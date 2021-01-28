@@ -1,0 +1,84 @@
+{
+  "name": "node-boilerplate",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Node boiler plate for API server",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node ./src/server",
+    "dev": "env DEBUG=api:* nodemon --watch src/ --watch retail-api-openapi.json --exec babel-node ./src/server",
+    "prod": "env DEBUG=api:* NODE_ENV=production PORT=3333 npm run build && node dist/server",
+    "build": "babel src --delete-dir-on-start -d dist --ignore 'src/**/*.test.js'  --copy-files --no-copy-ignored",
+    "lint:eslint": "eslint src/",
+    "lint:eslint:fix": "npm run lint:eslint -- . --fix",
+    "lint:staged": "lint-staged",
+    "prettify": "prettier --write",
+    "test": "jest --detectOpenHandles",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watchAll",
+    "test:clean": "rimraf ./coverage"
+  },
+  "author": "Datics",
+  "license": "ISC",
+  "lint-staged": {
+    "*.js": [
+      "npm run lint:eslint:fix",
+      "git add --force"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add --force"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint:staged"
+    }
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "debug": "^4.3.1",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "express-acl": "^2.0.8",
+    "express-jwt": "^5.3.1",
+    "express-session": "^1.15.6",
+    "express-static": "^1.2.6",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.4.0",
+    "lodash": "^4.17.15",
+    "mysql2": "^2.2.5",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "pg": "^8.5.1",
+    "sequelize": "^5.21.2",
+    "sequelize-cli": "^5.5.1",
+    "supertest": "^4.0.2",
+    "swagger-ui": "^3.40.0",
+    "swagger-ui-express": "^4.1.6",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "babel-eslint": "^10.1.0",
+    "code": "^5.2.4",
+    "cross-var": "^1.1.0",
+    "eslint": "^7.3.1",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "faker": "^4.1.0",
+    "husky": "^4.3.8",
+    "jest": "^26.6.3",
+    "lab": "^17.3.0",
+    "lint-staged": "^10.5.3",
+    "nodemon": "^1.19.4",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2"
+  }
+}

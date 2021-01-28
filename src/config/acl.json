@@ -1,0 +1,22 @@
+[
+  {
+    "group": "superAdmin",
+    "permissions": [
+      {
+        "resource": "*",
+        "methods": "*",
+        "action": "allow"
+      }
+    ]
+  },
+  {
+    "group": "user",
+    "permissions": [
+      {
+        "resource": "users/signup",
+        "methods": "*",
+        "action": "deny"
+      }
+    ]
+  }
+]
