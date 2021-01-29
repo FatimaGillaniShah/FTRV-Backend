@@ -1,7 +1,7 @@
 import express from 'express';
 import acl from 'express-acl';
 import auth from '../middlewares/auth';
-import users from './api/users';
+import users from './user/users';
 import test from './test';
 
 const router = express.Router();

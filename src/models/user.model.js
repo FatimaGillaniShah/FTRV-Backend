@@ -31,6 +31,9 @@ export default (sequelize, { STRING, INTEGER, ENUM }) => {
       role: {
         type: ENUM('admin', 'user'),
       },
+      status: {
+        type: ENUM('active', 'inactive'),
+      },
     },
     {
       paranoid: true,
