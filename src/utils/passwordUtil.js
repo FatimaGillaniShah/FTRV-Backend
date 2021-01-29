@@ -23,4 +23,4 @@ const validatePassword = (password, hashedPassword) => password === hashedPasswo
 const generateHash = (password) =>
   crypto.pbkdf2Sync(password, process.env.SALT, 10000, 64, 'sha512').toString('hex');
 
-module.exports = { generateHash, validatePassword };
+export { generateHash, validatePassword };

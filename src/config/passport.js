@@ -1,6 +1,6 @@
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import passwordUtil from '../utils/passwordUtil';
+import { generateHash } from '../utils/passwordUtil';
 import models from '../models';
 
 passport.use(
@@ -12,7 +12,7 @@ passport.use(
     async (email, passwordParam, done) => {
       const { User, Role } = models;
       // Hash user supplied password and find user
-      const password = passwordUtil.generateHash(passwordParam);
+      const password = generateHash(passwordParam);
       let user;
       try {
         user = await User.findOne({

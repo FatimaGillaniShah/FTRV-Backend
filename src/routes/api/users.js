@@ -3,7 +3,7 @@ import Joi from 'joi';
 import passport from 'passport';
 import express from 'express';
 import _ from 'lodash';
-import passwordUtil from '../../utils/passwordUtil';
+import { generateHash } from '../../utils/passwordUtil';
 import generateJWT from '../../utils/generateJWT';
 import models from '../../models';
 
@@ -95,7 +95,7 @@ async function signup(req, res /* , next */) {
   try {
     const userExists = await User.findOne(query);
     if (userExists === null) {
-      userParams.password = passwordUtil.generateHash(userParams.password);
+      userParams.password = generateHash(userParams.password);
       const user = await User.create(userParams);
       return res.json({ user });
     }
@@ -131,7 +131,7 @@ async function update(req, res /* , next */) {
   try {
     const userExists = await User.findOne(query);
     if (userExists) {
-      userUpdateParams.password = await passwordUtil.generateHash(userUpdateParams.password);
+      userUpdateParams.password = await generateHash(userUpdateParams.password);
       const user = await User.update(
         _.pick(userUpdateParams, ['name', 'email', 'contactNo', 'roleId', 'password']),
         {
@@ -273,4 +273,4 @@ async function role(req, res /* , next */) {
   }
 }
 
-module.exports = router;
+export default router;

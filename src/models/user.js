@@ -1,42 +1,37 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, { STRING, INTEGER, ENUM }) => {
   const User = sequelize.define(
     'User',
     {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.INTEGER,
+        type: INTEGER,
         autoIncrement: true,
       },
-      name: {
-        type: DataTypes.STRING,
+      firstName: {
+        type: STRING,
+        allowNull: false,
+      },
+      lastName: {
+        type: STRING,
         allowNull: false,
       },
       email: {
-        type: DataTypes.STRING,
+        type: STRING,
         allowNull: false,
       },
       password: {
-        type: DataTypes.STRING,
+        type: STRING,
         allowNull: false,
       },
       contactNo: {
-        type: DataTypes.STRING,
+        type: STRING,
         allowNull: false,
       },
-      // for storing some value in stringified form
-      // values : {
-      // 	type: DataTypes.STRING,
-      // 	allowNull: false,
-      // 	get: function () {
-      // 		return JSON.parse(this.getDataValue('values'));
-      // 	},
-      // 	set: function (value) {
-      // 		this.setDataValue('values', JSON.stringify(value));
-      // 	},
-      // }
+      role: {
+        type: ENUM('admin', 'user'),
+      },
     },
-    // for soft deletion
     {
       paranoid: true,
       timestamps: true,
@@ -51,6 +46,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  User.prototype.fullName = function () {
+    return `${this.firstName} ${this.lastName}`;
+  };
   // associate a role to user
   // User.associate = function (models) {
   // 	models.User.belongsTo(models.Role, {foreignKey: 'roleId'});

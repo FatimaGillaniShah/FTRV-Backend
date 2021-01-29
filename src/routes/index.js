@@ -31,4 +31,4 @@ router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
 router.use('/users', users);
 router.use('/test', test);
 
-export { router };
+export default router;
