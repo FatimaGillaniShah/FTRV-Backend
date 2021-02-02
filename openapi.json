@@ -12,8 +12,8 @@
   },
   "servers": [
     {
-      "url": "",
-      "description": "Boiler plate API"
+      "url": "/api",
+      "description": "Localhost FTRV Intra net"
     }
   ],
   "security": [
@@ -27,13 +27,13 @@
   "tags": [
     {
       "name": "Users",
-      "description": "Information regarding a retail store visitor"
+      "description": "Information regarding a users of ftrv"
     }
   ],
   "paths": {
-    "/user": {
+    "/users": {
       "post": {
-        "tags": ["Visitor"],
+        "tags": ["User"],
         "summary": "An endpoint to create a session for visitor authentication",
         "operationId": "createVisitorSession",
         "requestBody": {
@@ -64,6 +64,68 @@
             "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
+      },
+      "get": {
+        "summary": "Retrieve list of all user for given criteria",
+        "tags": ["User"],
+        "operationId": "getUserList",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "description": "Search string",
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -71,10 +133,10 @@
     "schemas": {
       "User": {
         "type": "object",
+
         "properties": {
           "id": {
-            "type": "string",
-            "description": "Unique Identifier for the expert"
+            "type": "number"
           },
           "firstName": {
             "type": "string"
@@ -82,22 +144,26 @@
           "lastName": {
             "type": "string"
           },
+          "email": {
+            "type": "string"
+          },
           "role": {
-            "description": "The role the expert is currently assigned",
             "type": "string"
           },
-          "status": {
-            "type": "string"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "profileUrl": {
-            "type": "string"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
     },
     "requestBodies": {
       "User": {
-        "description": "Information about the Afiniti client visitor",
+        "description": "Information about the Users of FTRV",
         "content": {
           "application/json": {
             "schema": {
@@ -108,17 +174,16 @@
         "required": true
       }
     },
-    "responses": {
-    },
+    "responses": {},
     "securitySchemes": {
       "retail_cookie_auth": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "afinitiretail.esid"
+        "name": ""
       },
       "retail_api_key_auth": {
         "type": "apiKey",
-        "description": "Afiniti Retail API Key Auth",
+        "description": "",
         "name": "X-API-KEY",
         "in": "header"
       }

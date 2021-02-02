@@ -1,13 +1,12 @@
 import express from 'express';
 import acl from 'express-acl';
 import auth from '../middlewares/auth';
-import users from './user/users';
-import test from './test';
+import userRoutes from './user';
 
 const router = express.Router();
 
 // list of routes to be excluded from authentication and authorization
-const aclExcludedRoutes = ['/api/users/login', /^\/api-docs\/.*/];
+const aclExcludedRoutes = ['/api/users', /^\/api-docs\/.*/];
 
 acl.config({
   baseUrl: 'api',
@@ -28,7 +27,6 @@ router.use(function (err, req, res, next) {
   }
 });
 router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
-router.use('/users', users);
-router.use('/test', test);
+router.use('/users', userRoutes);
 
 export default router;

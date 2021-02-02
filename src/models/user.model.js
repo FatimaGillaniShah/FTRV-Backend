@@ -1,4 +1,4 @@
-export default (sequelize, { STRING, INTEGER, ENUM }) => {
+export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL }) => {
   const User = sequelize.define(
     'User',
     {
@@ -19,6 +19,10 @@ export default (sequelize, { STRING, INTEGER, ENUM }) => {
       email: {
         type: STRING,
         allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
       },
       password: {
         type: STRING,
@@ -34,6 +38,15 @@ export default (sequelize, { STRING, INTEGER, ENUM }) => {
       status: {
         type: ENUM('active', 'inactive'),
       },
+      fullName: {
+        type: VIRTUAL,
+        get() {
+          return `${this.firstName} ${this.lastName}`;
+        },
+        set() {
+          throw new Error('Do not try to set the `fullName` value!');
+        },
+      },
     },
     {
       paranoid: true,
@@ -48,14 +61,6 @@ export default (sequelize, { STRING, INTEGER, ENUM }) => {
       ],
     }
   );
-
-  User.prototype.fullName = function () {
-    return `${this.firstName} ${this.lastName}`;
-  };
-  // associate a role to user
-  // User.associate = function (models) {
-  // 	models.User.belongsTo(models.Role, {foreignKey: 'roleId'});
-  // };
 
   return User;
 };

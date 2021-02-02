@@ -1,7 +1,13 @@
 import express from 'express';
-import users from './users';
+import UserController from './user.controller';
 
 const router = express.Router();
-router.use('/users', users);
+// router.get('/login', UserController.login);
+// router.post('/signup', signup);
+// router.post('/logout', logout);
+// router.post('/update', update);
+// router.post('/delete', deleteUser);
+// router.get('/getUserById', getUserById);
+router.get('/', UserController.list);
 
 export default router;

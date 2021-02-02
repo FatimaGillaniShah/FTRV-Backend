@@ -6,7 +6,6 @@ import models from './models';
 const debug = debugObj('api:server');
 const port = normalizePort(process.env.PORT || '3000');
 const address = process.env.SERVER_ADDRESS || '127.0.0.1';
-
 const server = http.createServer(app);
 init();
 
