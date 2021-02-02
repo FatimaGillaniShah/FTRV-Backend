@@ -1,7 +1,7 @@
 import express from 'express';
 import acl from 'express-acl';
 import auth from '../middlewares/auth';
-import users from './api/users';
+import users from './user/users';
 import test from './test';
 
 const router = express.Router();
@@ -31,4 +31,4 @@ router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
 router.use('/users', users);
 router.use('/test', test);
 
-export { router };
+export default router;

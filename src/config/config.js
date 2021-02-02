@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   development: {
     // dialect: 'sqlite',
     // storage: './db.development.sqlite'
@@ -9,7 +9,7 @@ module.exports = {
     type: 'default',
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
-    // schema: 'boilerplate_db',
+    schema: 'funtown',
     logging: true,
   },
   test: {

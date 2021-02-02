@@ -23,4 +23,4 @@ const generateJWT = ({ id, email, name, Role }) =>
     },
     process.env.JWT_SECRET
   );
-module.exports = generateJWT;
+export default generateJWT;

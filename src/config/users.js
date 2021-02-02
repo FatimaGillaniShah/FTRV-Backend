@@ -19,4 +19,4 @@ const Users = {};
 Users[user1.email] = user1;
 Users[user2.email] = user2;
 
-module.exports = Users;
+export default Users;
