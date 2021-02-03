@@ -1,4 +1,6 @@
-module.exports = {
+import { generateHash } from '../utils/helper';
+
+export default {
   up: async (queryInterface) => {
     await queryInterface.bulkInsert(
       {
@@ -10,7 +12,7 @@ module.exports = {
           firstName: 'Dr',
           lastName: 'Danyal',
           email: 'usmanqamar189@hotmail.com',
-          password: '123456',
+          password: generateHash('123456'),
           contactNo: '03214078115',
           role: 'admin',
           status: 'active',

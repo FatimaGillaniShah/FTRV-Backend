@@ -18,10 +18,7 @@
   ],
   "security": [
     {
-      "retail_cookie_auth": []
-    },
-    {
-      "retail_api_key_auth": []
+      "bearerAuth": []
     }
   ],
   "tags": [
@@ -35,7 +32,7 @@
       "post": {
         "tags": ["User"],
         "summary": "An endpoint to create a session for visitor authentication",
-        "operationId": "createVisitorSession",
+        "operationId": "createUsers",
         "requestBody": {
           "content": {
             "application/json": {
@@ -127,6 +124,50 @@
           }
         }
       }
+    },
+    "/users/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "An endpoint to login",
+        "operationId": "createUserSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful authentication of user credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visitor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input"
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -176,16 +217,12 @@
     },
     "responses": {},
     "securitySchemes": {
-      "retail_cookie_auth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": ""
-      },
-      "retail_api_key_auth": {
-        "type": "apiKey",
+      "bearerAuth": {
+        "type": "http",
         "description": "",
-        "name": "X-API-KEY",
-        "in": "header"
+        "scheme": "bearer",
+        "name": "authorization",
+        "bearerFormat": "JWT"
       }
     }
   }

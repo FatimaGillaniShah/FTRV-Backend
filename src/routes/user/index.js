@@ -9,5 +9,7 @@ const router = express.Router();
 // router.post('/delete', deleteUser);
 // router.get('/getUserById', getUserById);
 router.get('/', UserController.list);
+router.post('/', UserController.createUser);
+router.post('/login', UserController.login);
 
 export default router;

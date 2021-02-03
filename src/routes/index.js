@@ -6,14 +6,14 @@ import userRoutes from './user';
 const router = express.Router();
 
 // list of routes to be excluded from authentication and authorization
-const aclExcludedRoutes = ['/api/users', /^\/api-docs\/.*/];
+const aclExcludedRoutes = ['/api/users/login', /^\/api-docs\/.*/];
 
 acl.config({
   baseUrl: 'api',
   filename: 'acl.json',
   path: 'src/config',
-  defaultRole: 'user',
-  decodedObjectName: 'payload',
+  defaultRole: 'asdasdasd',
+  decodedObjectName: 'user',
 });
 router.use(auth.required.unless({ path: aclExcludedRoutes }));
 

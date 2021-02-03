@@ -1,18 +1,18 @@
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import { generateHash } from '../utils/passwordUtil';
+import { generateHash } from '../utils/helper';
 import models from '../models';
 
 passport.use(
   new LocalStrategy(
     {
-      usernameField: 'user[email]',
-      passwordField: 'user[password]',
+      usernameField: 'email',
+      passwordField: 'password',
     },
     async (email, passwordParam, done) => {
-      const { User, Role } = models;
-      // Hash user supplied password and find user
+      const { User } = models;
       const password = generateHash(passwordParam);
+
       let user;
       try {
         user = await User.findOne({
@@ -20,11 +20,6 @@ passport.use(
             email,
             password,
           },
-          include: [
-            {
-              model: Role,
-            },
-          ],
         });
       } catch (error) {
         return done(null, false, { error });
@@ -38,6 +33,7 @@ passport.use(
       // 	return done(null, false, { errors: { 'password': 'Password is invalid'}});
       // }
 
+      console.log(user);
       return done(null, user);
     }
   )

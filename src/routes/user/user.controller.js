@@ -1,6 +1,10 @@
+import Joi from 'joi';
+import passport from 'passport';
 import models from '../../models';
 import { PAGE_SIZE } from '../../utils/constants';
 import { listQuery } from './query';
+import { generateHash, generateJWT, getErrorMessages } from '../../utils/helper';
+import { userLoginSchema, userSignUpSchema } from './validationSchemas';
 
 const { User } = models;
 
@@ -28,51 +32,70 @@ class UserController {
       });
     }
   }
+
+  async login(req, res, next) {
+    const { body: user } = req;
+
+    const result = Joi.validate(user, userLoginSchema, { abortEarly: true });
+    if (result.error) {
+      return res.status(400).json({
+        errors: getErrorMessages(result),
+      });
+    }
+
+    return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (passportUser) {
+        const userObj = {
+          id: passportUser.id,
+          email: passportUser.email,
+          role: passportUser.role,
+          name: passportUser.name,
+          token: generateJWT(passportUser),
+        };
+
+        return res.json(userObj);
+      }
+
+      return res.status(400).send(info);
+    })(req, res, next);
+  }
+
+  async createUser(req, res) {
+    const { body: userPayload } = req;
+    const result = Joi.validate(userPayload, userSignUpSchema);
+    if (result.error) {
+      return res.status(422).json({
+        errors: result.error,
+      });
+    }
+    const query = {
+      where: {
+        email: userPayload.email,
+      },
+    };
+    try {
+      const userExists = await User.findOne(query);
+      if (userExists === null) {
+        userPayload.password = generateHash(userPayload.password);
+        userPayload.role = 'user';
+        const user = await User.create(userPayload);
+        const userResponse = user.toJSON();
+        delete userResponse.password;
+        return res.json(userResponse);
+      }
+      return res.status(400).json(`User "${userPayload.email}" already exists`);
+    } catch (e) {
+      return res.status(500).json({
+        errors: e,
+      });
+    }
+  }
 }
 
-// async login(req, res, next) {
-//   const {
-//     body: { user },
-//   } = req;
-//   const result = Joi.validate(user, userLoginSchema);
-//   if (result.error) {
-//     return res.status(422).json({
-//       errors: result.error,
-//     });
-//   }
-//
-//   return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
-//     if (err) {
-//       return next(err);
-//     }
-//
-//     if (passportUser) {
-//       const userObj = {
-//         id: passportUser.id,
-//         email: passportUser.email,
-//         name: passportUser.name,
-//         token: generateJWT(passportUser),
-//       };
-//
-//       return res.json({ userObj });
-//     }
-//
-//     return res.status(400).send(info);
-//   })(req, res, next);
-// }
-// const userSignUpSchema = Joi.object().keys({
-//   email: Joi.string().email({ minDomainAtoms: 2 }).required(),
-//   password: Joi.string().required(),
-//   name: Joi.string().min(2).max(100).required(),
-//   contactNo: Joi.string().alphanum().required(),
-//   roleId: Joi.number().min(1).required(),
-//   // values: Joi.array().items(Joi.number()).required()
-// });
-//
-// const userLoginSchema = Joi.object().keys({
-//   email: Joi.string().email({ minDomainAtoms: 2 }).required(),
-//   password: Joi.string().required(),
-// });
 //
 // const userUpdateSchema = Joi.object().keys({
 //   id: Joi.number().min(1).required(),
@@ -86,36 +109,7 @@ class UserController {
 //
 //
 //
-// async function signup(req, res /* , next */) {
-//   const {
-//     body: { user: userParams },
-//   } = req;
-//   const result = Joi.validate(userParams, userSignUpSchema);
-//   if (result.error) {
-//     return res.status(422).json({
-//       errors: result.error,
-//     });
-//   }
-//   const query = {
-//     where: {
-//       email: userParams.email,
-//     },
-//   };
-//   try {
-//     const userExists = await User.findOne(query);
-//     if (userExists === null) {
-//       userParams.password = generateHash(userParams.password);
-//       const user = await User.create(userParams);
-//       return res.json({ user });
-//     }
-//     return res.status(404).json(`User "${userParams.email}" already exists`);
-//   } catch (e) {
-//     return res.status(500).json({
-//       errors: e,
-//     });
-//   }
-// }
-//
+
 // // eslint-disable-next-line no-empty-function,no-unused-vars
 // async function logout(req, res /* , next */) {}
 //
