@@ -12,7 +12,6 @@ acl.config({
   baseUrl: 'api',
   filename: 'acl.json',
   path: 'src/config',
-  defaultRole: 'asdasdasd',
   decodedObjectName: 'user',
 });
 router.use(auth.required.unless({ path: aclExcludedRoutes }));
