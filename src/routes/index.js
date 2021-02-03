@@ -1,7 +1,7 @@
 import express from 'express';
 import acl from 'express-acl';
 import auth from '../middlewares/auth';
-import userRoutes from './user';
+import UserController from './user/user.controller';
 
 const router = express.Router();
 
@@ -26,6 +26,6 @@ router.use(function (err, req, res, next) {
   }
 });
 router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
-router.use('/users', userRoutes);
+router.use('/users', UserController.getRouter(router));
 
 export default router;

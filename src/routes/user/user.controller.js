@@ -9,7 +9,17 @@ import { userLoginSchema, userSignUpSchema } from './validationSchemas';
 const { User } = models;
 
 class UserController {
-  async list(req, res) {
+  static router;
+
+  static getRouter(router) {
+    this.router = router;
+    this.router.get('/', this.list);
+    this.router.post('/', this.createUser);
+    this.router.post('/login', this.login);
+    return this.router;
+  }
+
+  static async list(req, res) {
     const {
       query: { status, searchString, sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
     } = req;
@@ -33,7 +43,7 @@ class UserController {
     }
   }
 
-  async login(req, res, next) {
+  static async login(req, res, next) {
     const { body: user } = req;
 
     const result = Joi.validate(user, userLoginSchema, { abortEarly: true });
@@ -64,7 +74,7 @@ class UserController {
     })(req, res, next);
   }
 
-  async createUser(req, res) {
+  static async createUser(req, res) {
     const { body: userPayload } = req;
     const result = Joi.validate(userPayload, userSignUpSchema);
     if (result.error) {
@@ -222,4 +232,4 @@ class UserController {
 //   }
 // }
 
-export default new UserController();
+export default UserController;
