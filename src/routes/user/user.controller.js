@@ -48,9 +48,7 @@ class UserController {
 
     const result = Joi.validate(user, userLoginSchema, { abortEarly: true });
     if (result.error) {
-      return res.status(400).json({
-        errors: getErrorMessages(result),
-      });
+      BadRequestError(getErrorMessages(result));
     }
 
     return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
