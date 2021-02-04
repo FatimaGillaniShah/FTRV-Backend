@@ -13,13 +13,12 @@ import {
 import { userLoginSchema, userSignUpSchema } from './validationSchemas';
 
 const { User } = models;
-const wrapper = (fn) => (...args) => fn(...args).catch(args[2]);
 class UserController {
   static router;
 
   static getRouter(router) {
     this.router = router;
-    this.router.get('/', wrapper(this.list));
+    this.router.get('/', this.list);
     this.router.post('/', this.createUser);
     this.router.post('/login', this.login);
     return this.router;
