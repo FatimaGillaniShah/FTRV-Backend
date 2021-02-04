@@ -1,6 +1,6 @@
 [
   {
-    "group": "superAdmin",
+    "group": "admin",
     "permissions": [
       {
         "resource": "*",
@@ -13,9 +13,9 @@
     "group": "user",
     "permissions": [
       {
-        "resource": "users/signup",
-        "methods": "*",
-        "action": "deny"
+        "resource": "users",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }

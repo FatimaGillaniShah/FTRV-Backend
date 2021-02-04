@@ -1,8 +1,7 @@
 import express from 'express';
 import acl from 'express-acl';
 import auth from '../middlewares/auth';
-import users from './user/users';
-import test from './test';
+import UserController from './user/user.controller';
 
 const router = express.Router();
 
@@ -13,8 +12,7 @@ acl.config({
   baseUrl: 'api',
   filename: 'acl.json',
   path: 'src/config',
-  defaultRole: 'user',
-  decodedObjectName: 'payload',
+  decodedObjectName: 'user',
 });
 router.use(auth.required.unless({ path: aclExcludedRoutes }));
 
@@ -28,7 +26,6 @@ router.use(function (err, req, res, next) {
   }
 });
 router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
-router.use('/users', users);
-router.use('/test', test);
+router.use('/users', UserController.getRouter(router));
 
 export default router;
