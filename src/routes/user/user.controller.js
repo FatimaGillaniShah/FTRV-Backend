@@ -3,43 +3,43 @@ import passport from 'passport';
 import models from '../../models';
 import { PAGE_SIZE } from '../../utils/constants';
 import { listQuery } from './query';
-import { generateHash, generateJWT, getErrorMessages } from '../../utils/helper';
+import {
+  BadRequestError,
+  generateHash,
+  generateJWT,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import { userLoginSchema, userSignUpSchema } from './validationSchemas';
 
 const { User } = models;
-
+const wrapper = (fn) => (...args) => fn(...args).catch(args[2]);
 class UserController {
   static router;
 
   static getRouter(router) {
     this.router = router;
-    this.router.get('/', this.list);
+    this.router.get('/', wrapper(this.list));
     this.router.post('/', this.createUser);
     this.router.post('/login', this.login);
     return this.router;
   }
 
-  static async list(req, res) {
+  static async list(req, res, next) {
     const {
       query: { status, searchString, sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
     } = req;
 
     if (pageNumber <= 0) {
-      const error = 'Invalid page number';
-      return res.status(422).json({
-        error,
-      });
+      BadRequestError('Invalid page number', 422);
     }
+
     const query = listQuery({ status, searchString, sortColumn, sortOrder, pageNumber, pageSize });
     try {
       const users = await User.findAndCountAll(query);
-      return res.status(200).json({
-        users,
-      });
+      SuccessResponse(res, users);
     } catch (e) {
-      return res.status(500).json({
-        errors: e,
-      });
+      next(e);
     }
   }
 

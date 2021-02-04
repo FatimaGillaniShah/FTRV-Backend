@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 
 import jwt from 'jsonwebtoken';
+import { BadRequest, NotFound } from '../error';
 
 /**
  * Validates that the provided password matches the hashed counterpart
@@ -49,4 +50,25 @@ const generateJWT = ({ id, email, name, role }) =>
   );
 
 const getErrorMessages = (joiErrorObject) => joiErrorObject.error.details.map((e) => e.message);
-export { generateHash, validatePassword, generateJWT, getErrorMessages };
+
+const BadRequestError = (message, code) => {
+  throw new BadRequest(message, code);
+};
+const NotFoundError = (message, code) => {
+  throw new NotFound(message, code);
+};
+
+const SuccessResponse = (res, data) => {
+  res.status(200).json({
+    data,
+  });
+};
+export {
+  generateHash,
+  validatePassword,
+  generateJWT,
+  getErrorMessages,
+  BadRequestError,
+  NotFoundError,
+  SuccessResponse,
+};

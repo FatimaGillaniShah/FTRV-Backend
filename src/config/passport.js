@@ -33,7 +33,6 @@ passport.use(
       // 	return done(null, false, { errors: { 'password': 'Password is invalid'}});
       // }
 
-      console.log(user);
       return done(null, user);
     }
   )

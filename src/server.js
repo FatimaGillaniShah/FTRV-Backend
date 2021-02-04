@@ -11,6 +11,7 @@ init();
 
 async function init() {
   await models.sequelize.sync();
+  // eslint-disable-next-line no-console
   server.listen(port, address, () => console.log(`Server running on http://${address}:${port}`));
   server.on('error', onError);
   server.on('listening', onListening);
@@ -42,10 +43,12 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
+      // eslint-disable-next-line no-console
       console.error(`${bind} imports elevated privileges`);
       process.exit(1);
       break;
     case 'EADDRINUSE':
+      // eslint-disable-next-line no-console
       console.error(`${bind} is already in use`);
       process.exit(1);
       break;
