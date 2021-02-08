@@ -64,20 +64,18 @@ class UserController {
           token: generateJWT(passportUser),
         };
 
-        return res.json(userObj);
+        return SuccessResponse(res, userObj);
       }
 
-      return res.status(400).send(info);
+      return BadRequestError(info);
     })(req, res, next);
   }
 
-  static async createUser(req, res) {
+  static async createUser(req, res, next) {
     const { body: userPayload } = req;
     const result = Joi.validate(userPayload, userSignUpSchema);
     if (result.error) {
-      return res.status(422).json({
-        errors: result.error,
-      });
+      BadRequestError(result.error, 422);
     }
     const query = {
       where: {
@@ -92,13 +90,11 @@ class UserController {
         const user = await User.create(userPayload);
         const userResponse = user.toJSON();
         delete userResponse.password;
-        return res.json(userResponse);
+        SuccessResponse(res, userResponse);
       }
-      return res.status(400).json(`User "${userPayload.email}" already exists`);
+      BadRequestError(`User "${userPayload.email}" already exists`);
     } catch (e) {
-      return res.status(500).json({
-        errors: e,
-      });
+      next(e);
     }
   }
 }

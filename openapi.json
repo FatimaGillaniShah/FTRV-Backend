@@ -34,14 +34,7 @@
         "summary": "An endpoint to create a session for visitor authentication",
         "operationId": "createUsers",
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VisitorSessionByPhoneNumber"
-              }
-            }
-          },
-          "required": true
+          "$ref": "#/components/requestBodies/User"
         },
         "responses": {
           "200": {
@@ -49,13 +42,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Visitor"
+                  "$ref": "#/components/schemas/User"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid Input"
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized. An Expert authenticated session needs to be created"
@@ -118,6 +118,16 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -191,6 +201,9 @@
           "role": {
             "type": "string"
           },
+          "contactNo": {
+            "type": "string"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -200,9 +213,50 @@
             "format": "date-time"
           }
         }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
       }
     },
     "requestBodies": {
+      "User": {
+        "description": "Information about the Users of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstName": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "contactNo": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      }
+    },
+    "responses": {
       "User": {
         "description": "Information about the Users of FTRV",
         "content": {
@@ -215,7 +269,6 @@
         "required": true
       }
     },
-    "responses": {},
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
