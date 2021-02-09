@@ -15,17 +15,8 @@ acl.config({
   decodedObjectName: 'user',
 });
 router.use(auth.required.unless({ path: aclExcludedRoutes }));
-
-// for handling unauthorized access
-// @TODO Error handling middleware needs to be moved to generic place and more comprehensive
-router.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).send('Invalid Token');
-  } else {
-    next(err);
-  }
-});
 router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
+
 router.use('/users', UserController.getRouter(router));
 
 export default router;
