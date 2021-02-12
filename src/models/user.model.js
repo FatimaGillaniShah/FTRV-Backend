@@ -30,7 +30,23 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL }) => {
       },
       contactNo: {
         type: STRING,
-        allowNull: false,
+        allowNull: true,
+      },
+      extension: {
+        type: STRING,
+        allowNull: true,
+      },
+      title: {
+        type: STRING,
+        allowNull: true,
+      },
+      location: {
+        type: STRING,
+        allowNull: true,
+      },
+      department: {
+        type: STRING,
+        allowNull: true,
       },
       role: {
         type: ENUM('admin', 'user'),

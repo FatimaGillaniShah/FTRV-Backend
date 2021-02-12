@@ -1,7 +1,13 @@
 import Joi from 'joi';
 import passport from 'passport';
+import path from 'path';
+import xlsx from 'node-xlsx';
+import debugObj from 'debug';
+import fs from 'fs';
+import { promisify } from 'util';
 import models from '../../models';
-import { PAGE_SIZE } from '../../utils/constants';
+import uploadFile from '../../middlewares/upload';
+import { PAGE_SIZE, EXCEL_UPLOAD_PATH } from '../../utils/constants';
 import { listQuery } from './query';
 import {
   BadRequestError,
@@ -12,6 +18,9 @@ import {
 } from '../../utils/helper';
 import { userLoginSchema, userSignUpSchema } from './validationSchemas';
 
+const debug = debugObj('api:server');
+const deleteFileAsync = promisify(fs.unlink);
+
 const { User } = models;
 class UserController {
   static router;
@@ -21,6 +30,7 @@ class UserController {
     this.router.get('/', this.list);
     this.router.post('/', this.createUser);
     this.router.post('/login', this.login);
+    this.router.post('/upload', uploadFile.single('file'), this.upload);
     return this.router;
   }
 
@@ -95,6 +105,128 @@ class UserController {
       BadRequestError(`User "${userPayload.email}" already exists`);
     } catch (e) {
       next(e);
+    }
+  }
+
+  static async upload(req, res, next) {
+    try {
+      if (req.file === undefined) {
+        BadRequestError('Only excel file uploads are allowed');
+      }
+      const ingestStatus = { success: 0, failed: 0 };
+      const aggregateResult = (results) => {
+        results.forEach((result) => {
+          if (result.status === 'success') {
+            ingestStatus.success += 1;
+          } else if (result.status === 'failed') {
+            ingestStatus.failed += 1;
+          }
+        });
+      };
+      const excelFilePath = path.join(
+        path.dirname(require.main.filename),
+        EXCEL_UPLOAD_PATH,
+        req.file.filename
+      );
+      const worksheets = xlsx.parse(excelFilePath);
+      debug(`Excel file loading done: ${excelFilePath}`);
+
+      for (let w = 0; w < 1; w += 1) {
+        if (worksheets[w].data) {
+          const sheetData = worksheets[w].data;
+          let headerRow = sheetData[0];
+          // Remove all spaces and extra characters
+          headerRow = headerRow.map((header) => header.replace(/\s/g, ''));
+          const indexes = UserController.getAttributeIndexes(headerRow);
+          const promiseArr = [];
+          // Start from 1st row and leave headers
+          for (let r = 1; r < sheetData.length; r += 1) {
+            const row = sheetData[r];
+            const userData = UserController.getFormattedUserData(row, indexes);
+            if (userData.email) {
+              promiseArr.push(UserController.createUserBatch(userData));
+            } else {
+              ingestStatus.failed += 1;
+            }
+            if (promiseArr.length === 100) {
+              // eslint-disable-next-line no-await-in-loop
+              const results = await Promise.all(promiseArr.splice(0, 100));
+              aggregateResult(results);
+            }
+          }
+          if (promiseArr.length) {
+            // eslint-disable-next-line no-await-in-loop
+            const results = await Promise.all(promiseArr.splice(0, 100));
+            aggregateResult(results);
+          }
+        }
+      }
+      // delete uploaded file after processing
+      await deleteFileAsync(excelFilePath);
+      SuccessResponse(
+        res,
+        `${ingestStatus.success} users created, ${ingestStatus.failed} users failed`
+      );
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static getAttributeIndexes(headerRow) {
+    return {
+      deptIndex: headerRow.indexOf('Department'),
+      titleIndex: headerRow.indexOf('Title'),
+      locIndex: headerRow.indexOf('Location'),
+      nameIndex: headerRow.indexOf(' Name'),
+      extIndex: headerRow.indexOf('Extension'),
+      cellNoIndex: headerRow.indexOf('CellPhone'),
+      emailIndex: headerRow.indexOf('Email'),
+    };
+  }
+
+  static getFormattedUserData(row, attributeIndexes) {
+    const fullName = row[attributeIndexes.nameIndex];
+    let firstName = '';
+    let lastName = '';
+    if (fullName) {
+      const fullNameArr = row[attributeIndexes.nameIndex].split('');
+      firstName = fullNameArr.slice(0, 1).join(' ');
+      lastName = fullNameArr.slice(1, fullNameArr.length - 1).join(' ');
+    }
+    return {
+      firstName,
+      lastName,
+      email: row[attributeIndexes.emailIndex],
+      contactNo: row[attributeIndexes.cellNoIndex],
+      extension: row[attributeIndexes.extIndex],
+      title: row[attributeIndexes.titleIndex],
+      department: row[attributeIndexes.deptIndex],
+      location: row[attributeIndexes.locIndex],
+    };
+  }
+
+  static async createUserBatch(userData) {
+    const query = {
+      where: {
+        email: userData.email,
+      },
+    };
+    try {
+      const userExists = await User.findOne(query);
+      if (userExists === null) {
+        // eslint-disable-next-line no-param-reassign
+        userData.password = generateHash('ftrv@123');
+        // eslint-disable-next-line no-param-reassign
+        userData.role = 'user';
+        const user = await User.create(userData);
+        debug(`User with ${user.email} created successfully`);
+        return { status: 'success' };
+      }
+      debug(`User ${userData.email} already exists`);
+      return { status: 'failed' };
+    } catch (e) {
+      debug(e);
+      return { status: 'failed' };
     }
   }
 }
