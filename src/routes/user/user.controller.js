@@ -8,6 +8,7 @@ import { promisify } from 'util';
 import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, EXCEL_UPLOAD_PATH } from '../../utils/constants';
+import { BadRequest } from '../../error';
 import { listQuery } from './query';
 import {
   BadRequestError,
@@ -39,17 +40,23 @@ class UserController {
     const {
       query: { status, searchString, sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
     } = req;
-
-    if (pageNumber <= 0) {
-      return next(BadRequestError('Invalid page number', 422));
-    }
-
-    const query = listQuery({ status, searchString, sortColumn, sortOrder, pageNumber, pageSize });
     try {
+      if (pageNumber <= 0) {
+        BadRequestError('Invalid page number', 422);
+      }
+
+      const query = listQuery({
+        status,
+        searchString,
+        sortColumn,
+        sortOrder,
+        pageNumber,
+        pageSize,
+      });
       const users = await User.findAndCountAll(query);
-      return SuccessResponse(res, users);
+      SuccessResponse(res, users);
     } catch (e) {
-      return next(e);
+      next(e);
     }
   }
 
@@ -58,10 +65,10 @@ class UserController {
 
     const result = Joi.validate(user, userLoginSchema, { abortEarly: true });
     if (result.error) {
-      return next(BadRequestError(getErrorMessages(result), 422));
+      return next(new BadRequest(getErrorMessages(result), 422));
     }
 
-    return passport.authenticate('local', { session: false }, (err, passportUser) => {
+    return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
       if (err) {
         return next(err);
       }
@@ -77,22 +84,23 @@ class UserController {
 
         return SuccessResponse(res, userObj);
       }
-      return next(BadRequestError(getPassportErrorMessage(result), 422));
+      return next(new BadRequest(getPassportErrorMessage(info), 422));
     })(req, res, next);
   }
 
   static async createUser(req, res, next) {
     const { body: userPayload } = req;
-    const result = Joi.validate(userPayload, userSignUpSchema);
-    if (result.error) {
-      return next(BadRequestError(getErrorMessages(result), 422));
-    }
-    const query = {
-      where: {
-        email: userPayload.email,
-      },
-    };
     try {
+      const result = Joi.validate(userPayload, userSignUpSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), 422);
+      }
+      const query = {
+        where: {
+          email: userPayload.email,
+        },
+      };
+
       const userExists = await User.findOne(query);
       if (userExists === null) {
         userPayload.password = generateHash(userPayload.password);
@@ -103,16 +111,16 @@ class UserController {
         delete userResponse.password;
         SuccessResponse(res, userResponse);
       }
-      throw BadRequestError(`User "${userPayload.email}" already exists`);
+      BadRequestError(`User "${userPayload.email}" already exists`);
     } catch (e) {
-      return next(e);
+      next(e);
     }
   }
 
   static async upload(req, res, next) {
     try {
       if (req.file === undefined) {
-        throw BadRequestError('Only excel file uploads are allowed');
+        BadRequestError('No file found!');
       }
       const ingestStatus = { success: 0, failed: 0 };
       const aggregateResult = (results) => {
