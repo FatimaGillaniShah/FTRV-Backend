@@ -31,7 +31,7 @@
     "/users": {
       "post": {
         "tags": ["User"],
-        "summary": "An endpoint to create a session for visitor authentication",
+        "summary": "An endpoint to create a user",
         "operationId": "createUsers",
         "requestBody": {
           "$ref": "#/components/requestBodies/User"
@@ -165,7 +165,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Visitor"
+                  "$ref": "#/components/schemas/User"
                 }
               }
             }
@@ -247,6 +247,18 @@
                   "type": "string"
                 },
                 "contactNo": {
+                  "type": "string"
+                },
+                "extension": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "department": {
                   "type": "string"
                 }
               }

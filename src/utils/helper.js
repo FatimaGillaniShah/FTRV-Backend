@@ -51,12 +51,11 @@ const generateJWT = ({ id, email, name, role }) =>
 
 const getErrorMessages = (joiErrorObject) => joiErrorObject.error.details.map((e) => e.message);
 
-const BadRequestError = (message, code) => {
-  throw new BadRequest(message, code);
-};
-const NotFoundError = (message, code) => {
-  throw new NotFound(message, code);
-};
+const getPassportErrorMessage = (errorObject) => errorObject.errors.account;
+
+const BadRequestError = (message, code) => new BadRequest(message, code);
+
+const NotFoundError = (message, code) => new NotFound(message, code);
 
 const SuccessResponse = (res, data) => {
   res.status(200).json({
@@ -68,6 +67,7 @@ export {
   validatePassword,
   generateJWT,
   getErrorMessages,
+  getPassportErrorMessage,
   BadRequestError,
   NotFoundError,
   SuccessResponse,

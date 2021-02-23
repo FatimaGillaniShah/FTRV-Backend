@@ -14,6 +14,7 @@ import {
   generateHash,
   generateJWT,
   getErrorMessages,
+  getPassportErrorMessage,
   SuccessResponse,
 } from '../../utils/helper';
 import { userLoginSchema, userSignUpSchema } from './validationSchemas';
@@ -40,7 +41,7 @@ class UserController {
     } = req;
 
     if (pageNumber <= 0) {
-      BadRequestError('Invalid page number', 422);
+      return next(BadRequestError('Invalid page number', 422));
     }
 
     const query = listQuery({ status, searchString, sortColumn, sortOrder, pageNumber, pageSize });
@@ -57,10 +58,10 @@ class UserController {
 
     const result = Joi.validate(user, userLoginSchema, { abortEarly: true });
     if (result.error) {
-      BadRequestError(getErrorMessages(result));
+      return next(BadRequestError(getErrorMessages(result), 422));
     }
 
-    return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
+    return passport.authenticate('local', { session: false }, (err, passportUser) => {
       if (err) {
         return next(err);
       }
@@ -70,14 +71,13 @@ class UserController {
           id: passportUser.id,
           email: passportUser.email,
           role: passportUser.role,
-          name: passportUser.name,
+          name: passportUser.fullName,
           token: generateJWT(passportUser),
         };
 
         return SuccessResponse(res, userObj);
       }
-
-      return BadRequestError(info);
+      return next(BadRequestError(getPassportErrorMessage(result), 422));
     })(req, res, next);
   }
 
@@ -85,7 +85,7 @@ class UserController {
     const { body: userPayload } = req;
     const result = Joi.validate(userPayload, userSignUpSchema);
     if (result.error) {
-      BadRequestError(result.error, 422);
+      return next(BadRequestError(getErrorMessages(result), 422));
     }
     const query = {
       where: {
@@ -97,12 +97,13 @@ class UserController {
       if (userExists === null) {
         userPayload.password = generateHash(userPayload.password);
         userPayload.role = 'user';
+        userPayload.status = 'active';
         const user = await User.create(userPayload);
         const userResponse = user.toJSON();
         delete userResponse.password;
         SuccessResponse(res, userResponse);
       }
-      BadRequestError(`User "${userPayload.email}" already exists`);
+      throw BadRequestError(`User "${userPayload.email}" already exists`);
     } catch (e) {
       next(e);
     }
@@ -111,7 +112,7 @@ class UserController {
   static async upload(req, res, next) {
     try {
       if (req.file === undefined) {
-        BadRequestError('Only excel file uploads are allowed');
+        throw BadRequestError('Only excel file uploads are allowed');
       }
       const ingestStatus = { success: 0, failed: 0 };
       const aggregateResult = (results) => {
