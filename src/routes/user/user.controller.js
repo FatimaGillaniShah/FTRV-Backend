@@ -47,9 +47,9 @@ class UserController {
     const query = listQuery({ status, searchString, sortColumn, sortOrder, pageNumber, pageSize });
     try {
       const users = await User.findAndCountAll(query);
-      SuccessResponse(res, users);
+      return SuccessResponse(res, users);
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 
@@ -105,7 +105,7 @@ class UserController {
       }
       throw BadRequestError(`User "${userPayload.email}" already exists`);
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 
