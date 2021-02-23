@@ -38,7 +38,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful authentication of user credentials",
+            "description": "Successful creation of user",
             "content": {
               "application/json": {
                 "schema": {
@@ -202,6 +202,18 @@
             "type": "string"
           },
           "contactNo": {
+            "type": "string"
+          },
+          "extension": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "department": {
             "type": "string"
           },
           "createdAt": {
