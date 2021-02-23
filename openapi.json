@@ -3,7 +3,7 @@
   "info": {
     "description": "The API serves as the interface for APIs doc",
     "version": "1.0.0",
-    "title": "Boilerplate",
+    "title": "FTRV Intranet Portal",
     "termsOfService": "",
     "contact": {
       "name": "Usman Qamar",
@@ -13,7 +13,7 @@
   "servers": [
     {
       "url": "/api",
-      "description": "Localhost FTRV Intra net"
+      "description": "Localhost FTRV Intranet"
     }
   ],
   "security": [
