@@ -7,7 +7,7 @@ import fs from 'fs';
 import { promisify } from 'util';
 import models from '../../models';
 import uploadFile from '../../middlewares/upload';
-import { PAGE_SIZE, EXCEL_UPLOAD_PATH } from '../../utils/constants';
+import { PAGE_SIZE, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
 import { listQuery } from './query';
 import {
@@ -18,11 +18,10 @@ import {
   getPassportErrorMessage,
   SuccessResponse,
 } from '../../utils/helper';
-import { userLoginSchema, userSignUpSchema } from './validationSchemas';
+import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validationSchemas';
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
-
 const { User } = models;
 class UserController {
   static router;
@@ -30,9 +29,10 @@ class UserController {
   static getRouter(router) {
     this.router = router;
     this.router.get('/', this.list);
-    this.router.post('/', this.createUser);
+    this.router.post('/', uploadFile('image').single('file'), this.createUser);
+    this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.post('/login', this.login);
-    this.router.post('/upload', uploadFile.single('file'), this.upload);
+    this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
     return this.router;
   }
 
@@ -54,7 +54,7 @@ class UserController {
         pageSize,
       });
       const users = await User.findAndCountAll(query);
-      SuccessResponse(res, users);
+      return SuccessResponse(res, users);
     } catch (e) {
       next(e);
     }
@@ -89,7 +89,7 @@ class UserController {
   }
 
   static async createUser(req, res, next) {
-    const { body: userPayload } = req;
+    const { body: userPayload, file = {} } = req;
     try {
       const result = Joi.validate(userPayload, userSignUpSchema);
       if (result.error) {
@@ -102,16 +102,50 @@ class UserController {
       };
 
       const userExists = await User.findOne(query);
-      if (userExists === null) {
+      if (!userExists) {
         userPayload.password = generateHash(userPayload.password);
         userPayload.role = 'user';
         userPayload.status = 'active';
+        userPayload.avatar = file.filename;
         const user = await User.create(userPayload);
         const userResponse = user.toJSON();
         delete userResponse.password;
-        SuccessResponse(res, userResponse);
+        return SuccessResponse(res, userResponse);
       }
       BadRequestError(`User "${userPayload.email}" already exists`);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async updateUser(req, res, next) {
+    const {
+      body: userPayload,
+      file = {},
+      params: { id: userId },
+    } = req;
+    try {
+      const result = Joi.validate(userPayload, userUpdateSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), 422);
+      }
+      const query = {
+        where: {
+          id: userId,
+        },
+      };
+
+      const userExists = await User.findOne(query);
+      if (userExists) {
+        if (userPayload.password) {
+          userPayload.password = generateHash(userPayload.password);
+        }
+        userPayload.avatar = file.filename;
+        await User.update(userPayload, query);
+        delete userPayload.password;
+        return SuccessResponse(res, userPayload);
+      }
+      BadRequestError(`User does not exists`, 404);
     } catch (e) {
       next(e);
     }
@@ -134,7 +168,7 @@ class UserController {
       };
       const excelFilePath = path.join(
         path.dirname(require.main.filename),
-        EXCEL_UPLOAD_PATH,
+        UPLOAD_PATH,
         req.file.filename
       );
       const worksheets = xlsx.parse(excelFilePath);
@@ -172,7 +206,7 @@ class UserController {
       }
       // delete uploaded file after processing
       await deleteFileAsync(excelFilePath);
-      SuccessResponse(res, {
+      return SuccessResponse(res, {
         message: `${ingestStatus.success} users created, ${ingestStatus.failed} users failed`,
       });
     } catch (e) {
