@@ -20,7 +20,7 @@ const imageFilter = (req, file, cb) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(path.dirname(require.main.filename), '../public', UPLOAD_PATH));
+    cb(null, path.join(path.dirname(require.main.filename), UPLOAD_PATH));
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-employee-${file.originalname}`);
