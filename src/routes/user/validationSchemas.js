@@ -11,4 +11,8 @@ export const userSignUpSchema = Joi.object().keys({
   firstName: Joi.string().min(2).max(100).required(),
   lastName: Joi.string().min(2).max(100).required(),
   contactNo: Joi.string().alphanum().required(),
+  extension: Joi.string(),
+  location: Joi.string().required(),
+  title: Joi.string().required(),
+  department: Joi.string().required(),
 });

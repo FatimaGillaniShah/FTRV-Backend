@@ -51,9 +51,12 @@ const generateJWT = ({ id, email, name, role }) =>
 
 const getErrorMessages = (joiErrorObject) => joiErrorObject.error.details.map((e) => e.message);
 
+const getPassportErrorMessage = (errorObject) => errorObject.errors.account;
+
 const BadRequestError = (message, code) => {
   throw new BadRequest(message, code);
 };
+
 const NotFoundError = (message, code) => {
   throw new NotFound(message, code);
 };
@@ -68,6 +71,7 @@ export {
   validatePassword,
   generateJWT,
   getErrorMessages,
+  getPassportErrorMessage,
   BadRequestError,
   NotFoundError,
   SuccessResponse,

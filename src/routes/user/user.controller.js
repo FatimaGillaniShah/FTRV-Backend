@@ -8,12 +8,14 @@ import { promisify } from 'util';
 import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, EXCEL_UPLOAD_PATH } from '../../utils/constants';
+import { BadRequest } from '../../error';
 import { listQuery } from './query';
 import {
   BadRequestError,
   generateHash,
   generateJWT,
   getErrorMessages,
+  getPassportErrorMessage,
   SuccessResponse,
 } from '../../utils/helper';
 import { userLoginSchema, userSignUpSchema } from './validationSchemas';
@@ -38,13 +40,19 @@ class UserController {
     const {
       query: { status, searchString, sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
     } = req;
-
-    if (pageNumber <= 0) {
-      BadRequestError('Invalid page number', 422);
-    }
-
-    const query = listQuery({ status, searchString, sortColumn, sortOrder, pageNumber, pageSize });
     try {
+      if (pageNumber <= 0) {
+        BadRequestError('Invalid page number', 422);
+      }
+
+      const query = listQuery({
+        status,
+        searchString,
+        sortColumn,
+        sortOrder,
+        pageNumber,
+        pageSize,
+      });
       const users = await User.findAndCountAll(query);
       SuccessResponse(res, users);
     } catch (e) {
@@ -57,7 +65,7 @@ class UserController {
 
     const result = Joi.validate(user, userLoginSchema, { abortEarly: true });
     if (result.error) {
-      BadRequestError(getErrorMessages(result));
+      return next(new BadRequest(getErrorMessages(result), 422));
     }
 
     return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
@@ -70,33 +78,34 @@ class UserController {
           id: passportUser.id,
           email: passportUser.email,
           role: passportUser.role,
-          name: passportUser.name,
+          name: passportUser.fullName,
           token: generateJWT(passportUser),
         };
 
         return SuccessResponse(res, userObj);
       }
-
-      return BadRequestError(info);
+      return next(new BadRequest(getPassportErrorMessage(info), 422));
     })(req, res, next);
   }
 
   static async createUser(req, res, next) {
     const { body: userPayload } = req;
-    const result = Joi.validate(userPayload, userSignUpSchema);
-    if (result.error) {
-      BadRequestError(result.error, 422);
-    }
-    const query = {
-      where: {
-        email: userPayload.email,
-      },
-    };
     try {
+      const result = Joi.validate(userPayload, userSignUpSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), 422);
+      }
+      const query = {
+        where: {
+          email: userPayload.email,
+        },
+      };
+
       const userExists = await User.findOne(query);
       if (userExists === null) {
         userPayload.password = generateHash(userPayload.password);
         userPayload.role = 'user';
+        userPayload.status = 'active';
         const user = await User.create(userPayload);
         const userResponse = user.toJSON();
         delete userResponse.password;
@@ -111,7 +120,7 @@ class UserController {
   static async upload(req, res, next) {
     try {
       if (req.file === undefined) {
-        BadRequestError('Only excel file uploads are allowed');
+        BadRequestError('No file found!');
       }
       const ingestStatus = { success: 0, failed: 0 };
       const aggregateResult = (results) => {
@@ -163,10 +172,9 @@ class UserController {
       }
       // delete uploaded file after processing
       await deleteFileAsync(excelFilePath);
-      SuccessResponse(
-        res,
-        `${ingestStatus.success} users created, ${ingestStatus.failed} users failed`
-      );
+      SuccessResponse(res, {
+        message: `${ingestStatus.success} users created, ${ingestStatus.failed} users failed`,
+      });
     } catch (e) {
       next(e);
     }

@@ -20,18 +20,24 @@ export const listQuery = ({
   }
   // for filtering
   if (searchString) {
-    const likeClause = { [Op.like]: parseInt(searchString, 10) > 0 ? `%${searchString}%` : '' };
+    const likeClause = { [Op.like]: `%${searchString}%` };
     query.where[Op.or] = [
       {
-        id: likeClause,
+        firstName: likeClause,
       },
       {
-        name: likeClause,
+        lastName: likeClause,
       },
       {
         email: likeClause,
       },
     ];
+    const integerValue = parseInt(searchString, 10);
+    if (integerValue > 0) {
+      query.where[Op.or].push({
+        id: integerValue,
+      });
+    }
   }
 
   // for sorting

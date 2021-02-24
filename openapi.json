@@ -3,7 +3,7 @@
   "info": {
     "description": "The API serves as the interface for APIs doc",
     "version": "1.0.0",
-    "title": "Boilerplate",
+    "title": "FTRV Intranet Portal",
     "termsOfService": "",
     "contact": {
       "name": "Usman Qamar",
@@ -13,7 +13,7 @@
   "servers": [
     {
       "url": "/api",
-      "description": "Localhost FTRV Intra net"
+      "description": "Localhost FTRV Intranet"
     }
   ],
   "security": [
@@ -31,14 +31,14 @@
     "/users": {
       "post": {
         "tags": ["User"],
-        "summary": "An endpoint to create a session for visitor authentication",
+        "summary": "An endpoint to create a user",
         "operationId": "createUsers",
         "requestBody": {
           "$ref": "#/components/requestBodies/User"
         },
         "responses": {
           "200": {
-            "description": "Successful authentication of user credentials",
+            "description": "Successful creation of user",
             "content": {
               "application/json": {
                 "schema": {
@@ -165,7 +165,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Visitor"
+                  "$ref": "#/components/schemas/User"
                 }
               }
             }
@@ -175,6 +175,62 @@
           },
           "401": {
             "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/users/upload": {
+      "post": {
+        "tags": ["User"],
+        "summary": "An endpoint to upload employee sheet",
+        "operationId": "uploadUserList",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "base64"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Count of successful and failed user creation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fileUpload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No file found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Only excel file uploads are allowed!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -204,6 +260,18 @@
           "contactNo": {
             "type": "string"
           },
+          "extension": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -220,6 +288,14 @@
           "status": {
             "type": "string"
           },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "fileUpload": {
+        "type": "object",
+        "properties": {
           "message": {
             "type": "string"
           }
@@ -247,6 +323,18 @@
                   "type": "string"
                 },
                 "contactNo": {
+                  "type": "string"
+                },
+                "extension": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "department": {
                   "type": "string"
                 }
               }
