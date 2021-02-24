@@ -178,6 +178,62 @@
           }
         }
       }
+    },
+    "/users/upload": {
+      "post": {
+        "tags": ["User"],
+        "summary": "An endpoint to upload employee sheet",
+        "operationId": "uploadUserList",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "base64"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Count of successful and failed user creation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fileUpload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No file found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Only excel file uploads are allowed!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -232,6 +288,14 @@
           "status": {
             "type": "string"
           },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "fileUpload": {
+        "type": "object",
+        "properties": {
           "message": {
             "type": "string"
           }

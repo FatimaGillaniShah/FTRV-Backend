@@ -172,10 +172,9 @@ class UserController {
       }
       // delete uploaded file after processing
       await deleteFileAsync(excelFilePath);
-      SuccessResponse(
-        res,
-        `${ingestStatus.success} users created, ${ingestStatus.failed} users failed`
-      );
+      SuccessResponse(res, {
+        message: `${ingestStatus.success} users created, ${ingestStatus.failed} users failed`,
+      });
     } catch (e) {
       next(e);
     }
