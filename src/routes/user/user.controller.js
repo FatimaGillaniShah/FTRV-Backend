@@ -154,7 +154,7 @@ class UserController {
   static async upload(req, res, next) {
     try {
       if (req.file === undefined) {
-        BadRequestError('No file found!');
+        BadRequestError('No file found.', 422);
       }
       const ingestStatus = { success: 0, failed: 0 };
       const aggregateResult = (results) => {
@@ -178,13 +178,20 @@ class UserController {
         if (worksheets[w].data) {
           const sheetData = worksheets[w].data;
           let headerRow = sheetData[0];
+          if (!headerRow) {
+            BadRequestError('No row found.', 422);
+          }
           // Remove all spaces and extra characters
-          headerRow = headerRow.map((header) => header.replace(/\s/g, ''));
+          headerRow = headerRow.map((header) => header.toString().replace(/\s/g, ''));
           const indexes = UserController.getAttributeIndexes(headerRow);
           const promiseArr = [];
           // Start from 1st row and leave headers
           for (let r = 1; r < sheetData.length; r += 1) {
             const row = sheetData[r];
+            if (!row.length > 0) {
+              // eslint-disable-next-line no-continue
+              continue;
+            }
             const userData = UserController.getFormattedUserData(row, indexes);
             if (userData.email) {
               promiseArr.push(UserController.createUserBatch(userData));
@@ -260,6 +267,8 @@ class UserController {
         userData.password = generateHash('ftrv@123');
         // eslint-disable-next-line no-param-reassign
         userData.role = 'user';
+        // eslint-disable-next-line no-param-reassign
+        userData.status = 'active';
         const user = await User.create(userData);
         debug(`User with ${user.email} created successfully`);
         return { status: 'success' };

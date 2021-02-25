@@ -9,11 +9,11 @@ export default {
       },
       [
         {
-          firstName: 'Dr',
-          lastName: 'Danyal',
-          email: 'usmanqamar189@hotmail.com',
-          password: generateHash('123456'),
-          contactNo: '03214078115',
+          firstName: 'Super',
+          lastName: 'Admin',
+          email: 'admin@funtownrv.com',
+          password: generateHash('admin@ftrv123'),
+          contactNo: '1234567890',
           role: 'admin',
           status: 'active',
           createdAt: '2020-01-01T00:00:00.000Z',

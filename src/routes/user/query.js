@@ -14,7 +14,7 @@ export const listQuery = ({
 
   query.offset = (pageNumber - 1) * pageSize;
   query.limit = pageSize;
-
+  query.attributes = { exclude: ['password'] };
   if (status) {
     query.where[Op.and] = [{ status }];
   }
