@@ -135,6 +135,104 @@
         }
       }
     },
+    "/users/{id}": {
+      "put": {
+        "tags": ["User"],
+        "summary": "An endpoint to update a user",
+        "operationId": "updateUsers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/User"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "delete": {
+        "tags": ["User"],
+        "summary": "An endpoint to delete a user",
+        "operationId": "deleteUsers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful deletion of user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
     "/users/login": {
       "post": {
         "tags": ["User"],
@@ -306,7 +404,7 @@
       "User": {
         "description": "Information about the Users of FTRV",
         "content": {
-          "application/json": {
+          "multipart/form-data": {
             "schema": {
               "type": "object",
               "properties": {
@@ -314,6 +412,9 @@
                   "type": "string"
                 },
                 "lastName": {
+                  "type": "string"
+                },
+                "password": {
                   "type": "string"
                 },
                 "email": {
@@ -336,6 +437,10 @@
                 },
                 "department": {
                   "type": "string"
+                },
+                "file": {
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }

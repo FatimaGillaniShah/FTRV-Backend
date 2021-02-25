@@ -54,6 +54,9 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL }) => {
       status: {
         type: ENUM('active', 'inactive'),
       },
+      avatar: {
+        type: STRING,
+      },
       fullName: {
         type: VIRTUAL,
         get() {

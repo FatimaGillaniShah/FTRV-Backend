@@ -34,7 +34,8 @@
 	}],
 	"max-classes-per-file": ["warn", 1],
 	"import/no-cycle": 0,
-	"no-underscore-dangle": ["error", { "allowAfterThis": true }]
+	"no-underscore-dangle": ["error", { "allowAfterThis": true }],
+	"consistent-return": "off"
 },
 	"env": {
 		"node": true,

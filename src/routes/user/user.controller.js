@@ -7,7 +7,7 @@ import fs from 'fs';
 import { promisify } from 'util';
 import models from '../../models';
 import uploadFile from '../../middlewares/upload';
-import { PAGE_SIZE, EXCEL_UPLOAD_PATH } from '../../utils/constants';
+import { PAGE_SIZE, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
 import { listQuery } from './query';
 import {
@@ -18,11 +18,10 @@ import {
   getPassportErrorMessage,
   SuccessResponse,
 } from '../../utils/helper';
-import { userLoginSchema, userSignUpSchema } from './validationSchemas';
+import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validationSchemas';
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
-
 const { User } = models;
 class UserController {
   static router;
@@ -30,9 +29,11 @@ class UserController {
   static getRouter(router) {
     this.router = router;
     this.router.get('/', this.list);
-    this.router.post('/', this.createUser);
+    this.router.post('/', uploadFile('image').single('file'), this.createUser);
+    this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.post('/login', this.login);
-    this.router.post('/upload', uploadFile.single('file'), this.upload);
+    this.router.delete('/:id', this.deleteUser);
+    this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
     return this.router;
   }
 
@@ -54,7 +55,7 @@ class UserController {
         pageSize,
       });
       const users = await User.findAndCountAll(query);
-      SuccessResponse(res, users);
+      return SuccessResponse(res, users);
     } catch (e) {
       next(e);
     }
@@ -89,7 +90,7 @@ class UserController {
   }
 
   static async createUser(req, res, next) {
-    const { body: userPayload } = req;
+    const { body: userPayload, file = {} } = req;
     try {
       const result = Joi.validate(userPayload, userSignUpSchema);
       if (result.error) {
@@ -102,16 +103,69 @@ class UserController {
       };
 
       const userExists = await User.findOne(query);
-      if (userExists === null) {
+      if (!userExists) {
         userPayload.password = generateHash(userPayload.password);
         userPayload.role = 'user';
         userPayload.status = 'active';
+        userPayload.avatar = file.filename;
         const user = await User.create(userPayload);
         const userResponse = user.toJSON();
         delete userResponse.password;
-        SuccessResponse(res, userResponse);
+        return SuccessResponse(res, userResponse);
       }
       BadRequestError(`User "${userPayload.email}" already exists`);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async updateUser(req, res, next) {
+    const {
+      body: userPayload,
+      file = {},
+      params: { id: userId },
+    } = req;
+    try {
+      const result = Joi.validate(userPayload, userUpdateSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), 422);
+      }
+      const query = {
+        where: {
+          id: userId,
+        },
+      };
+
+      const userExists = await User.findOne(query);
+      if (userExists) {
+        if (userPayload.password) {
+          userPayload.password = generateHash(userPayload.password);
+        }
+        userPayload.avatar = file.filename;
+        await User.update(userPayload, query);
+        delete userPayload.password;
+        return SuccessResponse(res, userPayload);
+      }
+      BadRequestError(`User does not exists`, 404);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteUser(req, res, next) {
+    const {
+      params: { id },
+    } = req;
+    try {
+      if (!id) {
+        BadRequestError(`User id is required`, 422);
+      }
+      const user = await User.destroy({
+        where: {
+          id,
+        },
+      });
+      return SuccessResponse(res, { count: user });
     } catch (e) {
       next(e);
     }
@@ -120,7 +174,7 @@ class UserController {
   static async upload(req, res, next) {
     try {
       if (req.file === undefined) {
-        BadRequestError('No file found!');
+        BadRequestError('No file found.', 422);
       }
       const ingestStatus = { success: 0, failed: 0 };
       const aggregateResult = (results) => {
@@ -134,7 +188,7 @@ class UserController {
       };
       const excelFilePath = path.join(
         path.dirname(require.main.filename),
-        EXCEL_UPLOAD_PATH,
+        UPLOAD_PATH,
         req.file.filename
       );
       const worksheets = xlsx.parse(excelFilePath);
@@ -144,13 +198,20 @@ class UserController {
         if (worksheets[w].data) {
           const sheetData = worksheets[w].data;
           let headerRow = sheetData[0];
+          if (!headerRow) {
+            BadRequestError('No row found.', 422);
+          }
           // Remove all spaces and extra characters
-          headerRow = headerRow.map((header) => header.replace(/\s/g, ''));
+          headerRow = headerRow.map((header) => header.toString().replace(/\s/g, ''));
           const indexes = UserController.getAttributeIndexes(headerRow);
           const promiseArr = [];
           // Start from 1st row and leave headers
           for (let r = 1; r < sheetData.length; r += 1) {
             const row = sheetData[r];
+            if (!row.length > 0) {
+              // eslint-disable-next-line no-continue
+              continue;
+            }
             const userData = UserController.getFormattedUserData(row, indexes);
             if (userData.email) {
               promiseArr.push(UserController.createUserBatch(userData));
@@ -172,7 +233,7 @@ class UserController {
       }
       // delete uploaded file after processing
       await deleteFileAsync(excelFilePath);
-      SuccessResponse(res, {
+      return SuccessResponse(res, {
         message: `${ingestStatus.success} users created, ${ingestStatus.failed} users failed`,
       });
     } catch (e) {
@@ -226,6 +287,8 @@ class UserController {
         userData.password = generateHash('ftrv@123');
         // eslint-disable-next-line no-param-reassign
         userData.role = 'user';
+        // eslint-disable-next-line no-param-reassign
+        userData.status = 'active';
         const user = await User.create(userData);
         debug(`User with ${user.email} created successfully`);
         return { status: 'success' };
