@@ -32,6 +32,7 @@ class UserController {
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.post('/login', this.login);
+    this.router.delete('/:id', this.deleteUser);
     this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
     return this.router;
   }
@@ -146,6 +147,25 @@ class UserController {
         return SuccessResponse(res, userPayload);
       }
       BadRequestError(`User does not exists`, 404);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteUser(req, res, next) {
+    const {
+      params: { id },
+    } = req;
+    try {
+      if (!id) {
+        BadRequestError(`User id is required`, 422);
+      }
+      const user = await User.destroy({
+        where: {
+          id,
+        },
+      });
+      return SuccessResponse(res, { count: user });
     } catch (e) {
       next(e);
     }
