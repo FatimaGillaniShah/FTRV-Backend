@@ -5,6 +5,7 @@ const { Op } = sequelize;
 
 export const listQuery = ({ status }) => {
   const query = { where: {} };
+  query.attributes = { exclude: ['createdAt', 'updatedAt', 'deletedAt'] };
 
   const currentTime = moment().format('YYYY-MM-DD');
   if (status) {

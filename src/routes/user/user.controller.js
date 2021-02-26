@@ -5,6 +5,7 @@ import xlsx from 'node-xlsx';
 import debugObj from 'debug';
 import fs from 'fs';
 import { promisify } from 'util';
+import express from 'express';
 import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, UPLOAD_PATH } from '../../utils/constants';
@@ -19,7 +20,6 @@ import {
   SuccessResponse,
 } from '../../utils/helper';
 import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validationSchemas';
-import express from "express";
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
