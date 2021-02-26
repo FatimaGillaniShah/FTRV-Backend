@@ -16,6 +16,11 @@
         "resource": "users",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "users/:id",
+        "methods": ["PUT"],
+        "action": "allow"
       }
     ]
   }
