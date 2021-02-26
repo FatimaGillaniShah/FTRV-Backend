@@ -1,4 +1,4 @@
-export default (sequelize, { STRING, INTEGER, DATE, ENUM }) => {
+export default (sequelize, { STRING, INTEGER, DATEONLY, ENUM }) => {
   const Announcement = sequelize.define(
     'Announcement',
     {
@@ -17,11 +17,11 @@ export default (sequelize, { STRING, INTEGER, DATE, ENUM }) => {
         allowNull: false,
       },
       startTime: {
-        type: DATE,
+        type: DATEONLY,
         allowNull: false,
       },
       endTime: {
-        type: DATE,
+        type: DATEONLY,
         allowNull: false,
       },
       status: {

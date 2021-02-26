@@ -2,6 +2,7 @@ import express from 'express';
 import acl from 'express-acl';
 import auth from '../middlewares/auth';
 import UserController from './user/user.controller';
+import AnnouncementController from './announcement/announcement.controller';
 
 const router = express.Router();
 
@@ -17,6 +18,7 @@ acl.config({
 router.use(auth.required.unless({ path: aclExcludedRoutes }));
 router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
 
-router.use('/users', UserController.getRouter(router));
+router.use('/users', UserController.getRouter());
+router.use('/announcement', AnnouncementController.getRouter());
 
 export default router;

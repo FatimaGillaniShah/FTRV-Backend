@@ -19,6 +19,7 @@ import {
   SuccessResponse,
 } from '../../utils/helper';
 import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validationSchemas';
+import express from "express";
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
@@ -26,8 +27,8 @@ const { User } = models;
 class UserController {
   static router;
 
-  static getRouter(router) {
-    this.router = router;
+  static getRouter() {
+    this.router = express.Router();
     this.router.get('/', this.list);
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
