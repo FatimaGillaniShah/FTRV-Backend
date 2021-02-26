@@ -330,6 +330,46 @@
           }
         }
       }
+    },
+    "/announcements": {
+      "get": {
+        "summary": "Retrieve list of all active announcement",
+        "tags": ["Announcement"],
+        "operationId": "getAnnouncementList",
+        "responses": {
+          "200": {
+            "description": "Array of Announcement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -378,6 +418,31 @@
           }
         }
       },
+      "Announcement": {
+        "type": "object",
+
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+
       "Error": {
         "type": "object",
         "properties": {

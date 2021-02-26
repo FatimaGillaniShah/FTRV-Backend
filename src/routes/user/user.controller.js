@@ -5,6 +5,7 @@ import xlsx from 'node-xlsx';
 import debugObj from 'debug';
 import fs from 'fs';
 import { promisify } from 'util';
+import express from 'express';
 import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, UPLOAD_PATH } from '../../utils/constants';
@@ -26,8 +27,8 @@ const { User } = models;
 class UserController {
   static router;
 
-  static getRouter(router) {
-    this.router = router;
+  static getRouter() {
+    this.router = express.Router();
     this.router.get('/', this.list);
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
