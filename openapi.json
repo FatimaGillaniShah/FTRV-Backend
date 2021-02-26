@@ -181,9 +181,7 @@
             "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
-      }
-    },
-    "/users/{id}": {
+      },
       "delete": {
         "tags": ["User"],
         "summary": "An endpoint to delete a user",
