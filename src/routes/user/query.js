@@ -50,9 +50,10 @@ export const listQuery = ({
     }
   } else {
     if (name) {
-      query.where[Op.or] = [];
-      query.where[Op.or].push(makeSearchCondition('firstName', name));
-      query.where[Op.or].push(makeSearchCondition('lastName', name));
+      query.where[Op.or] = [
+        makeSearchCondition('firstName', name),
+        makeSearchCondition('lastName', name),
+      ];
     }
     if (department) {
       query.where[Op.and] = query.where[Op.and] || [];
