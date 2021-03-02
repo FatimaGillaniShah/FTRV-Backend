@@ -19,6 +19,6 @@ router.use(auth.required.unless({ path: aclExcludedRoutes }));
 router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
 
 router.use('/users', UserController.getRouter());
-router.use('/announcement', AnnouncementController.getRouter());
+router.use('/announcements', AnnouncementController.getRouter());
 
 export default router;
