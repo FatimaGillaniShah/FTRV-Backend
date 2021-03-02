@@ -14,7 +14,6 @@ export default {
           endTime: '2021-04-01',
           createdAt: new Date(),
           updatedAt: new Date(),
-
         },
       ],
       {}
