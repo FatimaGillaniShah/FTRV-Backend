@@ -98,6 +98,26 @@
             "name": "sortOrder",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "extension",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -181,24 +201,32 @@
             "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
-      },
+      }
+    },
+    "/users/deleteUsers": {
       "delete": {
         "tags": ["User"],
-        "summary": "An endpoint to delete a user",
+        "summary": "An endpoint to delete user(s)",
         "operationId": "deleteUsers",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["ids"]
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Successful deletion of user",
@@ -408,6 +436,9 @@
           "department": {
             "type": "string"
           },
+          "joiningDate": {
+            "type": "string"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -504,6 +535,9 @@
                 "file": {
                   "type": "string",
                   "format": "binary"
+                },
+                "joiningDate": {
+                  "type": "string"
                 }
               }
             }

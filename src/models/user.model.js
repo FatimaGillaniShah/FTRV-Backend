@@ -1,4 +1,4 @@
-export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL }) => {
+export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATE }) => {
   const User = sequelize.define(
     'User',
     {
@@ -56,6 +56,9 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL }) => {
       },
       avatar: {
         type: STRING,
+      },
+      joiningDate: {
+        type: DATE,
       },
       fullName: {
         type: VIRTUAL,

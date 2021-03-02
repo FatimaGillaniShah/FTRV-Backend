@@ -22,6 +22,7 @@ app.use(
   })
 );
 
+app.use('/assets', express.static('public/uploads'));
 app.use('/api', routes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec));
 app.use(handleErrors);

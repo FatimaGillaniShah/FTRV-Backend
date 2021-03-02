@@ -33,14 +33,25 @@ class UserController {
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.post('/login', this.login);
-    this.router.delete('/:id', this.deleteUser);
+    this.router.delete('/deleteUsers', this.deleteUsers);
     this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
     return this.router;
   }
 
   static async list(req, res, next) {
     const {
-      query: { status, searchString, sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
+      query: {
+        status,
+        searchString,
+        name,
+        department,
+        title,
+        extension,
+        sortColumn,
+        sortOrder,
+        pageNumber = 1,
+        pageSize = PAGE_SIZE,
+      },
     } = req;
     try {
       if (pageNumber <= 0) {
@@ -50,6 +61,10 @@ class UserController {
       const query = listQuery({
         status,
         searchString,
+        name,
+        department,
+        title,
+        extension,
         sortColumn,
         sortOrder,
         pageNumber,
@@ -153,17 +168,17 @@ class UserController {
     }
   }
 
-  static async deleteUser(req, res, next) {
+  static async deleteUsers(req, res, next) {
     const {
-      params: { id },
+      body: { ids = [] },
     } = req;
     try {
-      if (!id) {
-        BadRequestError(`User id is required`, 422);
+      if (ids.length < 1) {
+        BadRequestError(`User ids required`, 422);
       }
       const user = await User.destroy({
         where: {
-          id,
+          id: ids,
         },
       });
       return SuccessResponse(res, { count: user });

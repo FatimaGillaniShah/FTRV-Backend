@@ -1,11 +1,7 @@
-import debugObj from 'debug';
-
 import express from 'express';
 import models from '../../models';
 import { listQuery } from './query';
 import { SuccessResponse } from '../../utils/helper';
-
-const debug = debugObj('api:server');
 
 const { Announcement } = models;
 

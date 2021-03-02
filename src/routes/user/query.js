@@ -2,9 +2,19 @@ import sequelize from 'sequelize';
 
 const { Op } = sequelize;
 
+const makeSearchCondition = (columnName, searchValue) => {
+  const condition = {};
+  condition[columnName] = { [Op.iLike]: `%${searchValue}%` };
+  return condition;
+};
+
 export const listQuery = ({
   status,
   searchString,
+  name,
+  department,
+  title,
+  extension,
   sortColumn,
   sortOrder,
   pageNumber = 1,
@@ -20,7 +30,7 @@ export const listQuery = ({
   }
   // for filtering
   if (searchString) {
-    const likeClause = { [Op.like]: `%${searchString}%` };
+    const likeClause = { [Op.iLike]: `%${searchString}%` };
     query.where[Op.or] = [
       {
         firstName: likeClause,
@@ -37,6 +47,24 @@ export const listQuery = ({
       query.where[Op.or].push({
         id: integerValue,
       });
+    }
+  } else {
+    if (name) {
+      query.where[Op.or] = [];
+      query.where[Op.or].push(makeSearchCondition('firstName', name));
+      query.where[Op.or].push(makeSearchCondition('lastName', name));
+    }
+    if (department) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeSearchCondition('department', department));
+    }
+    if (title) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeSearchCondition('title', title));
+    }
+    if (extension) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeSearchCondition('extension', extension));
     }
   }
 
