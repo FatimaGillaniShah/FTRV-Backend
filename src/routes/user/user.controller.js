@@ -32,6 +32,7 @@ class UserController {
     this.router.get('/', this.list);
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
+    this.router.get('/:id', this.getUserById);
     this.router.post('/login', this.login);
     this.router.delete('/deleteUsers', this.deleteUsers);
     this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
@@ -72,6 +73,29 @@ class UserController {
       });
       const users = await User.findAndCountAll(query);
       return SuccessResponse(res, users);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async getUserById(req, res, next) {
+    const {
+      params: { id },
+    } = req;
+
+    try {
+      if (!id) {
+        BadRequestError(`User id is required`, 422);
+      }
+      const user = await User.findOne({
+        where: {
+          id,
+        },
+        attributes: {
+          exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'],
+        },
+      });
+      return SuccessResponse(res, user);
     } catch (e) {
       next(e);
     }

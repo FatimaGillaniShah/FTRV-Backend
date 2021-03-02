@@ -156,6 +156,49 @@
       }
     },
     "/users/{id}": {
+      "get": {
+        "summary": "Retrieve user by id",
+        "tags": ["User"],
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
       "put": {
         "tags": ["User"],
         "summary": "An endpoint to update a user",
@@ -537,7 +580,8 @@
                   "format": "binary"
                 },
                 "joiningDate": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "date "
                 }
               }
             }
