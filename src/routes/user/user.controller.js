@@ -92,7 +92,7 @@ class UserController {
           id,
         },
         attributes: {
-          exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'],
+          exclude: ['id', 'fullName', 'password', 'createdAt', 'updatedAt', 'deletedAt'],
         },
       });
       return SuccessResponse(res, user);
@@ -286,7 +286,7 @@ class UserController {
       deptIndex: headerRow.indexOf('Department'),
       titleIndex: headerRow.indexOf('Title'),
       locIndex: headerRow.indexOf('Location'),
-      nameIndex: headerRow.indexOf(' Name'),
+      nameIndex: headerRow.indexOf('Name'),
       extIndex: headerRow.indexOf('Extension'),
       cellNoIndex: headerRow.indexOf('CellPhone'),
       emailIndex: headerRow.indexOf('Email'),
@@ -298,9 +298,9 @@ class UserController {
     let firstName = '';
     let lastName = '';
     if (fullName) {
-      const fullNameArr = row[attributeIndexes.nameIndex].split('');
-      firstName = fullNameArr.slice(0, 1).join(' ');
-      lastName = fullNameArr.slice(1, fullNameArr.length - 1).join(' ');
+      const fullNameArr = row[attributeIndexes.nameIndex].trim().split(' ');
+      firstName = fullNameArr.slice(0, 1).join('');
+      lastName = fullNameArr.slice(1, fullNameArr.length).join(' ');
     }
     return {
       firstName,
