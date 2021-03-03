@@ -19,13 +19,15 @@ export const userSignUpSchema = Joi.object()
   })
   .unknown(true);
 
-export const userUpdateSchema = Joi.object().keys({
-  password: Joi.string(),
-  firstName: Joi.string().min(2).max(100),
-  lastName: Joi.string().min(2).max(100),
-  contactNo: Joi.string().alphanum(),
-  extension: Joi.string(),
-  location: Joi.string(),
-  title: Joi.string(),
-  department: Joi.string(),
-});
+export const userUpdateSchema = Joi.object()
+  .keys({
+    password: Joi.string(),
+    firstName: Joi.string().min(2).max(100),
+    lastName: Joi.string().min(2).max(100),
+    contactNo: Joi.string().alphanum(),
+    extension: Joi.string(),
+    location: Joi.string(),
+    title: Joi.string(),
+    department: Joi.string(),
+  })
+  .unknown(true);

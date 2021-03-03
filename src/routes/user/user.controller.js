@@ -298,7 +298,7 @@ class UserController {
     let firstName = '';
     let lastName = '';
     if (fullName) {
-      const fullNameArr = row[attributeIndexes.nameIndex].trim().split(' ');
+      const fullNameArr = row[attributeIndexes.nameIndex].replace(/['"]+/g, '').trim().split(' ');
       firstName = fullNameArr.slice(0, 1).join('');
       lastName = fullNameArr.slice(1, fullNameArr.length).join(' ');
     }
