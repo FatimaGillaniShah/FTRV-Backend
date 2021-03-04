@@ -120,6 +120,7 @@ class UserController {
           email: passportUser.email,
           role: passportUser.role,
           name: passportUser.fullName,
+          avatar: passportUser.avatar,
           token: generateJWT(passportUser),
         };
 
