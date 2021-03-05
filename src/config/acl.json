@@ -19,12 +19,7 @@
       },
       {
         "resource": "users/:id",
-        "methods": ["GET"],
-        "action": "allow"
-      },
-      {
-        "resource": "users/:id",
-        "methods": ["PUT"],
+        "methods": ["GET", "PUT"],
         "action": "allow"
       }
     ]
