@@ -15,6 +15,7 @@ export const listQuery = ({
   department,
   title,
   extension,
+  location,
   sortColumn,
   sortOrder,
   pageNumber = 1,
@@ -66,6 +67,10 @@ export const listQuery = ({
     if (extension) {
       query.where[Op.and] = query.where[Op.and] || [];
       query.where[Op.and].push(makeSearchCondition('extension', extension));
+    }
+    if (location) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeSearchCondition('location', location));
     }
   }
 

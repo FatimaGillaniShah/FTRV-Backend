@@ -118,6 +118,11 @@
             "name": "extension",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
