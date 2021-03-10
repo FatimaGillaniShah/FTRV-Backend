@@ -48,6 +48,7 @@ class UserController {
         department,
         title,
         extension,
+        location,
         sortColumn,
         sortOrder,
         pageNumber = 1,
@@ -66,6 +67,7 @@ class UserController {
         department,
         title,
         extension,
+        location,
         sortColumn,
         sortOrder,
         pageNumber,
@@ -205,6 +207,7 @@ class UserController {
         where: {
           id: ids,
         },
+        force: true,
       });
       return SuccessResponse(res, { count: user });
     } catch (e) {
