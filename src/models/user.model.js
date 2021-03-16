@@ -60,6 +60,9 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATE }) => {
       joiningDate: {
         type: DATE,
       },
+      dob: {
+        type: DATE,
+      },
       fullName: {
         type: VIRTUAL,
         get() {

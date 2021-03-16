@@ -16,6 +16,8 @@ export const userSignUpSchema = Joi.object()
     location: Joi.string().required(),
     title: Joi.string().required(),
     department: Joi.string().required(),
+    joiningDate: Joi.date(),
+    dob: Joi.date(),
   })
   .unknown(true);
 
@@ -29,5 +31,7 @@ export const userUpdateSchema = Joi.object()
     location: Joi.string(),
     title: Joi.string(),
     department: Joi.string(),
+    joiningDate: Joi.date(),
+    dob: Joi.date(),
   })
   .unknown(true);
