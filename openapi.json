@@ -487,6 +487,9 @@
           "joiningDate": {
             "type": "string"
           },
+          "dob": {
+            "type": "string"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -563,7 +566,8 @@
                   "type": "string"
                 },
                 "role": {
-                  "type": "string"
+                  "type": "string",
+                  "enum": ["user", "admin"]
                 },
                 "contactNo": {
                   "type": "string"
@@ -585,6 +589,10 @@
                   "format": "binary"
                 },
                 "joiningDate": {
+                  "type": "string",
+                  "format": "date "
+                },
+                "dob": {
                   "type": "string",
                   "format": "date "
                 }

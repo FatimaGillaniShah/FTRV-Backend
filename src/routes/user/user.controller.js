@@ -148,7 +148,7 @@ class UserController {
       const userExists = await User.findOne(query);
       if (!userExists) {
         userPayload.password = generateHash(userPayload.password);
-        userPayload.role = 'user';
+        userPayload.role = userPayload.role || 'user';
         userPayload.status = 'active';
         userPayload.avatar = file.filename;
         const user = await User.create(userPayload);
