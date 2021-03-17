@@ -769,7 +769,6 @@
       },
       "UsefulLink": {
         "type": "object",
-
         "properties": {
           "name": {
             "type": "string"
@@ -889,7 +888,7 @@
         "required": true
       },
       "UsefulLink": {
-        "description": "Information about the Users of FTRV",
+        "description": "Information about the useful links of FTRV",
         "content": {
           "application/json": {
             "schema": {
