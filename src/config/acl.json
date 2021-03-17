@@ -23,5 +23,15 @@
         "action": "allow"
       }
     ]
+  },
+  {
+    "group": "user",
+    "permissions": [
+      {
+        "resource": "usefulLinks",
+        "methods": ["GET"],
+        "action": "allow"
+      }
+    ]
   }
 ]
