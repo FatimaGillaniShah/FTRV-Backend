@@ -878,7 +878,7 @@
     },
     "responses": {
       "User": {
-        "description": "Information about the Useful Links of FTRV",
+        "description": "Information about the Users of FTRV",
         "content": {
           "application/json": {
             "schema": {
