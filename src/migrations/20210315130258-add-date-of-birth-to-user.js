@@ -14,7 +14,7 @@ module.exports = {
               schema: process.env.SCHEMA_NAME,
               },
               'dob',
-              Sequelize.DATE
+              Sequelize.DATEONLY
           );
       });
   },

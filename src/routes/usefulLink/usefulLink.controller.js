@@ -55,6 +55,9 @@ class UsefulLinkController {
         where: {
           id,
         },
+        attributes: {
+          exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+        },
       });
       return SuccessResponse(res, link);
     } catch (e) {
