@@ -843,11 +843,11 @@
                 },
                 "joiningDate": {
                   "type": "string",
-                  "format": "date "
+                  "format": "date"
                 },
                 "dob": {
                   "type": "string",
-                  "format": "date "
+                  "format": "date"
                 }
               }
             }
