@@ -8,10 +8,11 @@ export default {
       [
         {
           title: 'Holiday',
-          text: 'Dummy  description. Dummy  description.',
+          description: 'This is a holiday announcement description',
           status: 'active',
+          priority: 'high',
           startTime: new Date(),
-          endTime: '2021-04-01',
+          endTime: '2022-04-01',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
