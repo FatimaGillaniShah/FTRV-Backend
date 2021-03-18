@@ -10,9 +10,9 @@ export default (sequelize, { STRING, INTEGER, DATEONLY, ENUM }) => {
       },
       title: {
         type: STRING,
-        allowNull: true,
+        allowNull: false,
       },
-      text: {
+      description: {
         type: STRING,
         allowNull: false,
       },
@@ -26,6 +26,10 @@ export default (sequelize, { STRING, INTEGER, DATEONLY, ENUM }) => {
       },
       status: {
         type: ENUM('active', 'inactive'),
+        allowNull: false,
+      },
+      priority: {
+        type: ENUM('high', 'medium', 'low'),
         allowNull: false,
       },
     },

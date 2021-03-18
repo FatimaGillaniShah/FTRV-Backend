@@ -21,12 +21,7 @@
         "resource": "users/:id",
         "methods": ["GET", "PUT"],
         "action": "allow"
-      }
-    ]
-  },
-  {
-    "group": "user",
-    "permissions": [
+      },
       {
         "resource": "usefulLinks",
         "methods": ["GET"],
