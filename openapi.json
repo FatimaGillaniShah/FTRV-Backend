@@ -407,6 +407,48 @@
         }
       }
     },
+    "/users/birthday": {
+      "get": {
+        "summary": "An endpoint to get a upcoming birthdays",
+        "tags": ["User"],
+        "operationId": "getBirthday",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date for which we want to get birthdays",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/announcements": {
       "get": {
         "summary": "Retrieve list of all active announcement",
@@ -751,8 +793,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                  }
+                  "properties": {}
                 }
               }
             }

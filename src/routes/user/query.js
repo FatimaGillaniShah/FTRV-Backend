@@ -1,11 +1,31 @@
 import sequelize from 'sequelize';
 
-const { Op } = sequelize;
+const { Op, fn, cast } = sequelize;
 
 const makeSearchCondition = (columnName, searchValue) => {
   const condition = {};
   condition[columnName] = { [Op.iLike]: `%${searchValue}%` };
   return condition;
+};
+
+export const birthdayQuery = (date) => {
+  const query = {
+    where: {
+      [Op.and]: [
+        sequelize.where(
+          fn('date_part', 'day', sequelize.col('dob')),
+          fn('date_part', 'day', cast(date, 'date'))
+        ),
+        sequelize.where(
+          fn('date_part', 'month', sequelize.col('dob')),
+          fn('date_part', 'month', cast(date, 'date'))
+        ),
+      ],
+    },
+  };
+  query.attributes = ['id', 'firstName', 'lastName', 'dob'];
+
+  return query;
 };
 
 export const listQuery = ({
