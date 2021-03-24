@@ -51,7 +51,7 @@ const generateJWT = ({ id, email, name, role }) =>
 
 const getErrorMessages = (joiErrorObject) => joiErrorObject.error.details.map((e) => e.message);
 
-const getPassportErrorMessage = (errorObject) => errorObject.errors.account;
+const getPassportErrorMessage = (errorObject) => errorObject.errors && errorObject.errors.account;
 
 const BadRequestError = (message, code) => {
   throw new BadRequest(message, code);

@@ -4,6 +4,7 @@ import auth from '../middlewares/auth';
 import UserController from './user/user.controller';
 import AnnouncementController from './announcement/announcement.controller';
 import UsefulLinkController from './usefulLink/usefulLink.controller';
+import QuoteController from './quote/quote.controller';
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
 router.use('/users', UserController.getRouter());
 router.use('/announcements', AnnouncementController.getRouter());
 router.use('/usefulLinks', UsefulLinkController.getRouter());
+router.use('/quote', QuoteController.getRouter());
 
 export default router;

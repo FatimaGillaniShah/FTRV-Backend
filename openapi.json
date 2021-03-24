@@ -689,6 +689,76 @@
           }
         }
       }
+    },
+    "/quote": {
+      "put": {
+        "tags": ["Quote"],
+        "summary": "An endpoint to update a motivational quote",
+        "operationId": "updateQuote",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "get": {
+        "summary": "An endpoint to get a motivational quote",
+        "tags": ["Quote"],
+        "operationId": "getQuote",
+        "responses": {
+          "200": {
+            "description": "Object of quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
