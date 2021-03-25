@@ -408,13 +408,69 @@
       }
     },
     "/announcements": {
-      "get": {
-        "summary": "Retrieve list of all active announcement",
+      "post": {
         "tags": ["Announcement"],
-        "operationId": "getAnnouncementList",
+        "summary": "An endpoint to create an Announcement",
+        "operationId": "createAnnouncement",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Announcement"
+        },
         "responses": {
           "200": {
-            "description": "Array of Announcement",
+            "description": "Successful creation of Announcement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Announcement"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve list of all Announcements for given criteria",
+        "tags": ["Announcement"],
+        "operationId": "getAnnouncementsList",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Announcements",
             "content": {
               "application/json": {
                 "schema": {
@@ -426,7 +482,7 @@
                     "rows": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/User"
+                        "$ref": "#/components/schemas/Announcement"
                       }
                     }
                   }
@@ -443,6 +499,153 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/announcements/{id}": {
+      "get": {
+        "summary": "Retrieve announcement by id",
+        "tags": ["Announcement"],
+        "operationId": "getAnnouncementById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Announcement",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of announcement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Announcement"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Announcement"],
+        "summary": "An endpoint to update an announcement",
+        "operationId": "updateAnnouncement",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of announcement",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Announcement"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of announcement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Announcement"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/announcements/deleteAnnouncements": {
+      "delete": {
+        "tags": ["Announcement"],
+        "summary": "An endpoint to delete announcement(s)",
+        "operationId": "deleteAnnouncements",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["ids"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful deletion of announcement(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
       }
@@ -751,8 +954,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                  }
+                  "properties": {}
                 }
               }
             }
@@ -798,10 +1000,12 @@
             "type": "string"
           },
           "joiningDate": {
-            "type": "string"
+            "type": "string",
+            "format": "date"
           },
           "dob": {
-            "type": "string"
+            "type": "string",
+            "format": "date"
           },
           "createdAt": {
             "type": "string",
@@ -815,7 +1019,6 @@
       },
       "Announcement": {
         "type": "object",
-
         "properties": {
           "id": {
             "type": "number"
@@ -823,16 +1026,21 @@
           "title": {
             "type": "string"
           },
-          "text": {
+          "description": {
             "type": "string"
           },
           "startTime": {
-            "type": "string"
+            "type": "string",
+            "format": "date"
           },
           "endTime": {
-            "type": "string"
+            "type": "string",
+            "format": "date"
           },
           "status": {
+            "type": "string"
+          },
+          "priority": {
             "type": "string"
           }
         }
@@ -937,6 +1145,41 @@
                 },
                 "url": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "Announcement": {
+        "description": "Information about the announcements of FTRV",
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "startTime": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "endTime": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["active", "inactive"]
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"]
                 }
               }
             }
