@@ -23,7 +23,17 @@
         "action": "allow"
       },
       {
+        "resource": "users/birthday",
+        "methods": ["GET"],
+        "action": "allow"
+      },
+      {
         "resource": "usefulLinks",
+        "methods": ["GET"],
+        "action": "allow"
+      },
+      {
+        "resource": "announcements/userAnnouncements",
         "methods": ["GET"],
         "action": "allow"
       }
