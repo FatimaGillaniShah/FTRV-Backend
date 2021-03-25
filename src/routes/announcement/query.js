@@ -3,7 +3,25 @@ import moment from 'moment';
 
 const { Op } = sequelize;
 
-export const listQuery = ({ status }) => {
+export const listQuery = ({ sortColumn, sortOrder, pageNumber, pageSize }) => {
+  const query = { where: {} };
+  query.attributes = { exclude: ['createdAt', 'updatedAt', 'deletedAt'] };
+
+  // for pagination
+  query.offset = (pageNumber - 1) * pageSize;
+  query.limit = pageSize;
+
+  // for sorting
+  if (sortColumn && sortOrder) {
+    query.order = [[sortColumn, sortOrder]];
+  }
+
+  query.order = [['startTime', 'ASC']];
+
+  return query;
+};
+
+export const dashboardListQuery = ({ status }) => {
   const query = { where: {} };
   query.attributes = { exclude: ['createdAt', 'updatedAt', 'deletedAt'] };
 
