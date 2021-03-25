@@ -10,7 +10,7 @@ import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
-import { listQuery } from './query';
+import { birthdayQuery, listQuery } from './query';
 import {
   BadRequestError,
   generateHash,
@@ -31,12 +31,25 @@ class UserController {
     this.router = express.Router();
     this.router.get('/', this.list);
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
+    this.router.get('/birthday', this.birthdays);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.get('/:id', this.getUserById);
     this.router.post('/login', this.login);
     this.router.delete('/deleteUsers', this.deleteUsers);
     this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
     return this.router;
+  }
+
+  static async birthdays(req, res, next) {
+    const { date = new Date() } = req.query;
+
+    try {
+      const query = birthdayQuery(date);
+      const data = await User.findAll(query);
+      return SuccessResponse(res, data);
+    } catch (e) {
+      next(e);
+    }
   }
 
   static async list(req, res, next) {
