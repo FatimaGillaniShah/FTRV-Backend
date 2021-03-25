@@ -2,7 +2,7 @@ import Joi from 'joi';
 import express from 'express';
 import models from '../../models';
 import { PAGE_SIZE } from '../../utils/constants';
-import { listQuery } from './query';
+import { listQuery, dashboardListQuery } from './query';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { announcementCreateSchema, announcementUpdateSchema } from './validationSchemas';
 
@@ -15,6 +15,7 @@ class AnnouncementController {
     this.router = express.Router();
     this.router.get('/', this.list);
     this.router.post('/', this.createAnnouncement);
+    this.router.get('/userAnnouncements', this.userAnnouncements);
     this.router.put('/:id', this.updateAnnouncement);
     this.router.get('/:id', this.getAnnouncementById);
     this.router.delete('/deleteAnnouncements', this.deleteAnnouncements);
@@ -23,7 +24,7 @@ class AnnouncementController {
 
   static async list(req, res, next) {
     const {
-      query: { status, sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
     } = req;
     try {
       if (pageNumber <= 0) {
@@ -31,7 +32,6 @@ class AnnouncementController {
       }
 
       const query = listQuery({
-        status,
         sortColumn,
         sortOrder,
         pageNumber,
@@ -39,6 +39,18 @@ class AnnouncementController {
       });
       const announcements = await Announcement.findAndCountAll(query);
       return SuccessResponse(res, announcements);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async userAnnouncements(req, res, next) {
+    try {
+      const query = dashboardListQuery({
+        status: 'active',
+      });
+      const result = await Announcement.findAll(query);
+      return SuccessResponse(res, result);
     } catch (e) {
       next(e);
     }

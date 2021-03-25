@@ -594,6 +594,46 @@
         }
       }
     },
+    "/announcements/userAnnouncements": {
+      "get": {
+        "summary": "Retrieve list of all active announcement(s)",
+        "tags": ["Announcement"],
+        "operationId": "getUserAnnouncementList",
+        "responses": {
+          "200": {
+            "description": "Array of Announcements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Announcement"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/announcements/deleteAnnouncements": {
       "delete": {
         "tags": ["Announcement"],
