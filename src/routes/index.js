@@ -9,7 +9,7 @@ import QuoteController from './quote/quote.controller';
 const router = express.Router();
 
 // list of routes to be excluded from authentication and authorization
-const aclExcludedRoutes = ['/api/users/birthday', /^\/api-docs\/.*/];
+const aclExcludedRoutes = ['/api/users/login', /^\/api-docs\/.*/];
 
 acl.config({
   baseUrl: 'api',

@@ -23,7 +23,7 @@ export const birthdayQuery = (date) => {
       ],
     },
   };
-  query.attributes = ['id', 'firstName', 'lastName', 'dob'];
+  query.attributes = ['id', 'firstName', 'lastName', 'dob', 'avatar'];
 
   return query;
 };
