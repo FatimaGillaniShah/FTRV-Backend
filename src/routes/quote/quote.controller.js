@@ -29,7 +29,7 @@ class QuoteController {
 
   static async updateQuote(req, res, next) {
     const quoteSchema = Joi.object().keys({
-      data: Joi.string(),
+      data: Joi.string().allow(''),
     });
     const { data } = req.body;
     try {
