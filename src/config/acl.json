@@ -36,6 +36,11 @@
         "resource": "announcements/userAnnouncements",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/quote",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
