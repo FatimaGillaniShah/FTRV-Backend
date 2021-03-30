@@ -5,6 +5,7 @@ import UserController from './user/user.controller';
 import AnnouncementController from './announcement/announcement.controller';
 import UsefulLinkController from './usefulLink/usefulLink.controller';
 import QuoteController from './quote/quote.controller';
+import EventsController from './events/events.controller';
 
 const router = express.Router();
 
@@ -24,5 +25,6 @@ router.use('/users', UserController.getRouter());
 router.use('/announcements', AnnouncementController.getRouter());
 router.use('/usefulLinks', UsefulLinkController.getRouter());
 router.use('/quote', QuoteController.getRouter());
+router.use('/events', EventsController.getRouter());
 
 export default router;
