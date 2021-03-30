@@ -22,7 +22,6 @@ class EventsController {
       if (result.error) {
         BadRequestError(getErrorMessages(result), 422);
       }
-      console.log(eventPayload);
 
       const event = await Event.create(eventPayload);
       const eventResponse = event.toJSON();
