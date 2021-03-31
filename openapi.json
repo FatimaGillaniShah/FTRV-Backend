@@ -449,6 +449,41 @@
         }
       }
     },
+    "/events": {
+      "post": {
+        "tags": ["Events"],
+        "summary": "An endpoint to create an Event",
+        "operationId": "createEvent",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Event"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
     "/announcements": {
       "post": {
         "tags": ["Announcement"],
@@ -1127,6 +1162,28 @@
           }
         }
       },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "UsefulLink": {
         "type": "object",
         "properties": {
@@ -1262,6 +1319,33 @@
                 "priority": {
                   "type": "string",
                   "enum": ["high", "medium", "low"]
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "Event": {
+        "description": "Information about the company event of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "startDate": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "endDate": {
+                  "type": "string",
+                  "format": "date-time"
                 }
               }
             }
