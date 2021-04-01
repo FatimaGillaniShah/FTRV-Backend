@@ -587,7 +587,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized. An Expert authenticated session needs to be created"
+            "description": "Unauthorized"
           }
         }
       }
