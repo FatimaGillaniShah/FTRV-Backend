@@ -480,7 +480,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Array of Users",
+            "description": "Array of events",
             "content": {
               "application/json": {
                 "schema": {

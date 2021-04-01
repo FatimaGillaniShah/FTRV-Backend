@@ -29,7 +29,7 @@ class EventsController {
         pageNumber,
         pageSize,
       });
-      const events = await Event.findAll(query);
+      const events = await Event.findAndCountAll(query);
       return SuccessResponse(res, events);
     } catch (e) {
       next(e);
