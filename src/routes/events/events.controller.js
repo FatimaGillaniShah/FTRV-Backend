@@ -4,6 +4,7 @@ import models from '../../models';
 
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema } from './validationSchemas';
+import { listQuery } from './query';
 
 const { Event } = models;
 class EventsController {
@@ -12,7 +13,27 @@ class EventsController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createEvent);
+    this.router.get('/', this.list);
+
     return this.router;
+  }
+
+  static async list(req, res, next) {
+    const {
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
+    } = req;
+    try {
+      const query = listQuery({
+        sortColumn,
+        sortOrder,
+        pageNumber,
+        pageSize,
+      });
+      const events = await Event.findAndCountAll(query);
+      return SuccessResponse(res, events);
+    } catch (e) {
+      next(e);
+    }
   }
 
   static async createEvent(req, res, next) {
