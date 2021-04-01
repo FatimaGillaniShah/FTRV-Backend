@@ -1086,7 +1086,7 @@
         "operationId": "getCeoPageContent",
         "responses": {
           "200": {
-            "description": "Object of quote",
+            "description": "Object containing CEO page content and avatar",
             "content": {
               "application/json": {
                 "schema": {
@@ -1106,7 +1106,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful update of user",
+            "description": "Successful update of CEO page",
             "content": {
               "application/json": {
                 "schema": {
