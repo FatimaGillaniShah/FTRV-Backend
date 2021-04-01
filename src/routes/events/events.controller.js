@@ -20,12 +20,14 @@ class EventsController {
 
   static async list(req, res, next) {
     const {
-      query: { sortColumn, sortOrder },
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
     } = req;
     try {
       const query = listQuery({
         sortColumn,
         sortOrder,
+        pageNumber,
+        pageSize,
       });
       const events = await Event.findAll(query);
       return SuccessResponse(res, events);

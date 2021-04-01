@@ -464,6 +464,18 @@
             "name": "sortOrder",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {

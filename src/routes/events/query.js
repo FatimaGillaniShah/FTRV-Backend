@@ -1,6 +1,9 @@
-export const listQuery = ({ sortColumn, sortOrder }) => {
+export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) => {
   const query = { where: {} };
-
+  if (pageSize) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
   query.attributes = { exclude: ['deletedAt'] };
 
   // for sorting

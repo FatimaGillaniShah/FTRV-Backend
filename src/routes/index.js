@@ -10,7 +10,7 @@ import EventsController from './events/events.controller';
 const router = express.Router();
 
 // list of routes to be excluded from authentication and authorization
-const aclExcludedRoutes = ['/api/users/login', /^\/api-docs\/.*/];
+const aclExcludedRoutes = ['/api/events/login', /^\/api-docs\/.*/];
 
 acl.config({
   baseUrl: 'api',
