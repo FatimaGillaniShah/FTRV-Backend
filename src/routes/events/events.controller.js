@@ -65,7 +65,6 @@ class EventsController {
         where: {
           id: ids,
         },
-        force: true,
       });
       return SuccessResponse(res, { count: events });
     } catch (e) {
