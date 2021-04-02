@@ -14,6 +14,7 @@ class EventsController {
     this.router = express.Router();
     this.router.post('/', this.createEvent);
     this.router.get('/', this.list);
+    this.router.delete('/', this.deleteEvents);
 
     return this.router;
   }
@@ -47,6 +48,25 @@ class EventsController {
       const event = await Event.create(eventPayload);
       const eventResponse = event.toJSON();
       return SuccessResponse(res, eventResponse);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteEvents(req, res, next) {
+    const {
+      body: { ids = [] },
+    } = req;
+    try {
+      if (ids.length < 1) {
+        BadRequestError(`Event ids required`, 422);
+      }
+      const events = await Event.destroy({
+        where: {
+          id: ids,
+        },
+      });
+      return SuccessResponse(res, { count: events });
     } catch (e) {
       next(e);
     }
