@@ -1186,6 +1186,58 @@
           }
         }
       }
+    },
+    "/ceo": {
+      "get": {
+        "summary": "An endpoint to get CEO page avatar and content",
+        "tags": ["Ceo"],
+        "operationId": "getCeoPageContent",
+        "responses": {
+          "200": {
+            "description": "Object containing CEO page content and avatar",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CeoPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Ceo"],
+        "summary": "An endpoint to update CEO page avatar and content",
+        "operationId": "updateCeoPageContent",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CeoPage"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of CEO page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CeoPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1318,6 +1370,17 @@
         "type": "object",
         "properties": {
           "message": {
+            "type": "string"
+          }
+        }
+      },
+      "CeoPage": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string"
+          },
+          "content": {
             "type": "string"
           }
         }
@@ -1460,6 +1523,26 @@
           }
         },
         "required": true
+      },
+      "CeoPage": {
+        "description": "Information about the CEO of FTRV",
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string"
+                },
+                "file": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "required": true
       }
     },
     "responses": {
@@ -1480,6 +1563,17 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/UsefulLink"
+            }
+          }
+        },
+        "required": true
+      },
+      "CeoPage": {
+        "description": "Information about the CEO of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CeoPage"
             }
           }
         },
