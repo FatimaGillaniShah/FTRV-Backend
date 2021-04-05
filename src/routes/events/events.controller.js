@@ -3,7 +3,7 @@ import express from 'express';
 import models from '../../models';
 
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
-import { eventCreateSchema } from './validationSchemas';
+import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
 
 const { Event } = models;
@@ -15,6 +15,8 @@ class EventsController {
     this.router.post('/', this.createEvent);
     this.router.get('/', this.list);
     this.router.delete('/', this.deleteEvents);
+    this.router.get('/:id', this.getEventById);
+    this.router.put('/:id', this.updateEvent);
 
     return this.router;
   }
@@ -67,6 +69,56 @@ class EventsController {
         },
       });
       return SuccessResponse(res, { count: events });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async getEventById(req, res, next) {
+    const {
+      params: { id },
+    } = req;
+
+    try {
+      if (!id) {
+        BadRequestError(`Event id is required`, 422);
+      }
+      const event = await Event.findOne({
+        where: {
+          id,
+        },
+        attributes: {
+          exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+        },
+      });
+      return SuccessResponse(res, event);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async updateEvent(req, res, next) {
+    const {
+      body: eventPayload,
+      params: { id: eventId },
+    } = req;
+    try {
+      const result = Joi.validate(eventPayload, eventUpdateSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), 422);
+      }
+      const query = {
+        where: {
+          id: eventId,
+        },
+      };
+
+      const eventExists = await Event.findOne(query);
+      if (eventExists) {
+        const event = await Event.update(eventPayload, query);
+        return SuccessResponse(res, event);
+      }
+      BadRequestError(`Event does not exists`, 404);
     } catch (e) {
       next(e);
     }
