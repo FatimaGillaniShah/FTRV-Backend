@@ -41,6 +41,11 @@
         "resource": "/quote",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/ceo",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
