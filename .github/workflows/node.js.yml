@@ -12,15 +12,15 @@ jobs:
       matrix:
         node-version: [10.x, 12.x, 14.x, 15.x]
     steps:
-      - name: pull code
-        uses: actions/checkout@v2      
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }} 
-      - name: continues integration 
-        run: npm ci
-      - name: testing the code
-        run: npm test
-      - name: building the code
-      - run: npm run build --if-present
+    - name: pull code
+      uses: actions/checkout@v2      
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }} 
+    - name: continues integration 
+      run: npm ci
+    - name: testing the code
+      run: npm test
+    - name: building the code
+      run: npm run build --if-present
