@@ -46,6 +46,16 @@
         "resource": "/ceo",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "events",
+        "methods": ["GET"],
+        "action": "allow"
+      },
+      {
+        "resource": "events/:id",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
