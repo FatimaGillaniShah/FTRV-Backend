@@ -2,7 +2,7 @@ version: "3.7"
 services:
   web:
     restart: always 
-    build: .
+    image: 15021983/node-app:latest
     container_name: node-app
     command: npm start 
     depends_on:
