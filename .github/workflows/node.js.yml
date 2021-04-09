@@ -29,7 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: ci
     steps:
-      - uses: actions/checkout@v1
+      - name: code checkout
+        uses: actions/checkout@v1
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: image Build
@@ -42,3 +43,21 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USER }}/node-app:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USER }}/node-app:latest
+  deploy:
+    needs: cd
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' 
+    steps:
+       - name: Executing remote  command
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.SSH_HOST }}
+            USERNAME: ${{ secrets.SSH_USERNAME }}
+            password: ${{ secrets.SSH_KEY }}
+            script: |
+        - name: code checkout 
+          uses: actions/checkout@v2
+        script: |
+        docker-compose up -d
+
+
