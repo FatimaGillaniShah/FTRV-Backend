@@ -52,9 +52,9 @@ jobs:
       - name: code pull
         uses: actions/checkout@v2
         env:
-          POSTGRES_PASSWORD = ${{ secrets.POSTGRES_PASSWORD }} 
-          POSTGRES_USER = ${{ secrets.POSTGRES_USER }}
-          POSTGRES_DB = ${{ secrets.POSTGRES_DB }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }} 
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       - name: Build the stack
         run: docker-compose up -d
       - name: Add the private SSH key to the ssh-agent
