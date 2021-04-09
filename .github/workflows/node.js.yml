@@ -48,16 +48,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' 
     steps:
+       - name: code checkout 
+         uses: actions/checkout@v2
        - name: Executing remote  command
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.SSH_HOST }}
-            USERNAME: ${{ secrets.SSH_USERNAME }}
-            password: ${{ secrets.SSH_KEY }}
-            script: |
-        - name: code checkout 
-          uses: actions/checkout@v2
-        script: |
-        docker-compose up -d
+         uses: appleboy/ssh-action@master
+           with:
+             host: ${{ secrets.SSH_HOST }}
+             username: ${{ secrets.SSH_USERNAME }}
+             password: ${{ secrets.SSH_KEY }}
+             script: |
+               docker-compose up -d
 
 
