@@ -71,6 +71,6 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
-            docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}" docker.io
+            docker login -u="15021983" -p="MCSE2010"
             docker-compose -f docker-compose.yml up -d
           ENDSSH
