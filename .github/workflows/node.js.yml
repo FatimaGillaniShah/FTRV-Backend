@@ -68,21 +68,10 @@ jobs:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           mkdir -p ~/.ssh
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          cat <<EOT >> ~/.ssh/config
-          Host github.com
-          HostName github.com
-          IdentityFile ~/.ssh/id_rsa
-          EOT
-          
-      - name: Login to docker hub
-        uses: actions-hub/docker/login@master
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          
+          ssh-add - <<< "${{ secrets.SSH_KEY }}"
+              
       - name: Build and deploy images on DigitalOcean
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
@@ -93,5 +82,6 @@ jobs:
          scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose.yml root@${{ secrets.SSH_HOST }}:~./
          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
           source .env
+          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} 
           docker-compose -f docker-compose.yml up -d
          ENDSSH
