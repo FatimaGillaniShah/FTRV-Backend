@@ -46,6 +46,10 @@ jobs:
   deploy:
     needs: cd
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER = ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD = ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB = ${{ secrets.POSTGRES_DB }}
     if: github.event_name == 'push'
     steps:
       - name: code pull
