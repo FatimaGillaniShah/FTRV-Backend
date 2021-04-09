@@ -69,7 +69,7 @@ jobs:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
-          docker login  -u ${{ DOCKER_USERNAME }} -p ${{ DOCKER_PASSWORD }}
+          docker login  -u ${{ DOCKER_USER }} -p ${{ DOCKER_PASSWORD }}
           docker-compose -f docker-compose.yml up -d
           ENDSSH
 
