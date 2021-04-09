@@ -67,7 +67,10 @@ jobs:
       - name: Build and deploy images on DigitalOcean
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          DOCKER_USERNAME: ${{ secret.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secret.DOCKER_PASSWORD }}
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
+            docker login --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD}
             docker-compose -f docker-compose.yml up -d
           ENDSSH
