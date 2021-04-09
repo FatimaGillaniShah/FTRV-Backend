@@ -46,7 +46,7 @@ jobs:
   deploy:
     needs: cd
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' 
+    if: github.event_name == 'push'
     steps:
        - name: code checkout 
          uses: actions/checkout@v2
@@ -55,7 +55,8 @@ jobs:
          with:
            host: ${{ secrets.SSH_HOST }}
            username: ${{ secrets.SSH_USERNAME }}
-           password: ${{ secrets.SSH_KEY }}
+           key: ${{ secrets.SSH_KEY }}
+           port: ${{ secrets.SSH_PORT }} 
            script: |
              docker-compose up -d
 
