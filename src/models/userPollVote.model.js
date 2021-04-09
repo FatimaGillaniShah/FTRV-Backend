@@ -1,6 +1,6 @@
 const { Model } = require('sequelize');
 
-module.exports = (sequelize, { INTEGER }) => {
+export default (sequelize, { INTEGER }) => {
   class UserPollVote extends Model {
     /**
      * Helper method for defining associations.
@@ -18,7 +18,12 @@ module.exports = (sequelize, { INTEGER }) => {
   }
   UserPollVote.init(
     {
-      id: INTEGER,
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: INTEGER,
+        autoIncrement: true,
+      },
       userId: INTEGER,
       pollId: INTEGER,
       pollOptionId: INTEGER,
