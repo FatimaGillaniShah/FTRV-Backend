@@ -51,6 +51,18 @@ jobs:
     steps:
       - name: code pull
         uses: actions/checkout@v2
+      - name: Add environment variables to .env
+        run: |
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo DB_NAME=${{ secrets.POSTGRES_DB }} >> .env
+          echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
+          echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+          echo DB_PORT=${{ secrets.POSTGRES_PORT }} >> .env
+          echo SCHEMA_NAME=${{ secrets.SCHEMA_NAME }} >> .env
+          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+          echo SESSION_SECRET=${{ secrets.SESSION_SECRET }} >> .env
+          echo PORT=${{ secrets.NODE_PORT }} >> .env
+          echo SALT=${{ secrets.SALT }} >> .env
       - name: Add the private SSH key to the ssh-agent
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
@@ -78,6 +90,8 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
-            docker-compose -f docker-compose.yml up -d
-          ENDSSH
+         scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose.yml root@${{ secrets.SSH_HOST }}:~./
+         ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
+          source .env
+          docker-compose -f docker-compose.yml up -d
+         ENDSSH
