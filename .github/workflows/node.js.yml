@@ -46,13 +46,30 @@ jobs:
   deploy:
     needs: cd
     runs-on: ubuntu-latest
-    env:
-      POSTGRES_USER = ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD = ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB = ${{ secrets.POSTGRES_DB }}
     if: github.event_name == 'push'
+    
     steps:
       - name: code pull
         uses: actions/checkout@v2
+        env:
+          POSTGRES_PASSWORD = ${{ secrets.POSTGRES_PASSWORD }} 
+          POSTGRES_USER = ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB = ${{ secrets.POSTGRES_DB }}
       - name: Build the stack
         run: docker-compose up -d
+      - name: Add the private SSH key to the ssh-agent
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-add - <<< "${{ secrets.SSH_KEY }}"
+      - name: Build and deploy images on DigitalOcean
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
+          docker login  -u ${{ DOCKER_USERNAME }} -p ${{ DOCKER_PASSWORD }}
+          docker-compose -f docker-compose.yml up -d
+          ENDSSH
+
