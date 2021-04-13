@@ -10,7 +10,7 @@ services:
     links:
       - postgres
     environment:
-      DATABASE_URL: postgres://${{ secret.POSTGRES_USER }}:${{ secret.POSTGRES_PASSWORD }}@postgres/${{ secret.POSTGRES_DB }}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
       NODE_ENV: production
       VIRTUAL_HOST: api-test.paylpso.com
       LETSENCRYPT_HOST: api-test.paylpso.com
