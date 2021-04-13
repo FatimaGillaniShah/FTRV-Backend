@@ -449,6 +449,62 @@
         }
       }
     },
+    "/blogs": {
+      "get": {
+        "summary": "Retrieve list of all blogs",
+        "tags": ["Blogs"],
+        "operationId": "getBlogList",
+        "parameters": [
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of blogs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Blog"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/events": {
       "get": {
         "summary": "Retrieve list of all events",
@@ -1333,6 +1389,27 @@
   },
   "components": {
     "schemas": {
+      "Blog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "shortText": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "number"
+          }
+        }
+      },
       "User": {
         "type": "object",
 
