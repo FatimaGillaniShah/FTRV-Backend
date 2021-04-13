@@ -69,6 +69,8 @@ jobs:
           echo DB_NAME=${{ secrets.POSTGRES_DB }} >> .env
           echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
           echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+          echo CREATE SCHEMA funtown; > schema.sql
+          
           
           
       - name: Add the private SSH key to the ssh-agent
