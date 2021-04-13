@@ -18,8 +18,8 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
     - name: Create .env file
-      uses: SpicyPizza/create-envfile@v1
-      with:
+      uses: ./
+      env:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         DB_NAME: ${{ secrets.POSTGRES_DB }}
         DB_USERNAME: ${{ secrets.POSTGRES_USER }}
