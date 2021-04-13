@@ -90,7 +90,7 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         run: |
-         scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose.yml ./schema.sql root@${{ secrets.SSH_HOST }}:~/
+         scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose.yml root@${{ secrets.SSH_HOST }}:~/
          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
           source .env
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} 
