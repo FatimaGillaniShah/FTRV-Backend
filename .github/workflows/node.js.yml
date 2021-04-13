@@ -12,12 +12,25 @@ jobs:
       matrix:
         node-version: [10.x, 12.x, 14.x, 15.x]
     steps:
+    
     - name: pull code
       uses: actions/checkout@v2      
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
+    - name: Create .env file
+      uses: SpicyPizza/create-envfile@v1
       with:
-        node-version: ${{ matrix.node-version }} 
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        DB_NAME: ${{ secrets.POSTGRES_DB }}
+        DB_USERNAME: ${{ secrets.POSTGRES_USER }}
+        DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        DB_PORT: ${{ secrets.POSTGRES_PORT }}
+        SCHEMA_NAME: ${{ secrets.SCHEMA_NAME }}
+        NODE_ENV: ${{ secrets.NODE_ENV }}
+        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+        PORT: ${{ secrets.NODE_PORT }}
+        SALT: ${{ secrets.SALT }}
+        
     - name: continues integration 
       run: npm ci
     - name: testing the code
@@ -53,16 +66,11 @@ jobs:
         uses: actions/checkout@v2
       - name: Add environment variables to .env
         run: |
-          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo DB_NAME=${{ secrets.POSTGRES_DB }} >> .env
           echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
           echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-          echo DB_PORT=${{ secrets.POSTGRES_PORT }} >> .env
-          echo SCHEMA_NAME=${{ secrets.SCHEMA_NAME }} >> .env
-          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
-          echo SESSION_SECRET=${{ secrets.SESSION_SECRET }} >> .env
-          echo PORT=${{ secrets.NODE_PORT }} >> .env
-          echo SALT=${{ secrets.SALT }} >> .env
+          
+          
       - name: Add the private SSH key to the ssh-agent
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
