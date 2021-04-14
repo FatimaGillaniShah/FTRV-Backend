@@ -14,6 +14,7 @@ export default (sequelize, { INTEGER, STRING, TEXT }) => {
       userId: INTEGER,
       content: TEXT,
       shortText: STRING,
+      thumbnail: STRING,
     },
     {
       sequelize,

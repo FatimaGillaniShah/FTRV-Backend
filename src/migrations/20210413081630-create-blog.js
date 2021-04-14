@@ -23,6 +23,9 @@ module.exports = {
       shortText: {
         type: STRING
       },
+      thumbnail: {
+        type: STRING
+      },
       createdAt: {
         allowNull: false,
         type: DATE
