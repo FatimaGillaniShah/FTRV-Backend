@@ -23,24 +23,26 @@ jobs:
       run: npm test
     - name: building the code
       run: npm run build --if-present
-      env:
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        DB_NAME: ${{ secrets.POSTGRES_DB }}
-        DB_USERNAME: ${{ secrets.POSTGRES_USER }}
-        DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        DB_PORT: ${{ secrets.POSTGRES_PORT }}
-        SCHEMA_NAME: ${{ secrets.SCHEMA_NAME }}
-        NODE_ENV: ${{ secrets.NODE_ENV }}
-        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-        PORT: ${{ secrets.NODE_PORT }}
-        SALT: ${{ secrets.SALT }}
-      
+            
   cd:
     runs-on: ubuntu-latest
     needs: ci
     steps:
       - name: code checkout
         uses: actions/checkout@v1
+      - name: env file created
+        run: |
+          touch .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
+          echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+          echo DB_PORT=${{ secrets.POSTGRES_PORT }} >> .env
+          echo SCHEMA_NAME=${{ secrets.SCHEMA_NAME }} >> .env
+          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+          echo SESSION_SECRET=${{ secrets.SESSION_SECRET }} >> .env
+          echo PORT=${{ secrets.NODE_PORT }} >> .env
+          echo SALT=${{ secrets.SALT }} >> .env
+          cat .env
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: image Build
