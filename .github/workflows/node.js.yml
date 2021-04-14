@@ -17,9 +17,13 @@ jobs:
       uses: actions/checkout@v2      
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
-    - name: Make envfile
-      uses: SpicyPizza/create-envfile@v1
-      with:
+    - name: continues integration 
+      run: npm ci
+    - name: testing the code
+      run: npm test
+    - name: building the code
+      run: npm run build --if-present
+      env:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         DB_NAME: ${{ secrets.POSTGRES_DB }}
         DB_USERNAME: ${{ secrets.POSTGRES_USER }}
@@ -30,13 +34,6 @@ jobs:
         SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         PORT: ${{ secrets.NODE_PORT }}
         SALT: ${{ secrets.SALT }}
-        file_name: .env
-    - name: continues integration 
-      run: npm ci
-    - name: testing the code
-      run: npm test
-    - name: building the code
-      run: npm run build --if-present
       
   cd:
     runs-on: ubuntu-latest
