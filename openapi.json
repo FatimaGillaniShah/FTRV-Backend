@@ -1402,8 +1402,10 @@
             "type": "string"
           },
           "shortText": {
-            "type": "string",
-            "format": "date-time"
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "string"
           },
           "userId": {
             "type": "number"
