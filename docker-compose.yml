@@ -22,7 +22,9 @@ services:
     image: postgres:13.2-alpine
     container_name: node-db
     volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - my-app-data:/var/lib/postgresql/data
+      
     ports:
       - "0.0.0.0:5432:5432"
     environment:
