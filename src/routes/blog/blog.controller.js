@@ -12,6 +12,7 @@ class BlogController {
   static getRouter() {
     this.router = express.Router();
     this.router.get('/', this.list);
+    this.router.delete('/', this.deleteBlogs);
 
     return this.router;
   }
@@ -29,6 +30,22 @@ class BlogController {
       });
       const blogs = await Blog.findAndCountAll(query);
       return SuccessResponse(res, blogs);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteBlogs(req, res, next) {
+    const {
+      body: { id },
+    } = req;
+    try {
+      const blogs = await Blog.destroy({
+        where: {
+          id,
+        },
+      });
+      return SuccessResponse(res, { count: blogs });
     } catch (e) {
       next(e);
     }
