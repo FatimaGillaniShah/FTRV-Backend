@@ -56,6 +56,11 @@
         "resource": "events/:id",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/blogs",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
