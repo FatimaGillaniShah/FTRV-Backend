@@ -526,7 +526,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful deletion of events",
+            "description": "Successful deletion of blogs",
             "content": {
               "application/json": {
                 "schema": {
