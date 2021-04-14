@@ -7,12 +7,15 @@ export default (sequelize, { INTEGER }) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ Poll, PollOption }) {
+    static associate({ Poll, PollOption, User }) {
       this.belongsTo(Poll, {
         foreignKey: 'pollId',
       });
       this.belongsTo(PollOption, {
         foreignKey: 'pollOptionId',
+      });
+      this.belongsTo(User, {
+        foreignKey: 'userId',
       });
     }
   }
