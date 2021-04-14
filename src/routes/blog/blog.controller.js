@@ -12,7 +12,7 @@ class BlogController {
   static getRouter() {
     this.router = express.Router();
     this.router.get('/', this.list);
-    this.router.delete('/', this.deleteBlog);
+    this.router.delete('/', this.deleteBlogs);
 
     return this.router;
   }
@@ -35,7 +35,7 @@ class BlogController {
     }
   }
 
-  static async deleteBlog(req, res, next) {
+  static async deleteBlogs(req, res, next) {
     const {
       body: { id },
     } = req;
