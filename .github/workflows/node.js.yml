@@ -41,7 +41,7 @@ jobs:
           echo SCHEMA_NAME=${{ secrets.SCHEMA_NAME }} >> .env
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
           echo SESSION_SECRET=${{ secrets.SESSION_SECRET }} >> .env
-          ech0 SERVER_ADDRESS=${{ secrets.NODE_SERVER }}
+          echo SERVER_ADDRESS=${{ secrets.NODE_SERVER }}
           echo PORT=${{ secrets.NODE_PORT }} >> .env
           echo SALT=${{ secrets.SALT }} >> .env    
           cat .env
