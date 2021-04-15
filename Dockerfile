@@ -1,5 +1,5 @@
 FROM  node:latest
-
+RUN apt-get update && apt-get install -y vim
 # Create app directory
 WORKDIR /usr/src/app
 
