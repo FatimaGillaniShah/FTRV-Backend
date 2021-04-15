@@ -36,12 +36,14 @@ jobs:
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
           echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+          echo DB_HOSTNAME=${{ secrets.POSTGRES_HOST }} >> .env
           echo DB_PORT=${{ secrets.POSTGRES_PORT }} >> .env
           echo SCHEMA_NAME=${{ secrets.SCHEMA_NAME }} >> .env
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
           echo SESSION_SECRET=${{ secrets.SESSION_SECRET }} >> .env
+          ech0 SERVER_ADDRESS=${{ secrets.NODE_SERVER }}
           echo PORT=${{ secrets.NODE_PORT }} >> .env
-          echo SALT=${{ secrets.SALT }} >> .env
+          echo SALT=${{ secrets.SALT }} >> .env    
           cat .env
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
