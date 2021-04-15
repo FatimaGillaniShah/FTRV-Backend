@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   web:
-    restart: always 
+    restart: unless-stopped 
     image: 15021983/node-app:latest
     container_name: node-app
     command: npm start 
@@ -15,8 +15,7 @@ services:
       VIRTUAL_HOST: api-test.paylpso.com
       LETSENCRYPT_HOST: api-test.paylpso.com
       LETSENCRYPT_EMAIL: zeeshan.manzoor@datics.ai
-    ports:
-      - 3000:3000
+   
   postgres:
     restart: always
     image: postgres:13.2-alpine
@@ -32,7 +31,9 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
   nginx-proxy:
+    restart: unless-stopped
     image: jwilder/nginx-proxy:alpine
+    container_name: web-server
     ports:
       - "80:80"
       - "443:443"
