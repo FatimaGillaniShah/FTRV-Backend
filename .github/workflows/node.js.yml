@@ -89,6 +89,7 @@ jobs:
          scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose.yml root@${{ secrets.SSH_HOST }}:~/
          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} << 'ENDSSH'
           source .env
-          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }} 
+          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker pull 15021983/node-app
           docker-compose -f docker-compose.yml up -d
          ENDSSH
