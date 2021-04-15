@@ -58,7 +58,7 @@ jobs:
   deploy:
     needs: cd
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    #if: github.event_name == 'push'
     
     steps:
       - name: code pull
