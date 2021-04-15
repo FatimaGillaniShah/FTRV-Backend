@@ -36,6 +36,9 @@ class CeoController {
       if (result.error) {
         BadRequestError(getErrorMessages(result), 422);
       }
+      const contentQuery = listQuery();
+      const { data: existingContent } = await Content.findOne(contentQuery);
+
       const query = {
         where: {
           name: 'CEO-PAGE',
@@ -44,7 +47,7 @@ class CeoController {
 
       const data = {
         content: ceoPagePayload.content,
-        avatar: file.filename,
+        avatar: file.filename ? file.filename : existingContent.avatar,
       };
 
       await Content.update({ data }, query);
