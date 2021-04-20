@@ -450,6 +450,39 @@
       }
     },
     "/blogs": {
+      "post": {
+        "tags": ["Blogs"],
+        "summary": "An endpoint to create a blog",
+        "operationId": "createBlogs",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Blog"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of blog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blog"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
       "get": {
         "summary": "Retrieve list of all blogs",
         "tags": ["Blogs"],
@@ -552,6 +585,97 @@
           },
           "401": {
             "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/blogs/{id}": {
+      "get": {
+        "summary": "Retrieve blog by id",
+        "tags": ["Blogs"],
+        "operationId": "getBlogById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of blog",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blog"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Blogs"],
+        "summary": "An endpoint to update a blog",
+        "operationId": "updateBlogs",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of blog",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Blog"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blog"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
       }
@@ -1468,6 +1592,17 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -1760,6 +1895,29 @@
             "schema": {
               "type": "object",
               "properties": {
+                "content": {
+                  "type": "string"
+                },
+                "file": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "Blog": {
+        "description": "Information about the Blogs of FTRV",
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
                 "content": {
                   "type": "string"
                 },

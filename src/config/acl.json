@@ -61,6 +61,11 @@
         "resource": "/blogs",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/blogs/:id",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
