@@ -1,7 +1,14 @@
 const { Model } = require('sequelize');
 
 export default (sequelize, { INTEGER, STRING, TEXT }) => {
-  class Blog extends Model {}
+  class Blog extends Model {
+    static associate({ User }) {
+      this.belongsTo(User, {
+        as: 'user',
+        foreignKey: 'userId',
+      });
+    }
+  }
   Blog.init(
     {
       id: {

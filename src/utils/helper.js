@@ -66,7 +66,11 @@ const SuccessResponse = (res, data) => {
     data,
   });
 };
+
+const stripHtmlTags = (htmlString) => htmlString.replace(/(<([^>]+)>)/gi, '');
+
 export {
+  stripHtmlTags,
   generateHash,
   validatePassword,
   generateJWT,

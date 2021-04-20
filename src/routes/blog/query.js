@@ -1,5 +1,12 @@
+import models from '../../models';
+
+const { User } = models;
+
 export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) => {
-  const query = { where: {} };
+  const query = {
+    where: {},
+    include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName'] }],
+  };
   if (pageSize) {
     query.offset = (pageNumber - 1) * pageSize;
     query.limit = pageSize;
