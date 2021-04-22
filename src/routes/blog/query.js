@@ -7,6 +7,7 @@ export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) =
     where: {},
     include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName'] }],
   };
+  query.attributes = { exclude: ['content'] };
   if (pageSize) {
     query.offset = (pageNumber - 1) * pageSize;
     query.limit = pageSize;
