@@ -93,5 +93,6 @@ jobs:
           source .env
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker pull 15021983/node-app
+          docker-compose down --remove-orphans
           docker-compose -f docker-compose.yml up -d
          ENDSSH
