@@ -2,18 +2,19 @@ import jwt from 'express-jwt';
 
 const getTokenFromHeaders = (req) => {
   const {
-    headers: { authorization },
+    headers: { authorization, gtoken },
   } = req;
   if (authorization && authorization.split(' ')[0] === 'Bearer') {
     return authorization.split(' ')[1];
   }
-  return null;
+  return gtoken;
 };
 
 const auth = {
   required: jwt({
     secret: process.env.JWT_SECRET,
     getToken: getTokenFromHeaders,
+    credentialsRequired: false,
   }),
   optional: jwt({
     secret: process.env.JWT_SECRET,

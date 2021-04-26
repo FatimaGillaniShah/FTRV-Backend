@@ -6,11 +6,13 @@ import debugObj from 'debug';
 import fs from 'fs';
 import { promisify } from 'util';
 import express from 'express';
+import { OAuth2Client } from 'google-auth-library';
 import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
 import { birthdayQuery, listQuery } from './query';
+
 import {
   BadRequestError,
   generateHash,
@@ -35,6 +37,8 @@ class UserController {
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.get('/:id', this.getUserById);
     this.router.post('/login', this.login);
+    this.router.post('/googleLogin', this.googleLogin);
+
     this.router.delete('/deleteUsers', this.deleteUsers);
     this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
     return this.router;
@@ -143,6 +147,55 @@ class UserController {
       }
       return next(new BadRequest(getPassportErrorMessage(info), 422));
     })(req, res, next);
+  }
+
+  static async googleLogin(req, res, next) {
+    const {
+      body: { tokenId },
+    } = req;
+
+    try {
+      if (!tokenId) {
+        BadRequestError('Google token missing', 422);
+      }
+      const client = new OAuth2Client();
+      const ticket = await client.verifyIdToken({
+        idToken: tokenId,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const {
+        email,
+        picture: avatar,
+        role = 'user',
+        given_name: firstName,
+        family_name: lastName,
+      } = ticket.getPayload();
+
+      const [user] = await User.findOrCreate({
+        where: { email },
+        defaults: {
+          role,
+          status: 'active',
+          avatar,
+          firstName,
+          lastName,
+          password: '',
+        },
+      });
+
+      const userObj = {
+        id: user.id,
+        email,
+        role,
+        name: user.fullName,
+        avatar: user.avatar,
+        token: generateJWT(user),
+      };
+
+      return SuccessResponse(res, userObj);
+    } catch (e) {
+      next(e);
+    }
   }
 
   static async createUser(req, res, next) {
