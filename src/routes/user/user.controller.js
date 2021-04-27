@@ -169,7 +169,12 @@ class UserController {
         role = 'user',
         given_name: firstName,
         family_name: lastName,
+        exp,
       } = ticket.getPayload();
+
+      if (Math.floor(Date.now() / 1000) > exp) {
+        BadRequestError('Token expired. Try again', 400);
+      }
 
       const [user] = await User.findOrCreate({
         where: { email },
