@@ -12,7 +12,7 @@ import BlogController from './blog/blog.controller';
 const router = express.Router();
 
 // list of routes to be excluded from authentication and authorization
-const aclExcludedRoutes = ['/api/users/login', /^\/api-docs\/.*/];
+const aclExcludedRoutes = ['/api/users/googleLogin', '/api/users/login', /^\/api-docs\/.*/];
 
 acl.config({
   baseUrl: 'api',
