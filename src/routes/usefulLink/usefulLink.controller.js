@@ -22,11 +22,14 @@ class UsefulLinkController {
 
   static async list(req, res, next) {
     const {
-      query: { sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
+      query: { categoryId, sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
     } = req;
     try {
       if (pageNumber <= 0) {
         BadRequestError('Invalid page number', 422);
+      }
+      if (categoryId === undefined) {
+        BadRequestError('Category required', 422);
       }
 
       const query = listQuery({
@@ -34,6 +37,7 @@ class UsefulLinkController {
         sortOrder,
         pageNumber,
         pageSize,
+        categoryId,
       });
       const usefulLinks = await UsefulLink.findAndCountAll(query);
       return SuccessResponse(res, usefulLinks);

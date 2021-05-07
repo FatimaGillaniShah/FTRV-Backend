@@ -1237,6 +1237,11 @@
         "operationId": "getUsefulLinksList",
         "parameters": [
           {
+            "name": "categoryId",
+            "in": "query",
+            "type": "integer"
+          },
+          {
             "name": "pageNumber",
             "in": "query",
             "type": "string"

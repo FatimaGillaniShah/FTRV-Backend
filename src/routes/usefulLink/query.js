@@ -1,5 +1,5 @@
-export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) => {
-  const query = { where: {} };
+export const listQuery = ({ categoryId, sortColumn, sortOrder, pageNumber = 1, pageSize }) => {
+  const query = { where: { categoryId } };
   query.attributes = { exclude: ['createdAt', 'updatedAt', 'deletedAt'] };
 
   // for pagination
