@@ -7,7 +7,7 @@
   "scripts": {
     "start": "babel-node ./src/server",
     "start:prod": "pm2 start npm -- run prod",
-    "dev": "env DEBUG=api:* nodemon --watch src/ --watch openapi.json --exec babel-node ./src/server",
+    "dev": "set DEBUG=api:* & nodemon --watch src/ --watch openapi.json --exec babel-node ./src/server",
     "prod": "env DEBUG=api:* NODE_ENV=production PORT=3333 npm run build && node dist/server",
     "build": "babel src --delete-dir-on-start -d dist --ignore 'src/**/*.test.js'  --copy-files --no-copy-ignored",
     "lint:eslint": "eslint src/",
