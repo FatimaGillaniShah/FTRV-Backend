@@ -18,7 +18,7 @@
         "action": "allow"
       },
       {
-        "resource": "link-category",
+        "resource": "linkCategories",
         "methods": ["GET"],
         "action": "allow"
       },

@@ -1197,7 +1197,7 @@
         }
       }
     },
-    "/linksCategories": {
+    "/linkCategories": {
       "get": {
         "summary": "Retrieve list of all useful link categories",
         "tags": ["UsefulLink Categories"],
