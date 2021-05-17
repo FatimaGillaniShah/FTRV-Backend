@@ -1217,6 +1217,39 @@
             }
           }
         }
+      },
+      "post": {
+        "summary": "An endpoint to create a useful link category link",
+        "tags": ["UsefulLink Categories"],
+        "operationId": "createlinkCategory",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UsefulLinkCategory"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of link Category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsefulLinkCategory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
       }
     },
     "/usefulLinks": {
@@ -1841,6 +1874,22 @@
                 "dob": {
                   "type": "string",
                   "format": "date"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "UsefulLinkCategory": {
+        "description": "Information about the Link Categories of FTRV",
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
                 }
               }
             }
