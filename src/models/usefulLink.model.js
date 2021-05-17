@@ -23,5 +23,8 @@ export default (sequelize, { STRING, INTEGER }) => {
     }
   );
 
+  UsefulLink.belongsTo(sequelize.models.LinkCategory, {
+    foreignKey: 'categoryId',
+  });
   return UsefulLink;
 };

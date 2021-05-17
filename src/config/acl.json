@@ -18,6 +18,11 @@
         "action": "allow"
       },
       {
+        "resource": "link-category",
+        "methods": ["GET"],
+        "action": "allow"
+      },
+      {
         "resource": "users/:id",
         "methods": ["GET", "PUT"],
         "action": "allow"
