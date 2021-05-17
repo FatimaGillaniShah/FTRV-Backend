@@ -8,6 +8,7 @@ import QuoteController from './quote/quote.controller';
 import EventsController from './events/events.controller';
 import CeoController from './ceo/ceo.controller';
 import BlogController from './blog/blog.controller';
+import LinkCategoryController from './linkCategory/linkCategory.controller';
 
 const router = express.Router();
 
@@ -30,5 +31,6 @@ router.use('/quote', QuoteController.getRouter());
 router.use('/events', EventsController.getRouter());
 router.use('/ceo', CeoController.getRouter());
 router.use('/blogs', BlogController.getRouter());
+router.use('/linkCategories', LinkCategoryController.getRouter());
 
 export default router;
