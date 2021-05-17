@@ -1197,6 +1197,38 @@
         }
       }
     },
+    "/linksCategories": {
+      "get": {
+        "summary": "Retrieve list of all useful link categories",
+        "tags": ["UsefulLink Categories"],
+        "operationId": "getLinksCategoryList",
+        "responses": {
+          "200": {
+            "description": "Array of Useful Links Categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsefulLinkCategory"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/usefulLinks": {
       "post": {
         "tags": ["UsefulLink"],
@@ -1721,6 +1753,20 @@
           },
           "url": {
             "type": "string"
+          }
+        }
+      },
+      "UsefulLinkCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "linksCount": {
+            "type": "number"
           }
         }
       },
