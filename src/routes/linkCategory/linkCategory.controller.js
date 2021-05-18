@@ -82,7 +82,7 @@ class LinkCategoryController {
       const linkCategory = await LinkCategory.findOne({
         where: { id },
         attributes: {
-          exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+          exclude: ['createdAt', 'updatedAt'],
         },
       });
       return SuccessResponse(res, linkCategory);

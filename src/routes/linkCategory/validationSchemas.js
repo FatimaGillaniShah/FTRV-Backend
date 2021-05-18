@@ -5,5 +5,5 @@ export const linkCategoryCreateSchema = Joi.object().keys({
 });
 
 export const linkCategoryUpdateSchema = Joi.object().keys({
-  name: Joi.string().optional(),
+  name: Joi.string().required(),
 });

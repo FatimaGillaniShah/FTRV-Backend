@@ -23,11 +23,6 @@
         "action": "allow"
       },
       {
-        "resource": "linkCategories/:id",
-        "methods": ["GET"],
-        "action": "allow"
-      },
-      {
         "resource": "users/:id",
         "methods": ["GET", "PUT"],
         "action": "allow"
