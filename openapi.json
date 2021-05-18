@@ -1217,6 +1217,130 @@
             }
           }
         }
+      },
+      "post": {
+        "summary": "An endpoint to create a useful link category",
+        "tags": ["UsefulLink Categories"],
+        "operationId": "createlinkCategory",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UsefulLinkCategory"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of link Category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsefulLinkCategory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/linkCategories/{id}": {
+      "get": {
+        "summary": "Retrieve link category by id",
+        "tags": ["UsefulLink Categories"],
+        "operationId": "getLinkCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of link category",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of link Category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsefulLinkCategory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["UsefulLink Categories"],
+        "summary": "An endpoint to update a link category",
+        "operationId": "updateLinkCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of link catgory",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UsefulLinkCategory"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of link category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsefulLinkCategory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
       }
     },
     "/usefulLinks": {
@@ -1841,6 +1965,22 @@
                 "dob": {
                   "type": "string",
                   "format": "date"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "UsefulLinkCategory": {
+        "description": "Information about the Link Categories of FTRV",
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
                 }
               }
             }
