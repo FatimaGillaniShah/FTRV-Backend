@@ -3,7 +3,7 @@ import Joi from 'joi';
 import models from '../../models';
 import { listQuery } from './query';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
-import { linkCategoryCreateSchema } from './validationSchemas';
+import { linkCategoryCreateSchema, linkCategoryUpdateSchema } from './validationSchemas';
 
 const { LinkCategory } = models;
 class LinkCategoryController {
@@ -13,6 +13,8 @@ class LinkCategoryController {
     this.router = express.Router();
     this.router.get('/', this.list);
     this.router.post('/', this.createLinkCategory);
+    this.router.put('/:id', this.updateLinkCategory);
+    this.router.get('/:id', this.getLinkCategoryById);
 
     return this.router;
   }
@@ -38,6 +40,52 @@ class LinkCategoryController {
       const linkCategory = await LinkCategory.create(linkCategoryPayload);
       const linkCategoryResponse = linkCategory.toJSON();
       return SuccessResponse(res, linkCategoryResponse);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async updateLinkCategory(req, res, next) {
+    const {
+      body: linkCategoryPayload,
+      params: { id: linkCategoryId },
+    } = req;
+    try {
+      const result = Joi.validate(linkCategoryPayload, linkCategoryUpdateSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), 422);
+      }
+      const query = {
+        where: {
+          id: linkCategoryId,
+        },
+      };
+      const linkCategoryExists = await LinkCategory.findOne(query);
+      if (linkCategoryExists) {
+        const linkCategory = await LinkCategory.update(linkCategoryPayload, query);
+        return SuccessResponse(res, linkCategory);
+      }
+      BadRequestError(`Category does not exist`);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async getLinkCategoryById(req, res, next) {
+    const {
+      params: { id },
+    } = req;
+    try {
+      if (!id) {
+        BadRequestError(`Category Id is required`, 422);
+      }
+      const linkCategory = await LinkCategory.findOne({
+        where: { id },
+        attributes: {
+          exclude: ['createdAt', 'updatedAt'],
+        },
+      });
+      return SuccessResponse(res, linkCategory);
     } catch (e) {
       next(e);
     }
