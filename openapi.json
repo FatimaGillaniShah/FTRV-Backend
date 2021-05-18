@@ -1219,7 +1219,7 @@
         }
       },
       "post": {
-        "summary": "An endpoint to create a useful link category link",
+        "summary": "An endpoint to create a useful link category",
         "tags": ["UsefulLink Categories"],
         "operationId": "createlinkCategory",
         "requestBody": {
