@@ -99,13 +99,16 @@ class LinkCategoryController {
     } = req;
     try {
       if (!id) {
-        BadRequestError(`Category Id is required`, STATUS_CODES.FORBIDDEN);
+        BadRequestError(`Category Id is required`, STATUS_CODES.INVALID_INPUT);
       }
       const linksCount = await UsefulLink.count({
         where: { categoryId: id },
       });
       if (linksCount > 0) {
-        BadRequestError(`Category cannot be deleted. It have ${linksCount} links`, 403);
+        BadRequestError(
+          `Category cannot be deleted. It have ${linksCount} links`,
+          STATUS_CODES.FORBIDDEN
+        );
       }
 
       const categoriesDeleted = await LinkCategory.destroy({
