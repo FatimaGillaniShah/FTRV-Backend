@@ -4,8 +4,9 @@ import models from '../../models';
 import { listQuery } from './query';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { linkCategoryCreateSchema, linkCategoryUpdateSchema } from './validationSchemas';
+import { STATUS_CODES } from '../../utils/constants';
 
-const { LinkCategory } = models;
+const { LinkCategory, UsefulLink } = models;
 class LinkCategoryController {
   static router;
 
@@ -15,6 +16,7 @@ class LinkCategoryController {
     this.router.post('/', this.createLinkCategory);
     this.router.put('/:id', this.updateLinkCategory);
     this.router.get('/:id', this.getLinkCategoryById);
+    this.router.delete('/:id', this.deleteLinkCategory);
 
     return this.router;
   }
@@ -34,7 +36,7 @@ class LinkCategoryController {
     try {
       const result = Joi.validate(linkCategoryPayload, linkCategoryCreateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
 
       const linkCategory = await LinkCategory.create(linkCategoryPayload);
@@ -77,7 +79,7 @@ class LinkCategoryController {
     } = req;
     try {
       if (!id) {
-        BadRequestError(`Category Id is required`, 422);
+        BadRequestError(`Category Id is required`, STATUS_CODES.INVALID_INPUT);
       }
       const linkCategory = await LinkCategory.findOne({
         where: { id },
@@ -86,6 +88,33 @@ class LinkCategoryController {
         },
       });
       return SuccessResponse(res, linkCategory);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteLinkCategory(req, res, next) {
+    const {
+      params: { id },
+    } = req;
+    try {
+      if (!id) {
+        BadRequestError(`Category Id is required`, STATUS_CODES.FORBIDDEN);
+      }
+      const linksCount = await UsefulLink.count({
+        where: { categoryId: id },
+      });
+      if (linksCount > 0) {
+        BadRequestError(`Category cannot be deleted. It have ${linksCount} links`, 403);
+      }
+
+      const categoriesDeleted = await LinkCategory.destroy({
+        where: {
+          id,
+        },
+        force: true,
+      });
+      return SuccessResponse(res, { count: categoriesDeleted });
     } catch (e) {
       next(e);
     }

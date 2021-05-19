@@ -1304,7 +1304,7 @@
           {
             "name": "id",
             "in": "path",
-            "description": "ID of link catgory",
+            "description": "ID of link category",
             "required": true,
             "style": "simple",
             "explode": false,
@@ -1323,6 +1323,54 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UsefulLinkCategory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["UsefulLink Categories"],
+        "summary": "An endpoint to delete useful links category",
+        "operationId": "deleteLinkCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of link category",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful deletion of useful link category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }

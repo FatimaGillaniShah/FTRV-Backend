@@ -11,6 +11,7 @@ import {
 import { blogCreateSchema, blogUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
 import uploadFile from '../../middlewares/upload';
+import { STATUS_CODES } from '../../utils/constants';
 
 const { Blog, User } = models;
 
@@ -51,7 +52,7 @@ class BlogController {
     try {
       const result = Joi.validate(blogPayload, blogCreateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
 
       blogPayload.userId = user.id;
@@ -72,7 +73,7 @@ class BlogController {
 
     try {
       if (!id) {
-        BadRequestError(`Blog id is required`, 422);
+        BadRequestError(`Blog id is required`, STATUS_CODES.INVALID_INPUT);
       }
       const blog = await Blog.findOne({
         where: {
@@ -95,7 +96,7 @@ class BlogController {
     try {
       const result = Joi.validate(blogPayload, blogUpdateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
@@ -110,7 +111,7 @@ class BlogController {
         const blog = await Blog.update(blogPayload, query);
         return SuccessResponse(res, blog);
       }
-      BadRequestError(`Blog does not exists`, 404);
+      BadRequestError(`Blog does not exists`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }

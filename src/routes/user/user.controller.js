@@ -9,7 +9,7 @@ import express from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import models from '../../models';
 import uploadFile from '../../middlewares/upload';
-import { PAGE_SIZE, UPLOAD_PATH } from '../../utils/constants';
+import { PAGE_SIZE, STATUS_CODES, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
 import { birthdayQuery, listQuery } from './query';
 
@@ -74,7 +74,7 @@ class UserController {
     } = req;
     try {
       if (pageNumber <= 0) {
-        BadRequestError('Invalid page number', 422);
+        BadRequestError('Invalid page number', STATUS_CODES.INVALID_INPUT);
       }
 
       const query = listQuery({
@@ -104,7 +104,7 @@ class UserController {
 
     try {
       if (!id) {
-        BadRequestError(`User id is required`, 422);
+        BadRequestError(`User id is required`, STATUS_CODES.INVALID_INPUT);
       }
       const user = await User.findOne({
         where: {
@@ -125,7 +125,7 @@ class UserController {
 
     const result = Joi.validate(user, userLoginSchema, { abortEarly: true });
     if (result.error) {
-      return next(new BadRequest(getErrorMessages(result), 422));
+      return next(new BadRequest(getErrorMessages(result), STATUS_CODES.INVALID_INPUT));
     }
 
     return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
@@ -145,7 +145,7 @@ class UserController {
 
         return SuccessResponse(res, userObj);
       }
-      return next(new BadRequest(getPassportErrorMessage(info), 422));
+      return next(new BadRequest(getPassportErrorMessage(info), STATUS_CODES.INVALID_INPUT));
     })(req, res, next);
   }
 
@@ -156,7 +156,7 @@ class UserController {
 
     try {
       if (!tokenId) {
-        BadRequestError('Google token missing', 422);
+        BadRequestError('Google token missing', STATUS_CODES.INVALID_INPUT);
       }
       const client = new OAuth2Client();
       const ticket = await client.verifyIdToken({
@@ -208,7 +208,7 @@ class UserController {
     try {
       const result = Joi.validate(userPayload, userSignUpSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
@@ -242,7 +242,7 @@ class UserController {
     try {
       const result = Joi.validate(userPayload, userUpdateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
@@ -260,7 +260,7 @@ class UserController {
         delete userPayload.password;
         return SuccessResponse(res, userPayload);
       }
-      BadRequestError(`User does not exists`, 404);
+      BadRequestError(`User does not exists`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }
@@ -272,7 +272,7 @@ class UserController {
     } = req;
     try {
       if (ids.length < 1) {
-        BadRequestError(`User ids required`, 422);
+        BadRequestError(`User ids required`, STATUS_CODES.INVALID_INPUT);
       }
       const user = await User.destroy({
         where: {
@@ -289,7 +289,7 @@ class UserController {
   static async upload(req, res, next) {
     try {
       if (req.file === undefined) {
-        BadRequestError('No file found.', 422);
+        BadRequestError('No file found.', STATUS_CODES.INVALID_INPUT);
       }
       const ingestStatus = { success: 0, failed: 0 };
       const aggregateResult = (results) => {
@@ -314,7 +314,7 @@ class UserController {
           const sheetData = worksheets[w].data;
           let headerRow = sheetData[0];
           if (!headerRow) {
-            BadRequestError('No row found.', 422);
+            BadRequestError('No row found.', STATUS_CODES.INVALID_INPUT);
           }
           // Remove all spaces and extra characters
           headerRow = headerRow.map((header) => header.toString().replace(/\s/g, ''));
@@ -416,131 +416,5 @@ class UserController {
     }
   }
 }
-
-//
-// const userUpdateSchema = Joi.object().keys({
-//   id: Joi.number().min(1).required(),
-//   name: Joi.string().min(2).max(100).required(),
-//   email: Joi.string().email({ minDomainAtoms: 2 }).required(),
-//   password: Joi.string().required(),
-//   contactNo: Joi.string().alphanum().required(),
-//   roleId: Joi.number().min(1).required(),
-//   // values: Joi.array().items(Joi.number()).required(),
-// });
-//
-//
-//
-
-// // eslint-disable-next-line no-empty-function,no-unused-vars
-// async function logout(req, res /* , next */) {}
-//
-// // update user
-// async function update(req, res /* , next */) {
-//   const {
-//     body: { user: userUpdateParams },
-//   } = req;
-//   const result = Joi.validate(userUpdateParams, userUpdateSchema);
-//   if (result.error) {
-//     return res.status(422).json({
-//       errors: result.error,
-//     });
-//   }
-//   const query = {
-//     where: {
-//       email: userUpdateParams.email,
-//       id: { [Op.notIn]: [userUpdateParams.id] },
-//     },
-//   };
-//
-//   try {
-//     const userExists = await User.findOne(query);
-//     if (userExists) {
-//       userUpdateParams.password = await generateHash(userUpdateParams.password);
-//       const user = await User.update(
-//         _.pick(userUpdateParams, ['name', 'email', 'contactNo', 'roleId', 'password']),
-//         {
-//           where: {
-//             id: userUpdateParams.id,
-//           },
-//         }
-//       );
-//       return res.json({ user });
-//     }
-//     return res.status(404).json('User not found');
-//   } catch (e) {
-//     return res.status(500).json({
-//       errors: e,
-//     });
-//   }
-// }
-//
-// // delete User
-// async function deleteUser(req, res /* , next */) {
-//   const {
-//     body: { id },
-//   } = req;
-//   if (_.isEmpty(id)) {
-//     return res.status(422).json({
-//       errors: 'User id is required',
-//     });
-//   }
-//
-//   try {
-//     const user = await User.destroy({
-//       where: {
-//         id,
-//       },
-//     });
-//     return res.json({ user });
-//   } catch (e) {
-//     return res.status(500).json({
-//       errors: e,
-//     });
-//   }
-// }
-//
-// // get user by ID
-// async function getUserById(req, res) {
-//   const {
-//     query: { id },
-//   } = req;
-//
-//   if (_.isEmpty(id)) {
-//     return res.status(422).json({
-//       errors: 'User id is required',
-//     });
-//   }
-//
-//   try {
-//     const user = await User.findOne({ where: { id } });
-//     return res.status(200).json({
-//       user,
-//     });
-//   } catch (e) {
-//     return res.status(500).json({
-//       errors: e,
-//     });
-//   }
-// }
-//
-//
-// // get user roles
-// async function role(req, res /* , next */) {
-//   const { Role } = models;
-//   try {
-//     const query = {
-//       attributes: ['id', 'name'],
-//       where: {},
-//     };
-//     const roleObj = await Role.findAll(query);
-//     return res.status(200).json({
-//       roleObj,
-//     });
-//   } catch (e) {
-//     return res.status(500).json({
-//       errors: e,
-//     });
-//   }
-// }
 
 export default UserController;

@@ -4,6 +4,7 @@ import models from '../../models';
 import { listQuery } from './query';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import uploadFile from '../../middlewares/upload';
+import { STATUS_CODES } from '../../utils/constants';
 
 const { Content } = models;
 class CeoController {
@@ -34,7 +35,7 @@ class CeoController {
     try {
       const result = Joi.validate(ceoPagePayload, ceoPageContentSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const contentQuery = listQuery();
       const { data: existingContent } = await Content.findOne(contentQuery);

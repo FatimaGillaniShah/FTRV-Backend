@@ -5,6 +5,7 @@ import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
+import { STATUS_CODES } from '../../utils/constants';
 
 const { Event } = models;
 class EventsController {
@@ -44,7 +45,7 @@ class EventsController {
     try {
       const result = Joi.validate(eventPayload, eventCreateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
 
       const event = await Event.create(eventPayload);
@@ -61,7 +62,7 @@ class EventsController {
     } = req;
     try {
       if (ids.length < 1) {
-        BadRequestError(`Event ids required`, 422);
+        BadRequestError(`Event ids required`, STATUS_CODES.INVALID_INPUT);
       }
       const events = await Event.destroy({
         where: {
@@ -81,7 +82,7 @@ class EventsController {
 
     try {
       if (!id) {
-        BadRequestError(`Event id is required`, 422);
+        BadRequestError(`Event id is required`, STATUS_CODES.INVALID_INPUT);
       }
       const event = await Event.findOne({
         where: {
@@ -105,7 +106,7 @@ class EventsController {
     try {
       const result = Joi.validate(eventPayload, eventUpdateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
@@ -118,7 +119,7 @@ class EventsController {
         const event = await Event.update(eventPayload, query);
         return SuccessResponse(res, event);
       }
-      BadRequestError(`Event does not exists`, 404);
+      BadRequestError(`Event does not exists`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }
