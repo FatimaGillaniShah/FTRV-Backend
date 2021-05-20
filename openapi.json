@@ -1915,6 +1915,9 @@
           },
           "url": {
             "type": "string"
+          },
+          "categoryId": {
+            "type": "number"
           }
         }
       },
@@ -2048,6 +2051,9 @@
                 },
                 "url": {
                   "type": "string"
+                },
+                "categoryId": {
+                  "type": "number"
                 }
               }
             }
