@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import express from 'express';
 import models from '../../models';
-import { PAGE_SIZE } from '../../utils/constants';
+import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import { listQuery, dashboardListQuery } from './query';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { announcementCreateSchema, announcementUpdateSchema } from './validationSchemas';
@@ -28,7 +28,7 @@ class AnnouncementController {
     } = req;
     try {
       if (pageNumber <= 0) {
-        BadRequestError('Invalid page number', 422);
+        BadRequestError('Invalid page number', STATUS_CODES.INVALID_INPUT);
       }
 
       const query = listQuery({
@@ -63,7 +63,7 @@ class AnnouncementController {
 
     try {
       if (!id) {
-        BadRequestError(`Announcement id is required`, 422);
+        BadRequestError(`Announcement id is required`, STATUS_CODES.INVALID_INPUT);
       }
       const announcement = await Announcement.findOne({
         where: {
@@ -84,7 +84,7 @@ class AnnouncementController {
     try {
       const result = Joi.validate(announcementPayload, announcementCreateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const announcement = await Announcement.create(announcementPayload);
       const announcementResponse = announcement.toJSON();
@@ -102,7 +102,7 @@ class AnnouncementController {
     try {
       const result = Joi.validate(announcementPayload, announcementUpdateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
@@ -115,7 +115,7 @@ class AnnouncementController {
         const announcement = await Announcement.update(announcementPayload, query);
         return SuccessResponse(res, announcement);
       }
-      BadRequestError(`Announcement does not exists`, 404);
+      BadRequestError(`Announcement does not exists`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }
@@ -127,7 +127,7 @@ class AnnouncementController {
     } = req;
     try {
       if (ids.length < 1) {
-        BadRequestError(`Announcement ids required`, 422);
+        BadRequestError(`Announcement ids required`, STATUS_CODES.INVALID_INPUT);
       }
       const announcements = await Announcement.destroy({
         where: {

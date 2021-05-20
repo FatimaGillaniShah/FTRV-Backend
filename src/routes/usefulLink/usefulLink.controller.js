@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import express from 'express';
 import models from '../../models';
-import { PAGE_SIZE } from '../../utils/constants';
+import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import { listQuery } from './query';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { linkCreateSchema, linkUpdateSchema } from './validationSchemas';
@@ -26,10 +26,10 @@ class UsefulLinkController {
     } = req;
     try {
       if (pageNumber <= 0) {
-        BadRequestError('Invalid page number', 422);
+        BadRequestError('Invalid page number', STATUS_CODES.INVALID_INPUT);
       }
       if (categoryId === undefined) {
-        BadRequestError('Category required', 422);
+        BadRequestError('Category required', STATUS_CODES.INVALID_INPUT);
       }
 
       const query = listQuery({
@@ -53,7 +53,7 @@ class UsefulLinkController {
 
     try {
       if (!id) {
-        BadRequestError(`Link id is required`, 422);
+        BadRequestError(`Link id is required`, STATUS_CODES.INVALID_INPUT);
       }
       const link = await UsefulLink.findOne({
         where: {
@@ -74,7 +74,7 @@ class UsefulLinkController {
     try {
       const result = Joi.validate(linkPayload, linkCreateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
@@ -102,7 +102,7 @@ class UsefulLinkController {
     try {
       const result = Joi.validate(linkPayload, linkUpdateSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
@@ -115,7 +115,7 @@ class UsefulLinkController {
         const link = await UsefulLink.update(linkPayload, query);
         return SuccessResponse(res, link);
       }
-      BadRequestError(`Useful Link does not exists`, 404);
+      BadRequestError(`Useful Link does not exists`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }
@@ -127,7 +127,7 @@ class UsefulLinkController {
     } = req;
     try {
       if (ids.length < 1) {
-        BadRequestError(`Link ids required`, 422);
+        BadRequestError(`Link ids required`, STATUS_CODES.INVALID_INPUT);
       }
       const links = await UsefulLink.destroy({
         where: {

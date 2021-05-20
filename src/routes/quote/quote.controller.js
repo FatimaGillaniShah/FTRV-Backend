@@ -3,6 +3,7 @@ import Joi from 'joi';
 import models from '../../models';
 import { listQuery } from './query';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import { STATUS_CODES } from '../../utils/constants';
 
 const { Content } = models;
 class QuoteController {
@@ -35,7 +36,7 @@ class QuoteController {
     try {
       const result = Joi.validate(req.body, quoteSchema);
       if (result.error) {
-        BadRequestError(getErrorMessages(result), 422);
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
