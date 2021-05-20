@@ -106,7 +106,7 @@ class LinkCategoryController {
       });
       if (linksCount > 0) {
         BadRequestError(
-          `Category cannot be deleted. It have ${linksCount} links`,
+          `Category cannot be deleted. It have ${linksCount} link(s)`,
           STATUS_CODES.FORBIDDEN
         );
       }
@@ -115,7 +115,6 @@ class LinkCategoryController {
         where: {
           id,
         },
-        force: true,
       });
       return SuccessResponse(res, { count: categoriesDeleted });
     } catch (e) {
