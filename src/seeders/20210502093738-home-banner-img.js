@@ -7,8 +7,8 @@ export default {
       },
       [
         {
-          name: 'HOME-BANNER-IMG',
-          data: JSON.stringify({ file: '' }),
+          name: 'HOME-BANNER-IMAGE',
+          data: JSON.stringify({ fileName: '' }),
           createdAt: '2020-01-01T00:00:00.000Z',
           updatedAt: '2020-01-01T00:00:00.000Z',
         },
