@@ -30,7 +30,7 @@ class BannerImageController {
     const { file } = req;
     try {
       if (!file) {
-        BadRequestError('Invalid file', STATUS_CODES.INVALID_INPUT);
+        BadRequestError('File required', STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
