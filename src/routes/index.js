@@ -9,7 +9,7 @@ import EventsController from './events/events.controller';
 import CeoController from './ceo/ceo.controller';
 import BlogController from './blog/blog.controller';
 import LinkCategoryController from './linkCategory/linkCategory.controller';
-import BannerImageController from './bannerImg/bannerImg.controller';
+import BannerImageController from './bannerImage/bannerImage.controller';
 
 const router = express.Router();
 

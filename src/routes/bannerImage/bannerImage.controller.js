@@ -38,7 +38,7 @@ class BannerImageController {
         },
       };
       const data = {
-        avatar: file.filename,
+        fileName: file.filename,
       };
       await Content.update({ data }, query);
       return SuccessResponse(res, data);

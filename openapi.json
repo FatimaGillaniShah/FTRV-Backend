@@ -1762,12 +1762,12 @@
     },
     "/bannerImage": {
       "get": {
-        "summary": "An endpoint to get banner image avatar",
+        "summary": "An endpoint to get banner image",
         "tags": ["Banner Image"],
         "operationId": "getBannerImage",
         "responses": {
           "200": {
-            "description": "Object containing banner image avatar",
+            "description": "Object containing banner image",
             "content": {
               "application/json": {
                 "schema": {
@@ -1780,7 +1780,7 @@
       },
       "put": {
         "tags": ["Banner Image"],
-        "summary": "An endpoint to update banner Image avatar ",
+        "summary": "An endpoint to update banner Image ",
         "operationId": "updateBannerImage",
         "requestBody": {
           "$ref": "#/components/requestBodies/BannerImage"
@@ -2020,7 +2020,7 @@
       "BannerImage": {
         "type": "object",
         "properties": {
-          "avatar": {
+          "fileName": {
             "type": "string"
           }
         }
@@ -2277,18 +2277,18 @@
           }
         },
         "required": true
-      }
-    },
-    "bannerImagePage": {
-      "description": "Information about the banner Image of FTRV",
-      "content": {
-        "application/json": {
-          "schema": {
-            "$ref": "#/components/schemas/BannerImage"
-          }
-        }
       },
-      "required": true
+      "bannerImagePage": {
+        "description": "Information about the banner Image of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BannerImage"
+            }
+          }
+        },
+        "required": true
+      }
     }
   },
   "securitySchemes": {
