@@ -2,7 +2,8 @@ import express from 'express';
 import models from '../../models';
 import { listQuery } from './query';
 import uploadFile from '../../middlewares/upload';
-import { SuccessResponse } from '../../utils/helper';
+import { BadRequestError, SuccessResponse } from '../../utils/helper';
+import { STATUS_CODES } from '../../utils/constants';
 
 const { Content } = models;
 class BannerImageController {
@@ -26,10 +27,10 @@ class BannerImageController {
   }
 
   static async updateBannerImage(req, res, next) {
-    const { file = {} } = req;
+    const { file } = req;
     try {
-      if (file === {}) {
-        // BadRequestError(getErrorMessages('Invalid'), STATUS_CODES.INVALID_INPUT);
+      if (!file) {
+        BadRequestError('Invalid file', STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {

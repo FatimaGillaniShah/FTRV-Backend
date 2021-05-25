@@ -71,6 +71,11 @@
         "resource": "/blogs/:id",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/bannerImage",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }

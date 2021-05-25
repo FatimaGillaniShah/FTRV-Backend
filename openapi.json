@@ -1759,6 +1759,58 @@
           }
         }
       }
+    },
+    "/bannerImage": {
+      "get": {
+        "summary": "An endpoint to get banner image avatar",
+        "tags": ["Banner Image"],
+        "operationId": "getBannerImage",
+        "responses": {
+          "200": {
+            "description": "Object containing banner image avatar",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BannerImage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Banner Image"],
+        "summary": "An endpoint to update banner Image avatar ",
+        "operationId": "updateBannerImage",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/BannerImage"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of banner image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BannerImage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1964,6 +2016,14 @@
             "type": "string"
           }
         }
+      },
+      "BannerImage": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -2143,6 +2203,23 @@
         },
         "required": true
       },
+      "BannerImage": {
+        "description": "Information about the banner of FTRV",
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
       "Blog": {
         "description": "Information about the Blogs of FTRV",
         "content": {
@@ -2202,14 +2279,25 @@
         "required": true
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "description": "",
-        "scheme": "bearer",
-        "name": "authorization",
-        "bearerFormat": "JWT"
-      }
+    "bannerImagePage": {
+      "description": "Information about the banner Image of FTRV",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/BannerImage"
+          }
+        }
+      },
+      "required": true
+    }
+  },
+  "securitySchemes": {
+    "bearerAuth": {
+      "type": "http",
+      "description": "",
+      "scheme": "bearer",
+      "name": "authorization",
+      "bearerFormat": "JWT"
     }
   }
 }
