@@ -1,6 +1,18 @@
+import { Model } from 'sequelize';
+
 export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
-  const User = sequelize.define(
-    'User',
+  class User extends Model {
+    static associate({ Department, Location }) {
+      this.belongsTo(Location, {
+        foreignKey: 'locationId',
+      });
+      this.belongsTo(Department, {
+        foreignKey: 'departmentId',
+      });
+    }
+  }
+
+  User.init(
     {
       id: {
         allowNull: false,
@@ -74,6 +86,8 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       },
     },
     {
+      sequelize,
+      modelName: 'User',
       paranoid: true,
       timestamps: true,
     },
@@ -86,6 +100,5 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       ],
     }
   );
-
   return User;
 };

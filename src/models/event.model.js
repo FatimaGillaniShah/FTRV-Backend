@@ -1,7 +1,15 @@
 const { Model } = require('sequelize');
 
 export default (sequelize, { INTEGER, STRING, DATE }) => {
-  class Event extends Model {}
+  class Event extends Model {
+    static associate({ EventLocation, Location }) {
+      this.belongsToMany(Location, {
+        through: EventLocation,
+        foreignKey: 'eventId',
+        otherKey: 'locationId',
+      });
+    }
+  }
   Event.init(
     {
       id: {
