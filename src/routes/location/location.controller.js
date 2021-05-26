@@ -13,6 +13,7 @@ class LocationController {
   static getRouter() {
     this.router = express.Router();
     this.router.get('/', this.list);
+    this.router.get('/:id', this.getLocationById);
     this.router.post('/', this.createLocation);
     this.router.put('/:id', this.updateLocation);
     this.router.delete('/deleteLocations', this.deleteLocations);
@@ -33,6 +34,29 @@ class LocationController {
       });
       const locations = await Location.findAndCountAll(query);
       return SuccessResponse(res, locations);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async getLocationById(req, res, next) {
+    const {
+      params: { id },
+    } = req;
+
+    try {
+      if (!id) {
+        BadRequestError(`Location id is required`, STATUS_CODES.INVALID_INPUT);
+      }
+      const location = await Location.findOne({
+        where: {
+          id,
+        },
+        attributes: {
+          exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+        },
+      });
+      return SuccessResponse(res, location);
     } catch (e) {
       next(e);
     }
