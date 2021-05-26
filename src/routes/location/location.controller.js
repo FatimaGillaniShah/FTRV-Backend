@@ -6,7 +6,7 @@ import { listQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 import { locationSchema } from './validationSchemas';
 
-const { Location } = models;
+const { Location, User } = models;
 class LocationController {
   static router;
 
@@ -53,7 +53,7 @@ class LocationController {
           id,
         },
         attributes: {
-          exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+          exclude: ['createdAt', 'updatedAt'],
         },
       });
       return SuccessResponse(res, location);
@@ -117,8 +117,16 @@ class LocationController {
         where: {
           id: ids,
         },
-        force: true,
       });
+      if (locations === 0) {
+        BadRequestError(`Location doesn't exist`, STATUS_CODES.INVALID_INPUT);
+      }
+      const query = { where: { locationId: ids } };
+      const usersExist = await User.findOne(query);
+      if (usersExist) {
+        const userPayload = { locationId: null, locations: null };
+        await User.update(userPayload, query);
+      }
       return SuccessResponse(res, { count: locations });
     } catch (e) {
       next(e);

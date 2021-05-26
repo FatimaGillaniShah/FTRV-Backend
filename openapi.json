@@ -1910,8 +1910,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "type": "number"
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
                   }
                 },
                 "required": ["id"]
