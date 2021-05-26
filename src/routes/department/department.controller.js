@@ -6,7 +6,7 @@ import { listQuery } from './query';
 import { departmentCreateSchema, departmentUpdateSchema } from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
 
-const { Department } = models;
+const { Department, User } = models;
 class DepartmentController {
   static router;
 
@@ -71,7 +71,13 @@ class DepartmentController {
       if (department === 0) {
         BadRequestError(`Department doesn't exist`, STATUS_CODES.INVALID_INPUT);
       }
-      return SuccessResponse(res, { count: department });
+      const query = { where: { departmentId: ids } };
+      const usersExist = await User.findOne(query);
+      if (usersExist) {
+        const userPayload = { departmentId: null, department: null };
+        await User.update(userPayload, query);
+      }
+      return SuccessResponse(res, department);
     } catch (e) {
       next(e);
     }

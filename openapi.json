@@ -2451,7 +2451,7 @@
       "Department": {
         "description": "Information about the Departments of FTRV",
         "content": {
-          "application/x-www-form-urlencoded": {
+          "application/json": {
             "schema": {
               "type": "object",
               "properties": {
