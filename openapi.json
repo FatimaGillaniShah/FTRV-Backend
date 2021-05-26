@@ -2547,15 +2547,15 @@
         },
         "required": true
       }
-    }
-  },
-  "securitySchemes": {
-    "bearerAuth": {
-      "type": "http",
-      "description": "",
-      "scheme": "bearer",
-      "name": "authorization",
-      "bearerFormat": "JWT"
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "",
+        "scheme": "bearer",
+        "name": "authorization",
+        "bearerFormat": "JWT"
+      }
     }
   }
 }
