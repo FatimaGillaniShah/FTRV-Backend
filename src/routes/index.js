@@ -10,6 +10,7 @@ import CeoController from './ceo/ceo.controller';
 import BlogController from './blog/blog.controller';
 import LinkCategoryController from './linkCategory/linkCategory.controller';
 import BannerImageController from './bannerImage/bannerImage.controller';
+import DepartmentController from './department/department.controller';
 
 const router = express.Router();
 
@@ -34,5 +35,6 @@ router.use('/ceo', CeoController.getRouter());
 router.use('/blogs', BlogController.getRouter());
 router.use('/linkCategories', LinkCategoryController.getRouter());
 router.use('/bannerImage', BannerImageController.getRouter());
+router.use('/departments', DepartmentController.getRouter());
 
 export default router;
