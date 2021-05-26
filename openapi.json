@@ -1954,7 +1954,7 @@
     },
     "/locations/{id}": {
       "get": {
-        "summary": "Retrieve blog by id",
+        "summary": "Retrieve location by id",
         "tags": ["Locations"],
         "operationId": "getLocationById",
         "parameters": [
@@ -2462,7 +2462,7 @@
       "Location": {
         "description": "Information about the locations of FTRV",
         "content": {
-          "application/x-www-form-urlencoded": {
+          "application/json": {
             "schema": {
               "type": "object",
               "properties": {

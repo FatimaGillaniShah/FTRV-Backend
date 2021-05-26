@@ -4,7 +4,7 @@ import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { listQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
-import { locationCreateSchema, locationUpdateSchema } from './validationSchemas';
+import { locationSchema } from './validationSchemas';
 
 const { Location } = models;
 class LocationController {
@@ -65,7 +65,7 @@ class LocationController {
   static async createLocation(req, res, next) {
     const { body: locationPayload } = req;
     try {
-      const result = Joi.validate(locationPayload, locationCreateSchema);
+      const result = Joi.validate(locationPayload, locationSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
@@ -84,7 +84,7 @@ class LocationController {
       params: { id: locationId },
     } = req;
     try {
-      const result = Joi.validate(locationPayload, locationUpdateSchema);
+      const result = Joi.validate(locationPayload, locationSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
