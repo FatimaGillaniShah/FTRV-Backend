@@ -1847,7 +1847,7 @@
         }
       },
       "get": {
-        "summary": "Retrieve list of all blogs",
+        "summary": "Retrieve list of all locations",
         "tags": ["Locations"],
         "operationId": "getLocationList",
         "parameters": [
