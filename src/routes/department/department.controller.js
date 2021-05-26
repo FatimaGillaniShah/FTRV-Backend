@@ -72,10 +72,10 @@ class DepartmentController {
         BadRequestError(`Department doesn't exist`, STATUS_CODES.INVALID_INPUT);
       }
       const query = { where: { departmentId: ids } };
-      const usersExist = await User.findAndCountAll(query);
+      const usersExist = await User.count(query);
       if (usersExist) {
-        const userPayload = { departmentId: null };
-        await User.update(userPayload, query);
+        const userUpdateParams = { departmentId: null };
+        await User.update(userUpdateParams, query);
       }
       return SuccessResponse(res, department);
     } catch (e) {
