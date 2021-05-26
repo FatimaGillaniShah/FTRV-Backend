@@ -3,7 +3,7 @@ import express from 'express';
 import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { listQuery } from './query';
-import { departmentCreateSchema, departmentUpdateSchema } from './validationSchemas';
+import { departmentSchema } from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
 
 const { Department, User } = models;
@@ -42,7 +42,7 @@ class DepartmentController {
   static async createDepartment(req, res, next) {
     const { body: departmentPayload } = req;
     try {
-      const result = Joi.validate(departmentPayload, departmentCreateSchema);
+      const result = Joi.validate(departmentPayload, departmentSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
@@ -112,7 +112,7 @@ class DepartmentController {
       params: { id: departmentId },
     } = req;
     try {
-      const result = Joi.validate(departmentPayload, departmentUpdateSchema);
+      const result = Joi.validate(departmentPayload, departmentSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
