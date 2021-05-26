@@ -1961,19 +1961,25 @@
         "tags": ["Departments"],
         "summary": "An endpoint to delete department",
         "operationId": "deleteDepartment",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of Department",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["ids"]
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Successful deletion of department",
