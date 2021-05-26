@@ -10,6 +10,7 @@ import CeoController from './ceo/ceo.controller';
 import BlogController from './blog/blog.controller';
 import LinkCategoryController from './linkCategory/linkCategory.controller';
 import LocationController from './location/location.controller';
+import BannerImageController from './bannerImage/bannerImage.controller';
 
 const router = express.Router();
 
@@ -34,5 +35,6 @@ router.use('/ceo', CeoController.getRouter());
 router.use('/blogs', BlogController.getRouter());
 router.use('/linkCategories', LinkCategoryController.getRouter());
 router.use('/locations', LocationController.getRouter());
+router.use('/bannerImage', BannerImageController.getRouter());
 
 export default router;
