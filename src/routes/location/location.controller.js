@@ -122,9 +122,9 @@ class LocationController {
         BadRequestError(`Location doesn't exist`, STATUS_CODES.INVALID_INPUT);
       }
       const query = { where: { locationId: ids } };
-      const usersExist = await User.findOne(query);
+      const usersExist = await User.findAndCountAll(query);
       if (usersExist) {
-        const userPayload = { locationId: null, locations: null };
+        const userPayload = { locationId: null };
         await User.update(userPayload, query);
       }
       return SuccessResponse(res, { count: locations });
