@@ -1813,39 +1813,6 @@
       }
     },
     "/locations": {
-      "post": {
-        "tags": ["Locations"],
-        "summary": "An endpoint to create a location",
-        "operationId": "createLocations",
-        "requestBody": {
-          "$ref": "#/components/requestBodies/Location"
-        },
-        "responses": {
-          "200": {
-            "description": "Successful creation of location",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Location"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid Input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized. An Expert authenticated session needs to be created"
-          }
-        }
-      },
       "get": {
         "summary": "Retrieve list of all locations",
         "tags": ["Locations"],
@@ -1897,6 +1864,39 @@
                 }
               }
             }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Locations"],
+        "summary": "An endpoint to create a location",
+        "operationId": "createLocations",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Location"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of location",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Location"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
       },

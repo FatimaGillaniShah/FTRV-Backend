@@ -16,7 +16,7 @@ class LocationController {
     this.router.get('/:id', this.getLocationById);
     this.router.post('/', this.createLocation);
     this.router.put('/:id', this.updateLocation);
-    this.router.delete('/deleteLocations', this.deleteLocations);
+    this.router.delete('/', this.deleteLocations);
 
     return this.router;
   }
