@@ -11,6 +11,7 @@ import BlogController from './blog/blog.controller';
 import LinkCategoryController from './linkCategory/linkCategory.controller';
 import LocationController from './location/location.controller';
 import BannerImageController from './bannerImage/bannerImage.controller';
+import DepartmentController from './department/department.controller';
 
 const router = express.Router();
 
@@ -36,5 +37,6 @@ router.use('/blogs', BlogController.getRouter());
 router.use('/linkCategories', LinkCategoryController.getRouter());
 router.use('/locations', LocationController.getRouter());
 router.use('/bannerImage', BannerImageController.getRouter());
+router.use('/departments', DepartmentController.getRouter());
 
 export default router;
