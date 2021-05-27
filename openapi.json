@@ -1917,7 +1917,7 @@
                     }
                   }
                 },
-                "required": ["id"]
+                "required": ["ids"]
               }
             }
           },
