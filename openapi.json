@@ -2509,14 +2509,11 @@
                 "extension": {
                   "type": "string"
                 },
-                "title": {
-                  "type": "string"
+                "locationId": {
+                  "type": "number"
                 },
-                "location": {
-                  "type": "string"
-                },
-                "department": {
-                  "type": "string"
+                "departmentId": {
+                  "type": "number"
                 },
                 "file": {
                   "type": "string",
