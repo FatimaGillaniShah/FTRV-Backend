@@ -11,7 +11,7 @@ import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, STATUS_CODES, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
-import { birthdayQuery, listQuery } from './query';
+import { birthdayQuery, getUserByIdQuery, listQuery } from './query';
 
 import {
   BadRequestError,
@@ -25,7 +25,7 @@ import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validatio
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
-const { User, Location, Department } = models;
+const { User } = models;
 class UserController {
   static router;
 
@@ -106,30 +106,8 @@ class UserController {
       if (!id) {
         BadRequestError(`User id is required`, STATUS_CODES.INVALID_INPUT);
       }
-      const user = await User.findOne({
-        where: {
-          id,
-        },
-        attributes: {
-          exclude: ['id', 'fullName', 'password', 'createdAt', 'updatedAt', 'deletedAt'],
-        },
-        include: [
-          {
-            model: Location,
-            as: 'locations',
-            attributes: {
-              exclude: ['createdAt', 'updatedAt'],
-            },
-          },
-          {
-            model: Department,
-            as: 'departments',
-            attributes: {
-              exclude: ['createdAt', 'updatedAt'],
-            },
-          },
-        ],
-      });
+      const query = getUserByIdQuery({ id });
+      const user = await User.findOne(query);
       return SuccessResponse(res, user);
     } catch (e) {
       next(e);

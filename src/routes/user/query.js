@@ -1,6 +1,8 @@
 import sequelize from 'sequelize';
+import models from '../../models';
 
 const { Op, fn, cast } = sequelize;
+const { Location, Department } = models;
 
 const makeSearchCondition = (columnName, searchValue) => {
   const condition = {};
@@ -99,5 +101,42 @@ export const listQuery = ({
     query.order = [[sortColumn, sortOrder]];
   }
 
+  return query;
+};
+
+export const getUserByIdQuery = ({ id }) => {
+  const query = {
+    where: {
+      id,
+    },
+  };
+  query.attributes = {
+    exclude: [
+      'id',
+      'fullName',
+      'password',
+      'createdAt',
+      'updatedAt',
+      'deletedAt',
+      'locationId',
+      'departmentId',
+    ],
+  };
+  query.include = [
+    {
+      model: Location,
+      as: 'locations',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+    },
+    {
+      model: Department,
+      as: 'departments',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+    },
+  ];
   return query;
 };
