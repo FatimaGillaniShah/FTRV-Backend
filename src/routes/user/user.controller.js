@@ -25,7 +25,7 @@ import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validatio
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
-const { User } = models;
+const { User, Location, Department } = models;
 class UserController {
   static router;
 
@@ -113,6 +113,22 @@ class UserController {
         attributes: {
           exclude: ['id', 'fullName', 'password', 'createdAt', 'updatedAt', 'deletedAt'],
         },
+        include: [
+          {
+            model: Location,
+            as: 'locations',
+            attributes: {
+              exclude: ['createdAt', 'updatedAt'],
+            },
+          },
+          {
+            model: Department,
+            as: 'departments',
+            attributes: {
+              exclude: ['createdAt', 'updatedAt'],
+            },
+          },
+        ],
       });
       return SuccessResponse(res, user);
     } catch (e) {
