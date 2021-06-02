@@ -2325,6 +2325,12 @@
           "department": {
             "type": "string"
           },
+          "locationId": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "string"
+          },
           "joiningDate": {
             "type": "string",
             "format": "date"
@@ -2507,6 +2513,9 @@
                   "type": "string"
                 },
                 "extension": {
+                  "type": "string"
+                },
+                "title": {
                   "type": "string"
                 },
                 "locationId": {

@@ -52,6 +52,14 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
         type: STRING,
         allowNull: true,
       },
+      location: {
+        type: STRING,
+        allowNull: true,
+      },
+      department: {
+        type: STRING,
+        allowNull: true,
+      },
       role: {
         type: ENUM('admin', 'user'),
       },
