@@ -4,9 +4,14 @@ import models from '../../models';
 const { Op, fn, cast } = sequelize;
 const { Location, Department } = models;
 
-const makeSearchCondition = (columnName, searchValue) => {
+const makeLikeSearch = (columnName, searchValue) => {
   const condition = {};
   condition[columnName] = { [Op.iLike]: `%${searchValue}%` };
+  return condition;
+};
+const makeEqualitySearch = (columnName, searchValue) => {
+  const condition = {};
+  condition[columnName] = { [Op.eq]: `${searchValue}` };
   return condition;
 };
 
@@ -48,6 +53,22 @@ export const listQuery = ({
   query.offset = (pageNumber - 1) * pageSize;
   query.limit = pageSize;
   query.attributes = { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] };
+  query.include = [
+    {
+      model: Location,
+      as: 'locationObj',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'id'],
+      },
+    },
+    {
+      model: Department,
+      as: 'departmentObj',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'id'],
+      },
+    },
+  ];
   if (status) {
     query.where[Op.and] = [{ status }];
   }
@@ -73,26 +94,23 @@ export const listQuery = ({
     }
   } else {
     if (name) {
-      query.where[Op.or] = [
-        makeSearchCondition('firstName', name),
-        makeSearchCondition('lastName', name),
-      ];
+      query.where[Op.or] = [makeLikeSearch('firstName', name), makeLikeSearch('lastName', name)];
     }
     if (department) {
       query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeSearchCondition('department', department));
+      query.where[Op.and].push(makeEqualitySearch('departmentId', department));
     }
     if (title) {
       query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeSearchCondition('title', title));
+      query.where[Op.and].push(makeLikeSearch('title', title));
     }
     if (extension) {
       query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeSearchCondition('extension', extension));
+      query.where[Op.and].push(makeLikeSearch('extension', extension));
     }
     if (location) {
       query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeSearchCondition('location', location));
+      query.where[Op.and].push(makeEqualitySearch('locationId', location));
     }
   }
 
@@ -125,14 +143,14 @@ export const getUserByIdQuery = ({ id }) => {
   query.include = [
     {
       model: Location,
-      as: 'locations',
+      as: 'locationObj',
       attributes: {
         exclude: ['createdAt', 'updatedAt'],
       },
     },
     {
       model: Department,
-      as: 'departments',
+      as: 'departmentObj',
       attributes: {
         exclude: ['createdAt', 'updatedAt'],
       },
