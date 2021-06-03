@@ -11,7 +11,7 @@ import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, STATUS_CODES, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
-import { birthdayQuery, listQuery } from './query';
+import { birthdayQuery, getUserByIdQuery, listQuery } from './query';
 
 import {
   BadRequestError,
@@ -62,10 +62,10 @@ class UserController {
         status,
         searchString,
         name,
-        department,
+        departmentId,
         title,
         extension,
-        location,
+        locationId,
         sortColumn,
         sortOrder,
         pageNumber = 1,
@@ -81,10 +81,10 @@ class UserController {
         status,
         searchString,
         name,
-        department,
+        departmentId,
         title,
         extension,
-        location,
+        locationId,
         sortColumn,
         sortOrder,
         pageNumber,
@@ -106,14 +106,8 @@ class UserController {
       if (!id) {
         BadRequestError(`User id is required`, STATUS_CODES.INVALID_INPUT);
       }
-      const user = await User.findOne({
-        where: {
-          id,
-        },
-        attributes: {
-          exclude: ['id', 'fullName', 'password', 'createdAt', 'updatedAt', 'deletedAt'],
-        },
-      });
+      const query = getUserByIdQuery({ id });
+      const user = await User.findOne(query);
       return SuccessResponse(res, user);
     } catch (e) {
       next(e);
