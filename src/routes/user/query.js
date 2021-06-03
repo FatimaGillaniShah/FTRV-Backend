@@ -4,12 +4,12 @@ import models from '../../models';
 const { Op, fn, cast } = sequelize;
 const { Location, Department } = models;
 
-const makeLikeSearch = (columnName, searchValue) => {
+const makeLikeCondition = (columnName, searchValue) => {
   const condition = {};
   condition[columnName] = { [Op.iLike]: `%${searchValue}%` };
   return condition;
 };
-const makeEqualitySearch = (columnName, searchValue) => {
+const makeEqualityCondition = (columnName, searchValue) => {
   const condition = {};
   condition[columnName] = { [Op.eq]: `${searchValue}` };
   return condition;
@@ -39,10 +39,10 @@ export const listQuery = ({
   status,
   searchString,
   name,
-  department,
+  departmentId,
   title,
   extension,
-  location,
+  locationId,
   sortColumn,
   sortOrder,
   pageNumber = 1,
@@ -94,23 +94,26 @@ export const listQuery = ({
     }
   } else {
     if (name) {
-      query.where[Op.or] = [makeLikeSearch('firstName', name), makeLikeSearch('lastName', name)];
+      query.where[Op.or] = [
+        makeLikeCondition('firstName', name),
+        makeLikeCondition('lastName', name),
+      ];
     }
-    if (department) {
+    if (departmentId) {
       query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeEqualitySearch('departmentId', department));
+      query.where[Op.and].push(makeEqualityCondition('departmentId', departmentId));
     }
     if (title) {
       query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeLikeSearch('title', title));
+      query.where[Op.and].push(makeLikeCondition('title', title));
     }
     if (extension) {
       query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeLikeSearch('extension', extension));
+      query.where[Op.and].push(makeLikeCondition('extension', extension));
     }
-    if (location) {
+    if (locationId) {
       query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeEqualitySearch('locationId', location));
+      query.where[Op.and].push(makeEqualityCondition('locationId', locationId));
     }
   }
 

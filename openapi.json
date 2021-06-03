@@ -105,9 +105,9 @@
             "type": "string"
           },
           {
-            "name": "department",
+            "name": "departmentId",
             "in": "query",
-            "type": "string"
+            "type": "number"
           },
           {
             "name": "title",
@@ -120,9 +120,9 @@
             "type": "string"
           },
           {
-            "name": "location",
+            "name": "locationId",
             "in": "query",
-            "type": "string"
+            "type": "number"
           }
         ],
         "responses": {
@@ -2346,6 +2346,44 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "departmentObj": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "locationObj": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
           }
         }
       },
