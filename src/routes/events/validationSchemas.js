@@ -5,6 +5,7 @@ export const eventCreateSchema = Joi.object().keys({
   description: Joi.string().optional(),
   startDate: Joi.date().required(),
   endDate: Joi.string().required(),
+  locationId:Joi.number()
 });
 
 export const eventUpdateSchema = Joi.object().keys({
@@ -12,4 +13,5 @@ export const eventUpdateSchema = Joi.object().keys({
   description: Joi.string().optional(),
   startDate: Joi.date().optional(),
   endDate: Joi.string().optional(),
+  locationId:Joi.array().required()
 });

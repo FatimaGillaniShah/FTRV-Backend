@@ -1,3 +1,4 @@
+import EventLocation from '../../models/eventLocation.model';
 export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) => {
   const query = { where: {} };
   if (pageSize) {
@@ -13,14 +14,15 @@ export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) =
 
   return query;
 };
-export const eventLocationQuery = () => {
-  const query = { where: {} };
+export const eventLocationQuery = (locationId) => {
+  console.log(locationId)
+  const query = { where: {locationId} };
    query.include = [
       {
         model: EventLocation,
-        as: 'locationId',
+        as: 'id',
         attributes: {
-          exclude: ['createdAt', 'updatedAt', 'id'],
+          exclude: ['createdAt', 'updatedAt'],
         },
       },
     ]

@@ -1,13 +1,12 @@
 import Joi from 'joi';
 import express from 'express';
 import models from '../../models';
-
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
-import { listQuery } from './query';
+import { listQuery,eventLocationQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 
-const { Event } = models;
+const { Event,Location } = models;
 class EventsController {
   static router;
 
@@ -42,16 +41,18 @@ class EventsController {
 
   static async createEvent(req, res, next) {
     const { body: eventPayload } = req;
+    console.log(eventPayload)
     try {
-      const result = Joi.validate(eventPayload, eventCreateSchema);
-      if (result.error) {
-        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
-      }
-
+      // const result = Joi.validate(eventPayload, eventCreateSchema);
+      // if (result.error) {
+        // BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
+      // }
+    //  const query = eventLocationQuery(eventPayload.locationId);
+    //  console.log(query)
       const event = await Event.create(eventPayload);
       const eventResponse = event.toJSON();
       return SuccessResponse(res, eventResponse);
-    } catch (e) {
+    } catch (e) { 
       next(e);
     }
   }
@@ -113,7 +114,6 @@ class EventsController {
           id: eventId,
         },
       };
-
       const eventExists = await Event.findOne(query);
       if (eventExists) {
         const event = await Event.update(eventPayload, query);
