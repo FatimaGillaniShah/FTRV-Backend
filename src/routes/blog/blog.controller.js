@@ -7,6 +7,7 @@ import {
   BadRequestError,
   getErrorMessages,
   SuccessResponse,
+  generatePreSignedUrlForGetObject,
 } from '../../utils/helper';
 import { blogCreateSchema, blogUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
@@ -29,6 +30,13 @@ class BlogController {
     return this.router;
   }
 
+  static generatePreSignedUrl(blogs) {
+    blogs.forEach((blog) => {
+      // eslint-disable-next-line no-param-reassign
+      blog.thumbnail = generatePreSignedUrlForGetObject(blog.thumbnail);
+    });
+  }
+
   static async list(req, res, next) {
     const {
       query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
@@ -41,6 +49,7 @@ class BlogController {
         pageSize,
       });
       const blogs = await Blog.findAndCountAll(query);
+      BlogController.generatePreSignedUrl(blogs.rows);
       return SuccessResponse(res, blogs);
     } catch (e) {
       next(e);
@@ -56,7 +65,7 @@ class BlogController {
       }
 
       blogPayload.userId = user.id;
-      blogPayload.thumbnail = file.filename;
+      blogPayload.thumbnail = file.key;
       blogPayload.shortText = stripHtmlTags(blogPayload.content).substring(0, 200);
       const blog = await Blog.create(blogPayload);
       const blogResponse = blog.toJSON();
@@ -81,6 +90,7 @@ class BlogController {
         },
         include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName'] }],
       });
+      BlogController.generatePreSignedUrl([blog]);
       return SuccessResponse(res, blog);
     } catch (e) {
       next(e);
@@ -106,7 +116,7 @@ class BlogController {
 
       const blogExists = await Blog.findOne(query);
       if (blogExists) {
-        blogPayload.thumbnail = file.filename;
+        blogPayload.thumbnail = file.key;
         blogPayload.shortText = stripHtmlTags(blogPayload.content).substring(0, 200);
         const blog = await Blog.update(blogPayload, query);
         return SuccessResponse(res, blog);

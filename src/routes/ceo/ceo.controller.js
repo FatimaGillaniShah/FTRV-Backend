@@ -48,7 +48,7 @@ class CeoController {
 
       const data = {
         content: ceoPagePayload.content,
-        avatar: file.filename ? file.filename : existingContent.avatar,
+        avatar: file.key ? file.key : existingContent.avatar,
       };
 
       await Content.update({ data }, query);

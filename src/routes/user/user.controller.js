@@ -215,7 +215,7 @@ class UserController {
         userPayload.password = generateHash(userPayload.password);
         userPayload.role = userPayload.role || 'user';
         userPayload.status = 'active';
-        userPayload.avatar = file.filename;
+        userPayload.avatar = file.key;
         const user = await User.create(userPayload);
         const userResponse = user.toJSON();
         delete userResponse.password;
@@ -249,7 +249,7 @@ class UserController {
         if (userPayload.password) {
           userPayload.password = generateHash(userPayload.password);
         }
-        userPayload.avatar = file.filename;
+        userPayload.avatar = file.key;
         await User.update(userPayload, query);
         delete userPayload.password;
         return SuccessResponse(res, userPayload);
