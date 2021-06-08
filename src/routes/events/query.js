@@ -13,3 +13,17 @@ export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) =
 
   return query;
 };
+export const eventLocationQuery = () => {
+  const query = { where: {} };
+   query.include = [
+      {
+        model: EventLocation,
+        as: 'locationId',
+        attributes: {
+          exclude: ['createdAt', 'updatedAt', 'id'],
+        },
+      },
+    ]
+
+  return query;
+};
