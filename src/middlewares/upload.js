@@ -1,7 +1,8 @@
 import AWS from 'aws-sdk';
 import multer from 'multer';
 import multerS3 from 'multer-s3';
-import { AWS_CONFIG } from '../utils/constants';
+import path from 'path';
+import { AWS_CONFIG, UPLOAD_PATH } from '../utils/constants';
 
 const s3 = new AWS.S3({
   accessKeyId: AWS_CONFIG.AWS_ACCESS_KEY,
@@ -24,16 +25,16 @@ const imageFilter = (req, file, cb) => {
   }
 };
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, path.join(path.dirname(require.main.filename), UPLOAD_PATH));
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, `${Date.now()}-employee-${file.originalname}`);
-//   },
-// });
+const storageDisk = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(path.dirname(require.main.filename), UPLOAD_PATH));
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-employee-${file.originalname}`);
+  },
+});
 
-const storage = multerS3({
+const storageS3 = multerS3({
   s3,
   bucket: AWS_CONFIG.BUCKET,
   metadata(req, file, cb) {
@@ -60,5 +61,8 @@ const storage = multerS3({
 
 export default function (fileType) {
   const fileFilter = fileType === 'excel' ? excelFilter : imageFilter;
-  return multer({ storage, fileFilter });
+  return multer({
+    storage: fileType === 'excel' ? storageDisk : storageS3,
+    fileFilter,
+  });
 }
