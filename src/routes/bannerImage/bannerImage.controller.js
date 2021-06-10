@@ -2,7 +2,7 @@ import express from 'express';
 import models from '../../models';
 import { listQuery } from './query';
 import uploadFile from '../../middlewares/upload';
-import { BadRequestError, SuccessResponse } from '../../utils/helper';
+import { BadRequestError, cleanUnusedImage, SuccessResponse } from '../../utils/helper';
 import { STATUS_CODES } from '../../utils/constants';
 
 const { Content } = models;
@@ -32,7 +32,14 @@ class BannerImageController {
       if (!file) {
         BadRequestError('File required', STATUS_CODES.INVALID_INPUT);
       }
-      const query = {
+      const query = listQuery();
+      const {
+        data: { fileName },
+      } = await Content.findOne(query);
+      if (fileName) {
+        cleanUnusedImage(fileName);
+      }
+      const updateQuery = {
         where: {
           name: 'HOME-BANNER-IMAGE',
         },
@@ -40,7 +47,7 @@ class BannerImageController {
       const data = {
         fileName: file.key,
       };
-      await Content.update({ data }, query);
+      await Content.update({ data }, updateQuery);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);

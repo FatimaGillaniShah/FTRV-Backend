@@ -15,6 +15,8 @@ import { birthdayQuery, getUserByIdQuery, listQuery } from './query';
 
 import {
   BadRequestError,
+  cleanUnusedImage,
+  cleanUnusedImages,
   generateHash,
   generateJWT,
   getErrorMessages,
@@ -250,6 +252,9 @@ class UserController {
           userPayload.password = generateHash(userPayload.password);
         }
         userPayload.avatar = file.key;
+        if (file?.key && userExists?.avatar) {
+          cleanUnusedImage(userExists.avatar);
+        }
         await User.update(userPayload, query);
         delete userPayload.password;
         return SuccessResponse(res, userPayload);
@@ -268,6 +273,13 @@ class UserController {
       if (ids.length < 1) {
         BadRequestError(`User ids required`, STATUS_CODES.INVALID_INPUT);
       }
+      const query = {
+        where: {
+          id: ids,
+        },
+      };
+      const users = await User.findAll(query);
+      cleanUnusedImages(users);
       const user = await User.destroy({
         where: {
           id: ids,

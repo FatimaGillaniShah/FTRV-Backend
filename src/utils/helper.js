@@ -76,6 +76,32 @@ const SuccessResponse = (res, data) => {
 
 const stripHtmlTags = (htmlString) => htmlString.replace(/(<([^>]+)>)/gi, '');
 
+const cleanUnusedImage = (path) => {
+  const params = {
+    Bucket: AWS_CONFIG.BUCKET,
+    Key: path,
+  };
+  s3.deleteObject(params, (err, data) => {
+    if (err) {
+      throw new Error(err);
+    }
+    return data;
+  }).promise();
+};
+const cleanUnusedImages = (keys) => {
+  const objects = keys.map((user) => ({ Key: user.avatar }));
+  const params = {
+    Bucket: AWS_CONFIG.BUCKET,
+    Delete: { Objects: objects },
+  };
+  s3.deleteObjects(params, (err, data) => {
+    if (err) {
+      throw new Error(err);
+    }
+    return data;
+  }).promise();
+};
+
 const generatePreSignedUrlForGetObject = (key) =>
   s3.getSignedUrl('getObject', {
     Bucket: AWS_CONFIG.BUCKET,
@@ -94,4 +120,6 @@ export {
   NotFoundError,
   SuccessResponse,
   generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
+  cleanUnusedImage,
 };

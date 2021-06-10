@@ -2,7 +2,12 @@ import express from 'express';
 import Joi from 'joi';
 import models from '../../models';
 import { listQuery } from './query';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  cleanUnusedImage,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import uploadFile from '../../middlewares/upload';
 import { STATUS_CODES } from '../../utils/constants';
 
@@ -39,7 +44,9 @@ class CeoController {
       }
       const contentQuery = listQuery();
       const { data: existingContent } = await Content.findOne(contentQuery);
-
+      if (file.key) {
+        cleanUnusedImage(existingContent.avatar);
+      }
       const query = {
         where: {
           name: 'CEO-PAGE',
