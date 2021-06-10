@@ -7,6 +7,7 @@ export default (sequelize, { INTEGER, STRING, DATE }) => {
         through: EventLocation,
         foreignKey: 'eventId',
         otherKey: 'locationId',
+        as: 'locationIds',
       });
     }
   }

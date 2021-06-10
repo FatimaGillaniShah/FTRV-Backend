@@ -7,7 +7,7 @@ import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 
-const { Event, EventLocation } = models;
+const { Event, EventLocation, Location } = models;
 class EventsController {
   static router;
 
@@ -84,18 +84,22 @@ class EventsController {
     const {
       params: { id },
     } = req;
-
     try {
       if (!id) {
         BadRequestError(`Event id is required`, STATUS_CODES.INVALID_INPUT);
       }
+      // const eventLocation = await Event.findAll({where :{},
+      //   include: [{ model: EventLocation, as: 'locationId'}],
+      // })
+      // console.log(eventLocation)
       const event = await Event.findOne({
         where: {
           id,
         },
-        attributes: {
-          exclude: ['createdAt', 'updatedAt', 'deletedAt'],
-        },
+        include: { model: Location, as: 'locationIds', through: { attributes: ['locationId'] } },
+        // attributes: {
+        //   exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+        // },
       });
       return SuccessResponse(res, event);
     } catch (e) {
