@@ -88,18 +88,11 @@ class EventsController {
       if (!id) {
         BadRequestError(`Event id is required`, STATUS_CODES.INVALID_INPUT);
       }
-      // const eventLocation = await Event.findAll({where :{},
-      //   include: [{ model: EventLocation, as: 'locationId'}],
-      // })
-      // console.log(eventLocation)
       const event = await Event.findOne({
         where: {
           id,
         },
         include: { model: Location, as: 'locationIds', through: { attributes: ['locationId'] } },
-        // attributes: {
-        //   exclude: ['createdAt', 'updatedAt', 'deletedAt'],
-        // },
       });
       return SuccessResponse(res, event);
     } catch (e) {
