@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import express from 'express';
+import _ from 'lodash';
 import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
@@ -7,8 +8,6 @@ import { listQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 
 const { Event, EventLocation } = models;
-const _ = require('lodash');
-
 class EventsController {
   static router;
 
