@@ -1,6 +1,6 @@
 const { Model } = require('sequelize');
 
-export default (sequelize, { INTEGER, STRING, DATE , JSON}) => {
+export default (sequelize, { INTEGER, STRING, DATE }) => {
   class Event extends Model {
     static associate({ EventLocation, Location }) {
       this.belongsToMany(Location, {
@@ -26,10 +26,6 @@ export default (sequelize, { INTEGER, STRING, DATE , JSON}) => {
       },
       endDate: {
         type: DATE,
-        allowNull: false,
-      },
-      locationId: {
-        type: INTEGER,
         allowNull: false,
       },
     },

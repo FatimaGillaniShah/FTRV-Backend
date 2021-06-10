@@ -3,10 +3,12 @@ import express from 'express';
 import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
-import { listQuery,eventLocationQuery } from './query';
+import { listQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 
-const { Event,Location } = models;
+const { Event, EventLocation } = models;
+const _ = require('lodash');
+
 class EventsController {
   static router;
 
@@ -32,6 +34,7 @@ class EventsController {
         pageNumber,
         pageSize,
       });
+
       const events = await Event.findAndCountAll(query);
       return SuccessResponse(res, events);
     } catch (e) {
@@ -41,18 +44,20 @@ class EventsController {
 
   static async createEvent(req, res, next) {
     const { body: eventPayload } = req;
-    console.log(eventPayload)
     try {
-      // const result = Joi.validate(eventPayload, eventCreateSchema);
-      // if (result.error) {
-        // BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
-      // }
-    //  const query = eventLocationQuery(eventPayload.locationId);
-    //  console.log(query)
-      const event = await Event.create(eventPayload);
+      const result = Joi.validate(eventPayload, eventCreateSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
+      }
+      const event = await Event.create(_.omit(eventPayload, ['locationIds']));
       const eventResponse = event.toJSON();
+      const eventLocationPromises = EventsController.getEventLocationData(
+        eventResponse.id,
+        eventPayload.locationIds
+      );
+      await Promise.all(eventLocationPromises);
       return SuccessResponse(res, eventResponse);
-    } catch (e) { 
+    } catch (e) {
       next(e);
     }
   }
@@ -116,13 +121,33 @@ class EventsController {
       };
       const eventExists = await Event.findOne(query);
       if (eventExists) {
-        const event = await Event.update(eventPayload, query);
+        const event = await Event.update(_.omit(eventPayload, ['locationIds']), query);
+        await EventLocation.destroy({
+          where: {
+            eventId,
+          },
+        });
+        const eventLocationPromises = EventsController.getEventLocationData(
+          eventId,
+          eventPayload.locationIds
+        );
+        await Promise.all(eventLocationPromises);
         return SuccessResponse(res, event);
       }
       BadRequestError(`Event does not exists`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }
+  }
+
+  static getEventLocationData(eventId, locationIds) {
+    return locationIds.map((locationId) => {
+      const eventLocationCreateParams = {
+        eventId,
+        locationId,
+      };
+      return EventLocation.create(eventLocationCreateParams);
+    });
   }
 }
 
