@@ -185,7 +185,7 @@ class UserController {
       const userObj = {
         id: user.id,
         email,
-        role,
+        role: user.role || role,
         name: user.fullName,
         avatar: user.avatar,
         token: generateJWT(user),
