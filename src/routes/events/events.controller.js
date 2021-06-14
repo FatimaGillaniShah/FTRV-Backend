@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import express from 'express';
-import _ from 'lodash';
+import { omit } from 'lodash';
 import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
@@ -48,7 +48,7 @@ class EventsController {
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
-      const event = await Event.create(_.omit(eventPayload, ['locationIds']));
+      const event = await Event.create(omit(eventPayload, ['locationIds']));
       const eventResponse = event.toJSON();
       const eventLocationPromises = EventsController.getEventLocationData(
         eventResponse.id,
@@ -92,7 +92,12 @@ class EventsController {
         where: {
           id,
         },
-        include: { model: Location, as: 'locationIds', through: { attributes: [] } },
+        include: {
+          model: Location,
+          as: 'locationIds',
+          attributes: ['id', 'name'],
+          through: { attributes: [] },
+        },
       });
       return SuccessResponse(res, event);
     } catch (e) {
@@ -117,7 +122,7 @@ class EventsController {
       };
       const eventExists = await Event.findOne(query);
       if (eventExists) {
-        const event = await Event.update(_.omit(eventPayload, ['locationIds']), query);
+        const event = await Event.update(omit(eventPayload, ['locationIds']), query);
         await EventLocation.destroy({
           where: {
             eventId,
