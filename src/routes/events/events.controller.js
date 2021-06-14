@@ -14,7 +14,7 @@ class EventsController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createEvent);
-    this.router.get('/:id', this.list);
+    this.router.get('/', this.list);
     this.router.delete('/', this.deleteEvents);
     this.router.get('/:id', this.getEventById);
     this.router.put('/:id', this.updateEvent);
