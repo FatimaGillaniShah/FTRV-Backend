@@ -2,17 +2,22 @@
 module.exports = {
   up: async (queryInterface, { INTEGER, STRING, DATE }) => {
     await queryInterface.createTable({
-      tableName: 'LinkCategories',
-      schema: process.env.SCHEMA_NAME
+      tableName: 'UsefulLinks',
+      schema: process.env.SCHEMA_NAME,
     }, {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: INTEGER
+        type: INTEGER,
+        autoIncrement: true,
       },
       name: {
-        type: STRING
+        type: STRING,
+        allowNull: false,
+      },
+      url: {
+        type: STRING,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -21,10 +26,14 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: DATE
-      }
+      },
+      deletedAt: {
+        allowNull: true,
+        type: DATE
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('LinkCategories');
+    await queryInterface.dropTable('UsefulLinks');
   }
 };

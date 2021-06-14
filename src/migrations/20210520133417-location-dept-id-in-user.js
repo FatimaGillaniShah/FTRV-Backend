@@ -4,22 +4,36 @@ const colNameLoc = 'locationId'
 const colNameDept = 'departmentId'
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface, { INTEGER }) => {
     await queryInterface.addColumn(
       {
         tableName,
         schema: process.env.SCHEMA_NAME,
       },
-      colNameLoc,
-      Sequelize.INTEGER
+      colNameLoc, {
+      type: INTEGER,
+      references: {
+        model: 'Locations',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+      }
     );
     await queryInterface.addColumn(
       {
         tableName,
         schema: process.env.SCHEMA_NAME,
       },
-      colNameDept,
-      Sequelize.INTEGER
+      colNameDept,{
+      type: INTEGER,
+      references: {
+        model: 'Locations',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+      }
     );
   },
 
@@ -29,7 +43,7 @@ module.exports = {
         tableName,
         schema: process.env.SCHEMA_NAME,
       },
-      colNameLo
+      colNameLoc
     );
     await queryInterface.removeColumn(
       {

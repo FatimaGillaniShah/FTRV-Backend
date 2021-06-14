@@ -1,27 +1,10 @@
-import { Model } from 'sequelize';
-
-export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
-  class User extends Model {
-    static associate({ Department, Location, Blog, UserPollVote }) {
-      this.belongsTo(Location, {
-        foreignKey: 'locationId',
-        as: 'locationObj',
-      });
-      this.belongsTo(Department, {
-        foreignKey: 'departmentId',
-        as: 'departmentObj',
-      });
-      this.hasMany(Blog, {
-        foreignKey: 'userId',
-      });
-      this.hasMany(UserPollVote, {
-        foreignKey: 'userId',
-      });
-    }
-  }
-
-  User.init(
-    {
+'use strict';
+module.exports = {
+  up: async (queryInterface, { INTEGER, STRING, DATE, DATEONLY, ENUM }) => {
+    await queryInterface.createTable({
+      tableName: 'Users',
+      schema: process.env.SCHEMA_NAME,
+    }, {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -80,33 +63,21 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       joiningDate: {
         type: DATEONLY,
       },
-      dob: {
-        type: DATEONLY,
+      createdAt: {
+        allowNull: false,
+        type: DATE
       },
-      fullName: {
-        type: VIRTUAL,
-        get() {
-          return `${this.firstName} ${this.lastName}`;
-        },
-        set() {
-          throw new Error('Do not try to set the `fullName` value!');
-        },
+      updatedAt: {
+        allowNull: false,
+        type: DATE
       },
-    },
-    {
-      sequelize,
-      modelName: 'User',
-      paranoid: true,
-      timestamps: true,
-    },
-    {
-      indexes: [
-        {
-          unique: true,
-          fields: ['email'],
-        },
-      ],
-    }
-  );
-  return User;
+      deletedAt: {
+        allowNull: true,
+        type: DATE
+      },
+    });
+  },
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('Users');
+  }
 };

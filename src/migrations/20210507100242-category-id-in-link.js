@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, {INTEGER}) => {
+  up: async (queryInterface, { INTEGER }) => {
     /**
      * Add altering commands here.
      *
@@ -11,8 +11,15 @@ module.exports = {
     await queryInterface.addColumn({
       tableName: 'UsefulLinks',
       schema: process.env.SCHEMA_NAME
-    }, 'categoryId', {
-      type: INTEGER
+    },
+    'categoryId', {
+    type: INTEGER,
+    references: {
+      model: 'LinkCategories',
+      key: 'id',
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
     })
   },
 
