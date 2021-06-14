@@ -7,14 +7,14 @@ import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 
-const { Event, EventLocation, Location } = models;
+const { Event, EventLocation, Location, User } = models;
 class EventsController {
   static router;
 
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createEvent);
-    this.router.get('/', this.list);
+    this.router.get('/:id', this.list);
     this.router.delete('/', this.deleteEvents);
     this.router.get('/:id', this.getEventById);
     this.router.put('/:id', this.updateEvent);
@@ -26,15 +26,34 @@ class EventsController {
     const {
       query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
     } = req;
-    try {
-      const query = listQuery({
-        sortColumn,
-        sortOrder,
-        pageNumber,
-        pageSize,
-      });
 
-      const events = await Event.findAndCountAll(query);
+    try {
+      let events;
+      if (req.user.role !== 'admin') {
+        const userId = req.user.id;
+        const user = await User.findOne({
+          where: {
+            id: userId,
+          },
+        });
+        const { locationId } = user;
+        const query = listQuery({
+          sortColumn,
+          sortOrder,
+          pageNumber,
+          pageSize,
+          locationId,
+        });
+        events = await Location.findOne(query);
+      } else {
+        const query = listQuery({
+          sortColumn,
+          sortOrder,
+          pageNumber,
+          pageSize,
+        });
+        events = await Event.findAndCountAll(query);
+      }
       return SuccessResponse(res, events);
     } catch (e) {
       next(e);
