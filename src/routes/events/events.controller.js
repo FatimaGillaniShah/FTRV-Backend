@@ -24,19 +24,19 @@ class EventsController {
 
   static async list(req, res, next) {
     const {
+      user,
       query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
     } = req;
-
+    const { id, role } = user;
     try {
       let events;
-      if (req.user.role !== 'admin') {
-        const userId = req.user.id;
-        const user = await User.findOne({
+      if (role !== 'admin') {
+        const userObj = await User.findOne({
           where: {
-            id: userId,
+            id,
           },
         });
-        const { locationId } = user;
+        const { locationId } = userObj;
         const query = listQuery({
           sortColumn,
           sortOrder,
