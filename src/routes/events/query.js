@@ -3,10 +3,15 @@ import models from '../../models';
 const { Event } = models;
 
 export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize, locationId }) => {
-  const query = {
-    where: { id: locationId },
-    include: { model: Event, as: 'eventIds', through: { attributes: [] } },
-  };
+  let query;
+  if (locationId) {
+    query = {
+      where: { id: locationId },
+      include: { model: Event, as: 'eventIds', through: { attributes: [] } },
+    };
+  } else {
+    query = { where: {} };
+  }
   if (pageSize) {
     query.offset = (pageNumber - 1) * pageSize;
     query.limit = pageSize;
