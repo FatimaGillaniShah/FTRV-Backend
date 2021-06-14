@@ -4,7 +4,7 @@ import models from '../../models';
 import { listQuery } from './query';
 import {
   BadRequestError,
-  cleanUnusedImage,
+  cleanUnusedImages,
   getErrorMessages,
   SuccessResponse,
 } from '../../utils/helper';
@@ -44,8 +44,9 @@ class CeoController {
       }
       const contentQuery = listQuery();
       const { data: existingContent } = await Content.findOne(contentQuery);
-      if (file.key) {
-        cleanUnusedImage(existingContent.avatar);
+      if (file.key && existingContent.avatar) {
+        const avatarKeyObj = [{ Key: existingContent.avatar }];
+        cleanUnusedImages(avatarKeyObj);
       }
       const query = {
         where: {

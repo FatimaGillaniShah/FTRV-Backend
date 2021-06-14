@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import express from 'express';
-import models from '../../models';
+import models from '../../models/index';
 
 import {
   stripHtmlTags,
@@ -8,13 +8,14 @@ import {
   getErrorMessages,
   SuccessResponse,
   generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
 } from '../../utils/helper';
 import { blogCreateSchema, blogUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
 import uploadFile from '../../middlewares/upload';
 import { STATUS_CODES } from '../../utils/constants';
 
-const { Blog, User } = models;
+const { Blog, User, sequelize } = models;
 
 class BlogController {
   static router;
@@ -119,6 +120,11 @@ class BlogController {
         blogPayload.thumbnail = file.key;
         blogPayload.shortText = stripHtmlTags(blogPayload.content).substring(0, 200);
         const blog = await Blog.update(blogPayload, query);
+        if (file.key && blogExists.thumbnail) {
+          const avatarKeyObj = [{ Key: blogExists.thumbnail }];
+          cleanUnusedImages(avatarKeyObj);
+        }
+
         return SuccessResponse(res, blog);
       }
       BadRequestError(`Blog does not exists`, STATUS_CODES.NOTFOUND);
@@ -131,14 +137,24 @@ class BlogController {
     const {
       body: { id },
     } = req;
+    const transaction = await sequelize.transaction();
     try {
-      const blogs = await Blog.destroy({
+      const query = {
         where: {
           id,
         },
-      });
-      return SuccessResponse(res, { count: blogs });
+        transaction,
+      };
+      const blogs = await Blog.findAll(query);
+      const blogKeyobjects = blogs?.map((blog) => ({ Key: blog.thumbnail }));
+      if (blogKeyobjects.length > 0) {
+        cleanUnusedImages(blogKeyobjects);
+      }
+      const blogsCount = await Blog.destroy(query);
+      await transaction.commit();
+      return SuccessResponse(res, { count: blogsCount });
     } catch (e) {
+      await transaction.rollback();
       next(e);
     }
   }

@@ -15,7 +15,6 @@ import { birthdayQuery, getUserByIdQuery, listQuery } from './query';
 
 import {
   BadRequestError,
-  cleanUnusedImage,
   cleanUnusedImages,
   generateHash,
   generateJWT,
@@ -253,7 +252,8 @@ class UserController {
         }
         userPayload.avatar = file.key;
         if (file?.key && userExists?.avatar) {
-          cleanUnusedImage(userExists.avatar);
+          const avatarKeyObj = [{ Key: userExists.avatar }];
+          cleanUnusedImages(avatarKeyObj);
         }
         await User.update(userPayload, query);
         delete userPayload.password;
@@ -279,7 +279,10 @@ class UserController {
         },
       };
       const users = await User.findAll(query);
-      cleanUnusedImages(users);
+      const userKeyobjects = users?.map((user) => ({ Key: user.avatar }));
+      if (userKeyobjects.length > 0) {
+        cleanUnusedImages(userKeyobjects);
+      }
       const user = await User.destroy({
         where: {
           id: ids,

@@ -76,30 +76,12 @@ const SuccessResponse = (res, data) => {
 
 const stripHtmlTags = (htmlString) => htmlString.replace(/(<([^>]+)>)/gi, '');
 
-const cleanUnusedImage = (path) => {
-  const params = {
-    Bucket: AWS_CONFIG.BUCKET,
-    Key: path,
-  };
-  s3.deleteObject(params, (err, data) => {
-    if (err) {
-      throw new Error(err);
-    }
-    return data;
-  }).promise();
-};
-const cleanUnusedImages = (keys) => {
-  const objects = keys.map((user) => ({ Key: user.avatar }));
+const cleanUnusedImages = async (objects) => {
   const params = {
     Bucket: AWS_CONFIG.BUCKET,
     Delete: { Objects: objects },
   };
-  s3.deleteObjects(params, (err, data) => {
-    if (err) {
-      throw new Error(err);
-    }
-    return data;
-  }).promise();
+  await s3.deleteObjects(params).promise();
 };
 
 const generatePreSignedUrlForGetObject = (key) =>
@@ -121,5 +103,4 @@ export {
   SuccessResponse,
   generatePreSignedUrlForGetObject,
   cleanUnusedImages,
-  cleanUnusedImage,
 };

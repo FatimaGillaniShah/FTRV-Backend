@@ -2,7 +2,7 @@ import express from 'express';
 import models from '../../models';
 import { listQuery } from './query';
 import uploadFile from '../../middlewares/upload';
-import { BadRequestError, cleanUnusedImage, SuccessResponse } from '../../utils/helper';
+import { BadRequestError, cleanUnusedImages, SuccessResponse } from '../../utils/helper';
 import { STATUS_CODES } from '../../utils/constants';
 
 const { Content } = models;
@@ -36,8 +36,9 @@ class BannerImageController {
       const {
         data: { fileName },
       } = await Content.findOne(query);
-      if (fileName) {
-        cleanUnusedImage(fileName);
+      if (fileName && file.key) {
+        const fileKeyObj = [{ Key: fileName }];
+        cleanUnusedImages(fileKeyObj);
       }
       const updateQuery = {
         where: {
