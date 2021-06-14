@@ -7,7 +7,12 @@ export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize, loc
   if (locationId) {
     query = {
       where: { id: locationId },
-      include: { model: Event, as: 'eventIds', through: { attributes: [] } },
+      include: {
+        model: Event,
+        as: 'eventIds',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        through: { attributes: [] },
+      },
     };
   } else {
     query = { where: {} };
