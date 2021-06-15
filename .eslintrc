@@ -8,8 +8,7 @@
 	"prettier/prettier": ["error", {
 		"printWidth": 100,
 		"singleQuote": true,
-		"trailingComma": "es5",
-		"endOfLine": "auto"
+		"trailingComma": "es5"
 	}],
 	"no-console": "warn",
 	"curly": ["error", "all"],
