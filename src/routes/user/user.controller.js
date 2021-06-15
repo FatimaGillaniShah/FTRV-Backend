@@ -251,12 +251,13 @@ class UserController {
           userPayload.password = generateHash(userPayload.password);
         }
         userPayload.avatar = file.key;
+        await User.update(userPayload, query);
+        delete userPayload.password;
+
         if (file?.key && userExists?.avatar) {
           const avatarKeyObj = [{ Key: userExists.avatar }];
           cleanUnusedImages(avatarKeyObj);
         }
-        await User.update(userPayload, query);
-        delete userPayload.password;
         return SuccessResponse(res, userPayload);
       }
       BadRequestError(`User does not exists`, STATUS_CODES.NOTFOUND);

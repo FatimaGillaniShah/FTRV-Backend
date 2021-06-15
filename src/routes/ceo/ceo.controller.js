@@ -44,22 +44,21 @@ class CeoController {
       }
       const contentQuery = listQuery();
       const { data: existingContent } = await Content.findOne(contentQuery);
-      if (file.key && existingContent.avatar) {
-        const avatarKeyObj = [{ Key: existingContent.avatar }];
-        cleanUnusedImages(avatarKeyObj);
-      }
       const query = {
         where: {
           name: 'CEO-PAGE',
         },
       };
-
       const data = {
         content: ceoPagePayload.content,
         avatar: file.key ? file.key : existingContent.avatar,
       };
 
       await Content.update({ data }, query);
+      if (file.key && existingContent.avatar) {
+        const avatarKeyObj = [{ Key: existingContent.avatar }];
+        cleanUnusedImages(avatarKeyObj);
+      }
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);

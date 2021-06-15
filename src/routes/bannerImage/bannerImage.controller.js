@@ -33,13 +33,6 @@ class BannerImageController {
         BadRequestError('File required', STATUS_CODES.INVALID_INPUT);
       }
       const query = listQuery();
-      const {
-        data: { fileName },
-      } = await Content.findOne(query);
-      if (fileName && file.key) {
-        const fileKeyObj = [{ Key: fileName }];
-        cleanUnusedImages(fileKeyObj);
-      }
       const updateQuery = {
         where: {
           name: 'HOME-BANNER-IMAGE',
@@ -48,7 +41,15 @@ class BannerImageController {
       const data = {
         fileName: file.key,
       };
+
       await Content.update({ data }, updateQuery);
+      const {
+        data: { fileName },
+      } = await Content.findOne(query);
+      if (fileName && file.key) {
+        const fileKeyObj = [{ Key: fileName }];
+        cleanUnusedImages(fileKeyObj);
+      }
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);

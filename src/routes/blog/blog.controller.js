@@ -15,7 +15,7 @@ import { listQuery } from './query';
 import uploadFile from '../../middlewares/upload';
 import { STATUS_CODES } from '../../utils/constants';
 
-const { Blog, User, sequelize } = models;
+const { Blog, User } = models;
 
 class BlogController {
   static router;
@@ -137,24 +137,20 @@ class BlogController {
     const {
       body: { id },
     } = req;
-    const transaction = await sequelize.transaction();
     try {
       const query = {
         where: {
           id,
         },
-        transaction,
       };
       const blogs = await Blog.findAll(query);
       const blogKeyobjects = blogs?.map((blog) => ({ Key: blog.thumbnail }));
+      const blogsCount = await Blog.destroy(query);
       if (blogKeyobjects.length > 0) {
         cleanUnusedImages(blogKeyobjects);
       }
-      const blogsCount = await Blog.destroy(query);
-      await transaction.commit();
       return SuccessResponse(res, { count: blogsCount });
     } catch (e) {
-      await transaction.rollback();
       next(e);
     }
   }
