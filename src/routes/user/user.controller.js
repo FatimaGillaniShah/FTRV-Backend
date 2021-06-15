@@ -394,7 +394,9 @@ class UserController {
       const userExists = await User.findOne(query);
       if (userExists === null) {
         const locationQuery = {
-          where: { name: userInfo.location },
+          where: {
+            name: userInfo.location,
+          },
         };
         const departmentQuery = {
           where: {
@@ -411,6 +413,8 @@ class UserController {
           role: 'user',
           status: 'active',
         };
+        delete userInfo.location;
+        delete userInfo.department;
         const user = await User.create(userInfo);
         debug(`User with ${user.email} created successfully`);
         return { status: 'success' };
