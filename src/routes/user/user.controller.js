@@ -279,17 +279,18 @@ class UserController {
           id: ids,
         },
       };
-      const users = await User.findAll(query);
-      const userKeyobjects = users?.map((user) => ({ Key: user.avatar }));
-      if (userKeyobjects.length > 0) {
-        cleanUnusedImages(userKeyobjects);
-      }
+
       const user = await User.destroy({
         where: {
           id: ids,
         },
         force: true,
       });
+      const users = await User.findAll(query);
+      const userKeyobjects = users?.map((userInfo) => ({ Key: userInfo.avatar }));
+      if (userKeyobjects.length > 0) {
+        cleanUnusedImages(userKeyobjects);
+      }
       return SuccessResponse(res, { count: user });
     } catch (e) {
       next(e);
