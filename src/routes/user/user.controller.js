@@ -25,7 +25,7 @@ import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validatio
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
-const { User, Location } = models;
+const { User, Location, Department } = models;
 class UserController {
   static router;
 
@@ -384,32 +384,35 @@ class UserController {
   }
 
   static async createUserBatch(userData) {
+    const userInfo = userData;
     const query = {
       where: {
-        email: userData.email,
+        email: userInfo.email,
       },
     };
     try {
       const userExists = await User.findOne(query);
       if (userExists === null) {
         const locationQuery = {
-          where: { name: userData.location },
+          where: { name: userInfo.location },
+        };
+        const departmentQuery = {
+          where: {
+            name: userInfo.department,
+          },
         };
         const location = await Location.findOrCreate(locationQuery);
-        // debug(location[0].id, 'LOCAITONNNNNNNNNNNNNNN________');
-        // eslint-disable-next-line no-param-reassign
-        userData.locationId = location[0].id;
-        // eslint-disable-next-line no-param-reassign
-        userData.password = generateHash('ftrv@123');
-        // eslint-disable-next-line no-param-reassign
-        userData.role = 'user';
-        // eslint-disable-next-line no-param-reassign
-        userData.status = 'active';
-        const user = await User.create(userData);
+        const department = await Department.findOrCreate(departmentQuery);
+        userInfo.departmentId = department[0].id;
+        userInfo.locationId = location[0].id;
+        userInfo.password = generateHash('ftrv@123');
+        userInfo.role = 'user';
+        userInfo.status = 'active';
+        const user = await User.create(userInfo);
         debug(`User with ${user.email} created successfully`);
         return { status: 'success' };
       }
-      debug(`User ${userData.email} already exists`);
+      debug(`User ${userInfo.email} already exists`);
       return { status: 'failed' };
     } catch (e) {
       debug(e);
