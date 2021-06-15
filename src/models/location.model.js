@@ -5,7 +5,7 @@ export default (sequelize, { INTEGER, STRING }) => {
     static associate({ EventLocation, Event, User }) {
       this.hasMany(User, {
         as: 'users',
-        foreignKey: 'userId',
+        foreignKey: 'locationId',
       });
       this.belongsToMany(Event, {
         through: EventLocation,

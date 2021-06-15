@@ -10,7 +10,7 @@ export default (sequelize, { INTEGER, STRING }) => {
     static associate({ User }) {
       this.hasMany(User, {
         as: 'users',
-        foreignKey: 'userId',
+        foreignKey: 'departmentId',
       });
     }
   }
