@@ -14,6 +14,7 @@ module.exports = {
       name: {
         type: STRING,
         allowNull: false,
+        unique: true,
       },
       data: {
         type: JSON,

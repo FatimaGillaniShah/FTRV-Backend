@@ -12,7 +12,8 @@ module.exports = {
         type: INTEGER
       },
       name: {
-        type: STRING
+        type: STRING,
+        unique: true,
       },
       createdAt: {
         allowNull: false,
