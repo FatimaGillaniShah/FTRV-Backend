@@ -56,14 +56,14 @@ export const listQuery = ({
   query.include = [
     {
       model: Location,
-      as: 'locationObj',
+      as: 'location',
       attributes: {
         exclude: ['createdAt', 'updatedAt', 'id'],
       },
     },
     {
       model: Department,
-      as: 'departmentObj',
+      as: 'department',
       attributes: {
         exclude: ['createdAt', 'updatedAt', 'id'],
       },
@@ -146,14 +146,14 @@ export const getUserByIdQuery = ({ id }) => {
   query.include = [
     {
       model: Location,
-      as: 'locationObj',
+      as: 'location',
       attributes: {
         exclude: ['createdAt', 'updatedAt'],
       },
     },
     {
       model: Department,
-      as: 'departmentObj',
+      as: 'department',
       attributes: {
         exclude: ['createdAt', 'updatedAt'],
       },

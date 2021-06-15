@@ -25,7 +25,7 @@ import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validatio
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
-const { User } = models;
+const { User, Location } = models;
 class UserController {
   static router;
 
@@ -392,6 +392,13 @@ class UserController {
     try {
       const userExists = await User.findOne(query);
       if (userExists === null) {
+        const locationQuery = {
+          where: { name: userData.location },
+        };
+        const location = await Location.findOrCreate(locationQuery);
+        // debug(location[0].id, 'LOCAITONNNNNNNNNNNNNNN________');
+        // eslint-disable-next-line no-param-reassign
+        userData.locationId = location[0].id;
         // eslint-disable-next-line no-param-reassign
         userData.password = generateHash('ftrv@123');
         // eslint-disable-next-line no-param-reassign

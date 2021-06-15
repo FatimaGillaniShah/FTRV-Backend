@@ -5,11 +5,11 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
     static associate({ Department, Location }) {
       this.belongsTo(Location, {
         foreignKey: 'locationId',
-        as: 'locationObj',
+        as: 'location',
       });
       this.belongsTo(Department, {
         foreignKey: 'departmentId',
-        as: 'departmentObj',
+        as: 'department',
       });
     }
   }
@@ -51,14 +51,6 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
         allowNull: true,
       },
       title: {
-        type: STRING,
-        allowNull: true,
-      },
-      location: {
-        type: STRING,
-        allowNull: true,
-      },
-      department: {
         type: STRING,
         allowNull: true,
       },
