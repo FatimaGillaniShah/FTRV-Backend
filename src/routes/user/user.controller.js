@@ -384,7 +384,7 @@ class UserController {
   }
 
   static async createUserBatch(userData) {
-    const userInfo = userData;
+    let userInfo = { ...userData };
     const query = {
       where: {
         email: userInfo.email,
@@ -403,11 +403,14 @@ class UserController {
         };
         const location = await Location.findOrCreate(locationQuery);
         const department = await Department.findOrCreate(departmentQuery);
-        userInfo.departmentId = department[0].id;
-        userInfo.locationId = location[0].id;
-        userInfo.password = generateHash('ftrv@123');
-        userInfo.role = 'user';
-        userInfo.status = 'active';
+        userInfo = {
+          ...userInfo,
+          departmentId: department[0].id,
+          locationId: location[0].id,
+          password: generateHash('ftrv@123'),
+          role: 'user',
+          status: 'active',
+        };
         const user = await User.create(userInfo);
         debug(`User with ${user.email} created successfully`);
         return { status: 'success' };
