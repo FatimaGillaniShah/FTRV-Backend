@@ -45,10 +45,12 @@ class UserController {
     return this.router;
   }
 
-  static generatePreSignedUrl(blogs) {
-    blogs.forEach((blog) => {
-      // eslint-disable-next-line no-param-reassign
-      blog.thumbnail = generatePreSignedUrlForGetObject(blog.thumbnail);
+  static generatePreSignedUrl(users) {
+    users.forEach((user) => {
+      if (user?.avatar) {
+        // eslint-disable-next-line no-param-reassign
+        user.avatar = generatePreSignedUrlForGetObject(user.avatar);
+      }
     });
   }
 
@@ -58,6 +60,7 @@ class UserController {
     try {
       const query = birthdayQuery(date);
       const data = await User.findAll(query);
+      UserController.generatePreSignedUrl(data);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
@@ -117,6 +120,7 @@ class UserController {
       }
       const query = getUserByIdQuery({ id });
       const user = await User.findOne(query);
+      UserController.generatePreSignedUrl([user]);
       return SuccessResponse(res, user);
     } catch (e) {
       next(e);
@@ -145,7 +149,7 @@ class UserController {
           avatar: passportUser.avatar,
           token: generateJWT(passportUser),
         };
-
+        UserController.generatePreSignedUrl([userObj]);
         return SuccessResponse(res, userObj);
       }
       return next(new BadRequest(getPassportErrorMessage(info), STATUS_CODES.INVALID_INPUT));
@@ -261,6 +265,7 @@ class UserController {
         userPayload.avatar = file.key;
         await User.update(userPayload, query);
         delete userPayload.password;
+        UserController.generatePreSignedUrl([userPayload]);
         return SuccessResponse(res, userPayload);
       }
       BadRequestError(`User does not exists`, STATUS_CODES.NOTFOUND);

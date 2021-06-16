@@ -26,7 +26,9 @@ class CeoController {
     try {
       const query = listQuery();
       const { data } = await Content.findOne(query);
-      data.avatar = generatePreSignedUrlForGetObject(data.avatar);
+      if (data?.avatar) {
+        data.avatar = generatePreSignedUrlForGetObject(data.avatar);
+      }
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
@@ -58,7 +60,6 @@ class CeoController {
       };
 
       await Content.update({ data }, query);
-      data.avatar = generatePreSignedUrlForGetObject(data.avatar);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
