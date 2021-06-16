@@ -102,7 +102,6 @@ class UserController {
         pageSize,
       });
       const users = await User.findAndCountAll(query);
-      UserController.generatePreSignedUrl(users.rows);
       return SuccessResponse(res, users);
     } catch (e) {
       next(e);
