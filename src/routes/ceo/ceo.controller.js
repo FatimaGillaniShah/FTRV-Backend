@@ -2,7 +2,12 @@ import express from 'express';
 import Joi from 'joi';
 import models from '../../models';
 import { listQuery } from './query';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  generatePreSignedUrlForGetObject,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import uploadFile from '../../middlewares/upload';
 import { STATUS_CODES } from '../../utils/constants';
 
@@ -21,6 +26,7 @@ class CeoController {
     try {
       const query = listQuery();
       const { data } = await Content.findOne(query);
+      data.avatar = generatePreSignedUrlForGetObject(data.avatar);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
@@ -52,6 +58,7 @@ class CeoController {
       };
 
       await Content.update({ data }, query);
+      data.avatar = generatePreSignedUrlForGetObject(data.avatar);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);

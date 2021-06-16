@@ -17,6 +17,7 @@ import {
   BadRequestError,
   generateHash,
   generateJWT,
+  generatePreSignedUrlForGetObject,
   getErrorMessages,
   getPassportErrorMessage,
   SuccessResponse,
@@ -42,6 +43,13 @@ class UserController {
     this.router.delete('/deleteUsers', this.deleteUsers);
     this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
     return this.router;
+  }
+
+  static generatePreSignedUrl(blogs) {
+    blogs.forEach((blog) => {
+      // eslint-disable-next-line no-param-reassign
+      blog.thumbnail = generatePreSignedUrlForGetObject(blog.thumbnail);
+    });
   }
 
   static async birthdays(req, res, next) {
@@ -91,6 +99,7 @@ class UserController {
         pageSize,
       });
       const users = await User.findAndCountAll(query);
+      UserController.generatePreSignedUrl(users.rows);
       return SuccessResponse(res, users);
     } catch (e) {
       next(e);

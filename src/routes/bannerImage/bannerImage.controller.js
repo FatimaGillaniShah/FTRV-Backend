@@ -2,7 +2,11 @@ import express from 'express';
 import models from '../../models';
 import { listQuery } from './query';
 import uploadFile from '../../middlewares/upload';
-import { BadRequestError, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  generatePreSignedUrlForGetObject,
+  SuccessResponse,
+} from '../../utils/helper';
 import { STATUS_CODES } from '../../utils/constants';
 
 const { Content } = models;
@@ -20,6 +24,7 @@ class BannerImageController {
     try {
       const query = listQuery();
       const data = await Content.findOne(query);
+      data.data.fileName = generatePreSignedUrlForGetObject(data.data.fileName);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
@@ -41,6 +46,7 @@ class BannerImageController {
         fileName: file.key,
       };
       await Content.update({ data }, query);
+      data.fileName = generatePreSignedUrlForGetObject(data.fileName);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
