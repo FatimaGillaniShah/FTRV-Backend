@@ -46,8 +46,8 @@ class UserController {
   }
 
   static generatePreSignedUrl(users) {
-    users.forEach((user) => {
-      if (user?.avatar) {
+    users?.forEach((user) => {
+      if (user.avatar) {
         // eslint-disable-next-line no-param-reassign
         user.avatar = generatePreSignedUrlForGetObject(user.avatar);
       }
@@ -244,6 +244,7 @@ class UserController {
       body: userPayload,
       file = {},
       params: { id: userId },
+      user: { id },
     } = req;
     try {
       const result = Joi.validate(userPayload, userUpdateSchema);
@@ -261,10 +262,12 @@ class UserController {
         if (userPayload.password) {
           userPayload.password = generateHash(userPayload.password);
         }
-        userPayload.avatar = file.key;
+        userPayload.avatar = file.key || userExists.avatar;
         await User.update(userPayload, query);
         delete userPayload.password;
-        UserController.generatePreSignedUrl([userPayload]);
+        if (id === parseInt(userId, 10)) {
+          UserController.generatePreSignedUrl([userPayload]);
+        }
         return SuccessResponse(res, userPayload);
       }
       BadRequestError(`User does not exists`, STATUS_CODES.NOTFOUND);

@@ -25,8 +25,8 @@ class CeoController {
   static async list(req, res, next) {
     try {
       const query = listQuery();
-      const { data } = await Content.findOne(query);
-      if (data?.avatar) {
+      const { data = {} } = await Content.findOne(query);
+      if (data.avatar) {
         data.avatar = generatePreSignedUrlForGetObject(data.avatar);
       }
       return SuccessResponse(res, data);

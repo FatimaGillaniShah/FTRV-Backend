@@ -23,8 +23,8 @@ class BannerImageController {
   static async list(req, res, next) {
     try {
       const query = listQuery();
-      const { data } = await Content.findOne(query);
-      if (data?.fileName) {
+      const { data = {} } = await Content.findOne(query);
+      if (data.fileName) {
         data.fileName = generatePreSignedUrlForGetObject(data.fileName);
       }
       return SuccessResponse(res, data);
@@ -47,7 +47,7 @@ class BannerImageController {
       const data = {
         fileName: file.key,
       };
-      await Content.update(data, query);
+      await Content.update({ data }, query);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
