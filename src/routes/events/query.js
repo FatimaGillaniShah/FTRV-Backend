@@ -1,17 +1,18 @@
 import models from '../../models';
 
-const { Event } = models;
+const { Event, Location } = models;
 
-export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize, locationId }) => {
+export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize, role }) => {
   let query;
-  if (locationId) {
+  if (role !== 'admin') {
     query = {
-      where: { id: locationId },
       include: {
-        model: Event,
-        as: 'eventIds',
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        through: { attributes: [] },
+        model: Location,
+        as: 'locationIds',
+        include: {
+          model: Event,
+          as: 'eventIds',
+        },
       },
     };
   } else {

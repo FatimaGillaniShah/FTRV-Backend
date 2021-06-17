@@ -27,31 +27,21 @@ class EventsController {
       user,
       query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
     } = req;
-    const { id, role } = user;
+    const { role } = user;
     try {
       let events;
+      const query = listQuery({
+        sortColumn,
+        sortOrder,
+        pageNumber,
+        pageSize,
+        role,
+      });
       if (role !== 'admin') {
-        const userObj = await User.findOne({
-          where: {
-            id,
-          },
-        });
-        const { locationId } = userObj;
-        const query = listQuery({
-          sortColumn,
-          sortOrder,
-          pageNumber,
-          pageSize,
-          locationId,
-        });
-        events = await Location.findOne(query);
+        events = await User.findOne(query);
+        const eventsResponse = JSON.parse(JSON.stringify(events));
+        events = eventsResponse.locationIds.eventIds;
       } else {
-        const query = listQuery({
-          sortColumn,
-          sortOrder,
-          pageNumber,
-          pageSize,
-        });
         events = await Event.findAndCountAll(query);
       }
       return SuccessResponse(res, events);
