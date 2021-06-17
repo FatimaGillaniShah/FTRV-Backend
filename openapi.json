@@ -2319,12 +2319,6 @@
           "title": {
             "type": "string"
           },
-          "location": {
-            "type": "string"
-          },
-          "department": {
-            "type": "string"
-          },
           "locationId": {
             "type": "string"
           },
@@ -2347,7 +2341,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "departmentObj": {
+          "department": {
             "type": "object",
             "properties": {
               "id": {
@@ -2366,7 +2360,7 @@
               }
             }
           },
-          "locationObj": {
+          "location": {
             "type": "object",
             "properties": {
               "id": {

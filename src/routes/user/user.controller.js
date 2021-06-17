@@ -25,7 +25,7 @@ import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validatio
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
-const { User } = models;
+const { User, Location, Department } = models;
 class UserController {
   static router;
 
@@ -384,25 +384,42 @@ class UserController {
   }
 
   static async createUserBatch(userData) {
+    let userInfo = { ...userData };
     const query = {
       where: {
-        email: userData.email,
+        email: userInfo.email,
       },
     };
     try {
       const userExists = await User.findOne(query);
       if (userExists === null) {
-        // eslint-disable-next-line no-param-reassign
-        userData.password = generateHash('ftrv@123');
-        // eslint-disable-next-line no-param-reassign
-        userData.role = 'user';
-        // eslint-disable-next-line no-param-reassign
-        userData.status = 'active';
-        const user = await User.create(userData);
+        const locationQuery = {
+          where: {
+            name: userInfo.location,
+          },
+        };
+        const departmentQuery = {
+          where: {
+            name: userInfo.department,
+          },
+        };
+        const location = await Location.findOrCreate(locationQuery);
+        const department = await Department.findOrCreate(departmentQuery);
+        userInfo = {
+          ...userInfo,
+          departmentId: department[0].id,
+          locationId: location[0].id,
+          password: generateHash('ftrv@123'),
+          role: 'user',
+          status: 'active',
+        };
+        delete userInfo.location;
+        delete userInfo.department;
+        const user = await User.create(userInfo);
         debug(`User with ${user.email} created successfully`);
         return { status: 'success' };
       }
-      debug(`User ${userData.email} already exists`);
+      debug(`User ${userInfo.email} already exists`);
       return { status: 'failed' };
     } catch (e) {
       debug(e);
