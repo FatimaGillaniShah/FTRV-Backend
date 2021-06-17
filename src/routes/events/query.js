@@ -4,7 +4,7 @@ const { Event, Location } = models;
 
 export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize, role }) => {
   let query;
-  if (role !== 'admin') {
+  if (role === 'admin') {
     query = {
       include: {
         model: Location,

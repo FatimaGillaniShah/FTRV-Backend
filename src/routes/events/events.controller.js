@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import express from 'express';
-import _ from 'lodash';
+import { omit, pick } from 'lodash';
 import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
@@ -37,10 +37,9 @@ class EventsController {
         pageSize,
         role,
       });
-      if (role !== 'admin') {
+      if (role === 'admin') {
         events = await User.findOne(query);
-        const eventsResponse = JSON.parse(JSON.stringify(events));
-        events = eventsResponse.locationIds.eventIds;
+        events = pick(events.locationIds, ['eventIds']);
       } else {
         events = await Event.findAndCountAll(query);
       }
@@ -57,7 +56,7 @@ class EventsController {
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
-      const event = await Event.create(_.omit(eventPayload, ['locationIds']));
+      const event = await Event.create(omit(eventPayload, ['locationIds']));
       const eventResponse = event.toJSON();
       const eventLocationPromises = EventsController.getEventLocationData(
         eventResponse.id,
@@ -126,7 +125,7 @@ class EventsController {
       };
       const eventExists = await Event.findOne(query);
       if (eventExists) {
-        const event = await Event.update(_.omit(eventPayload, ['locationIds']), query);
+        const event = await Event.update(omit(eventPayload, ['locationIds']), query);
         await EventLocation.destroy({
           where: {
             eventId,
