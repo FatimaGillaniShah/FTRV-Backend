@@ -2,7 +2,12 @@ import express from 'express';
 import models from '../../models';
 import { listQuery } from './query';
 import uploadFile from '../../middlewares/upload';
-import { BadRequestError, cleanUnusedImages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
+  SuccessResponse,
+} from '../../utils/helper';
 import { STATUS_CODES } from '../../utils/constants';
 
 const { Content } = models;
@@ -19,7 +24,10 @@ class BannerImageController {
   static async list(req, res, next) {
     try {
       const query = listQuery();
-      const data = await Content.findOne(query);
+      const { data = {} } = await Content.findOne(query);
+      if (data.fileName) {
+        data.fileName = generatePreSignedUrlForGetObject(data.fileName);
+      }
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);

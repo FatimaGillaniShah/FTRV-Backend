@@ -18,6 +18,7 @@ import {
   cleanUnusedImages,
   generateHash,
   generateJWT,
+  generatePreSignedUrlForGetObject,
   getErrorMessages,
   getPassportErrorMessage,
   SuccessResponse,
@@ -45,12 +46,22 @@ class UserController {
     return this.router;
   }
 
+  static generatePreSignedUrl(users) {
+    users?.forEach((user) => {
+      if (user.avatar) {
+        // eslint-disable-next-line no-param-reassign
+        user.avatar = generatePreSignedUrlForGetObject(user.avatar);
+      }
+    });
+  }
+
   static async birthdays(req, res, next) {
     const { date = new Date() } = req.query;
 
     try {
       const query = birthdayQuery(date);
       const data = await User.findAll(query);
+      UserController.generatePreSignedUrl(data);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
@@ -109,6 +120,7 @@ class UserController {
       }
       const query = getUserByIdQuery({ id });
       const user = await User.findOne(query);
+      UserController.generatePreSignedUrl([user]);
       return SuccessResponse(res, user);
     } catch (e) {
       next(e);
@@ -137,7 +149,7 @@ class UserController {
           avatar: passportUser.avatar,
           token: generateJWT(passportUser),
         };
-
+        UserController.generatePreSignedUrl([userObj]);
         return SuccessResponse(res, userObj);
       }
       return next(new BadRequest(getPassportErrorMessage(info), STATUS_CODES.INVALID_INPUT));
@@ -186,7 +198,7 @@ class UserController {
       const userObj = {
         id: user.id,
         email,
-        role,
+        role: user.role,
         name: user.fullName,
         avatar: user.avatar,
         token: generateJWT(user),
@@ -233,6 +245,7 @@ class UserController {
       body: userPayload,
       file = {},
       params: { id: userId },
+      user: { id },
     } = req;
     try {
       const result = Joi.validate(userPayload, userUpdateSchema);
@@ -250,9 +263,12 @@ class UserController {
         if (userPayload.password) {
           userPayload.password = generateHash(userPayload.password);
         }
-        userPayload.avatar = file.key;
+        userPayload.avatar = file.key || userExists.avatar;
         await User.update(userPayload, query);
         delete userPayload.password;
+        if (id === parseInt(userId, 10)) {
+          UserController.generatePreSignedUrl([userPayload]);
+        }
 
         if (file?.key && userExists?.avatar) {
           const avatarKeyObj = [{ Key: userExists.avatar }];

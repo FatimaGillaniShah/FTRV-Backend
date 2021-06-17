@@ -4,6 +4,7 @@ import models from '../../models';
 import { listQuery } from './query';
 import {
   BadRequestError,
+  generatePreSignedUrlForGetObject,
   cleanUnusedImages,
   getErrorMessages,
   SuccessResponse,
@@ -25,7 +26,10 @@ class CeoController {
   static async list(req, res, next) {
     try {
       const query = listQuery();
-      const { data } = await Content.findOne(query);
+      const { data = {} } = await Content.findOne(query);
+      if (data.avatar) {
+        data.avatar = generatePreSignedUrlForGetObject(data.avatar);
+      }
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
@@ -44,11 +48,13 @@ class CeoController {
       }
       const contentQuery = listQuery();
       const { data: existingContent } = await Content.findOne(contentQuery);
+
       const query = {
         where: {
           name: 'CEO-PAGE',
         },
       };
+
       const data = {
         content: ceoPagePayload.content,
         avatar: file.key ? file.key : existingContent.avatar,

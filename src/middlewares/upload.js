@@ -38,19 +38,20 @@ const storageS3 = multerS3({
   s3,
   bucket: AWS_CONFIG.BUCKET,
   metadata(req, file, cb) {
-    cb(null, { fieldName: 'TESTING_METADATA' });
+    cb(null, {});
   },
   key(req, file, cb) {
     // get key name
     let key = '';
+    const fileSuffix = `${req.user.id}-${Date.now()}-${file.originalname}`;
     if (req.originalUrl.indexOf('bannerImage') > -1) {
-      key = `${AWS_CONFIG.BANNER_IMAGE}/${req.user.id}-${Date.now()}-${file.originalname}`;
+      key = `${AWS_CONFIG.BANNER_IMAGE}/${fileSuffix}`;
     } else if (req.originalUrl.indexOf('ceo') > -1) {
-      key = `${AWS_CONFIG.CEO_PAGE}/${req.user.id}-${Date.now()}-${file.originalname}`;
+      key = `${AWS_CONFIG.CEO_PAGE}/${fileSuffix}`;
     } else if (req.originalUrl.indexOf('users') > -1) {
-      key = `${AWS_CONFIG.PROFILE_PICTURE}/${req.user.id}-${Date.now()}-${file.originalname}`;
+      key = `${AWS_CONFIG.PROFILE_PICTURE}/${fileSuffix}`;
     } else if (req.originalUrl.indexOf('blogs') > -1) {
-      key = `${AWS_CONFIG.BLOG_THUMBNAIL}/${req.user.id}-${Date.now()}-${file.originalname}`;
+      key = `${AWS_CONFIG.BLOG_THUMBNAIL}/${fileSuffix}`;
     }
     if (!key) {
       return cb('No matching configuration found');

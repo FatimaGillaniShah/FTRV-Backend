@@ -32,9 +32,11 @@ class BlogController {
   }
 
   static generatePreSignedUrl(blogs) {
-    blogs.forEach((blog) => {
-      // eslint-disable-next-line no-param-reassign
-      blog.thumbnail = generatePreSignedUrlForGetObject(blog.thumbnail);
+    blogs?.forEach((blog) => {
+      if (blog.thumbnail) {
+        // eslint-disable-next-line no-param-reassign
+        blog.thumbnail = generatePreSignedUrlForGetObject(blog.thumbnail);
+      }
     });
   }
 
