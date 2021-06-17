@@ -28,7 +28,7 @@ module.exports = {
       colNameDept,{
       type: INTEGER,
       references: {
-        model: 'Locations',
+        model: 'Departments',
         key: 'id',
       },
       onUpdate: 'CASCADE',
