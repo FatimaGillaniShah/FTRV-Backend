@@ -1,16 +1,10 @@
-const { Model } = require('sequelize');
-
-export default (sequelize, { INTEGER, STRING, DATEONLY, ENUM }) => {
-  class Announcement extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-  }
-
-  Announcement.init(
-    {
+'use strict';
+module.exports = {
+  up: async (queryInterface, { INTEGER, STRING, DATE, DATEONLY, ENUM }) => {
+    await queryInterface.createTable({
+      tableName: 'Announcements',
+      schema: process.env.SCHEMA_NAME,
+    }, {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -41,14 +35,21 @@ export default (sequelize, { INTEGER, STRING, DATEONLY, ENUM }) => {
         type: ENUM('high', 'medium', 'low'),
         allowNull: false,
       },
-    },
-    {
-      sequelize,
-      modelName: 'Announcement',
-      paranoid: true,
-      timestamps: true,
-    }
-  );
-
-  return Announcement;
+      createdAt: {
+        allowNull: false,
+        type: DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DATE
+      },
+      deletedAt: {
+        allowNull: true,
+        type: DATE
+      },
+    });
+  },
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('Announcements');
+  }
 };

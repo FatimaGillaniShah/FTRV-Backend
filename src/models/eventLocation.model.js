@@ -1,7 +1,16 @@
 import { Model } from 'sequelize';
 
 export default (sequelize, { INTEGER }) => {
-  class EventLocation extends Model {}
+  class EventLocation extends Model {
+    static associate({ Location, Event }) {
+      this.belongsTo(Location, {
+        foreignKey: 'locationId',
+      });
+      this.belongsTo(Event, {
+        foreignKey: 'eventId',
+      });
+    }
+  }
   EventLocation.init(
     {
       id: {
@@ -12,17 +21,9 @@ export default (sequelize, { INTEGER }) => {
       },
       locationId: {
         type: INTEGER,
-        references: {
-          model: 'Location',
-          key: 'locationId',
-        },
       },
       eventId: {
         type: INTEGER,
-        references: {
-          model: 'Event',
-          key: 'eventId',
-        },
       },
     },
     {

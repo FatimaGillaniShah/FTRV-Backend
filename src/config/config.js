@@ -11,7 +11,7 @@ module.exports = {
     type: 'default',
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
-    schema: 'funtown',
+    schema: process.env.SCHEMA_NAME || 'funtown',
     logging: true,
   },
   test: {

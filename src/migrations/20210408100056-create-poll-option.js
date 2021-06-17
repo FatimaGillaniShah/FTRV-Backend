@@ -15,7 +15,14 @@ module.exports = {
         type: STRING
       },
       pollId: {
-        type: INTEGER
+        type: INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Polls',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       votes: {
         type: INTEGER,
