@@ -50,14 +50,17 @@ class BannerImageController {
         fileName: file.key,
       };
 
-      await Content.update({ data }, updateQuery);
       const {
         data: { fileName },
       } = await Content.findOne(query);
+
+      await Content.update({ data }, updateQuery);
+
       if (fileName && file.key) {
         const fileKeyObj = [{ Key: fileName }];
         cleanUnusedImages(fileKeyObj);
       }
+
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
