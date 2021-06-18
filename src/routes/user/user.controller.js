@@ -15,8 +15,10 @@ import { birthdayQuery, getUserByIdQuery, listQuery } from './query';
 
 import {
   BadRequestError,
+  cleanUnusedImages,
   generateHash,
   generateJWT,
+  generatePreSignedUrlForGetObject,
   getErrorMessages,
   getPassportErrorMessage,
   SuccessResponse,
@@ -44,12 +46,22 @@ class UserController {
     return this.router;
   }
 
+  static generatePreSignedUrl(users) {
+    users?.forEach((user) => {
+      if (user.avatar) {
+        // eslint-disable-next-line no-param-reassign
+        user.avatar = generatePreSignedUrlForGetObject(user.avatar);
+      }
+    });
+  }
+
   static async birthdays(req, res, next) {
     const { date = new Date() } = req.query;
 
     try {
       const query = birthdayQuery(date);
       const data = await User.findAll(query);
+      UserController.generatePreSignedUrl(data);
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
@@ -108,6 +120,7 @@ class UserController {
       }
       const query = getUserByIdQuery({ id });
       const user = await User.findOne(query);
+      UserController.generatePreSignedUrl([user]);
       return SuccessResponse(res, user);
     } catch (e) {
       next(e);
@@ -136,7 +149,7 @@ class UserController {
           avatar: passportUser.avatar,
           token: generateJWT(passportUser),
         };
-
+        UserController.generatePreSignedUrl([userObj]);
         return SuccessResponse(res, userObj);
       }
       return next(new BadRequest(getPassportErrorMessage(info), STATUS_CODES.INVALID_INPUT));
@@ -215,7 +228,7 @@ class UserController {
         userPayload.password = generateHash(userPayload.password);
         userPayload.role = userPayload.role || 'user';
         userPayload.status = 'active';
-        userPayload.avatar = file.filename;
+        userPayload.avatar = file.key;
         const user = await User.create(userPayload);
         const userResponse = user.toJSON();
         delete userResponse.password;
@@ -232,6 +245,7 @@ class UserController {
       body: userPayload,
       file = {},
       params: { id: userId },
+      user: { id },
     } = req;
     try {
       const result = Joi.validate(userPayload, userUpdateSchema);
@@ -249,9 +263,17 @@ class UserController {
         if (userPayload.password) {
           userPayload.password = generateHash(userPayload.password);
         }
-        userPayload.avatar = file.filename;
+        userPayload.avatar = file.key || userExists.avatar;
         await User.update(userPayload, query);
         delete userPayload.password;
+        if (id === parseInt(userId, 10)) {
+          UserController.generatePreSignedUrl([userPayload]);
+        }
+
+        if (file?.key && userExists?.avatar) {
+          const avatarKeyObj = [{ Key: userExists.avatar }];
+          cleanUnusedImages(avatarKeyObj);
+        }
         return SuccessResponse(res, userPayload);
       }
       BadRequestError(`User does not exists`, STATUS_CODES.NOTFOUND);
@@ -268,12 +290,23 @@ class UserController {
       if (ids.length < 1) {
         BadRequestError(`User ids required`, STATUS_CODES.INVALID_INPUT);
       }
+      const query = {
+        where: {
+          id: ids,
+        },
+      };
+      const users = await User.findAll(query);
+
       const user = await User.destroy({
         where: {
           id: ids,
         },
         force: true,
       });
+      const userKeyobjects = users?.map((userInfo) => ({ Key: userInfo.avatar }));
+      if (userKeyobjects.length > 0) {
+        cleanUnusedImages(userKeyobjects);
+      }
       return SuccessResponse(res, { count: user });
     } catch (e) {
       next(e);

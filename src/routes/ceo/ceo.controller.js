@@ -2,7 +2,13 @@ import express from 'express';
 import Joi from 'joi';
 import models from '../../models';
 import { listQuery } from './query';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import uploadFile from '../../middlewares/upload';
 import { STATUS_CODES } from '../../utils/constants';
 
@@ -20,7 +26,10 @@ class CeoController {
   static async list(req, res, next) {
     try {
       const query = listQuery();
-      const { data } = await Content.findOne(query);
+      const { data = {} } = await Content.findOne(query);
+      if (data.avatar) {
+        data.avatar = generatePreSignedUrlForGetObject(data.avatar);
+      }
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
@@ -48,10 +57,14 @@ class CeoController {
 
       const data = {
         content: ceoPagePayload.content,
-        avatar: file.filename ? file.filename : existingContent.avatar,
+        avatar: file.key ? file.key : existingContent.avatar,
       };
 
       await Content.update({ data }, query);
+      if (file.key && existingContent.avatar) {
+        const avatarKeyObj = [{ Key: existingContent.avatar }];
+        cleanUnusedImages(avatarKeyObj);
+      }
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
