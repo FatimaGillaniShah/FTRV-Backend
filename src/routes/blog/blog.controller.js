@@ -1,12 +1,14 @@
 import Joi from 'joi';
 import express from 'express';
-import models from '../../models';
+import models from '../../models/index';
 
 import {
   stripHtmlTags,
   BadRequestError,
   getErrorMessages,
   SuccessResponse,
+  generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
 } from '../../utils/helper';
 import { blogCreateSchema, blogUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
@@ -29,6 +31,15 @@ class BlogController {
     return this.router;
   }
 
+  static generatePreSignedUrl(blogs) {
+    blogs?.forEach((blog) => {
+      if (blog.thumbnail) {
+        // eslint-disable-next-line no-param-reassign
+        blog.thumbnail = generatePreSignedUrlForGetObject(blog.thumbnail);
+      }
+    });
+  }
+
   static async list(req, res, next) {
     const {
       query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
@@ -41,6 +52,7 @@ class BlogController {
         pageSize,
       });
       const blogs = await Blog.findAndCountAll(query);
+      BlogController.generatePreSignedUrl(blogs.rows);
       return SuccessResponse(res, blogs);
     } catch (e) {
       next(e);
@@ -56,7 +68,7 @@ class BlogController {
       }
 
       blogPayload.userId = user.id;
-      blogPayload.thumbnail = file.filename;
+      blogPayload.thumbnail = file.key;
       blogPayload.shortText = stripHtmlTags(blogPayload.content).substring(0, 200);
       const blog = await Blog.create(blogPayload);
       const blogResponse = blog.toJSON();
@@ -81,6 +93,7 @@ class BlogController {
         },
         include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName'] }],
       });
+      BlogController.generatePreSignedUrl([blog]);
       return SuccessResponse(res, blog);
     } catch (e) {
       next(e);
@@ -106,9 +119,14 @@ class BlogController {
 
       const blogExists = await Blog.findOne(query);
       if (blogExists) {
-        blogPayload.thumbnail = file.filename;
+        blogPayload.thumbnail = file.key;
         blogPayload.shortText = stripHtmlTags(blogPayload.content).substring(0, 200);
         const blog = await Blog.update(blogPayload, query);
+        if (file.key && blogExists.thumbnail) {
+          const avatarKeyObj = [{ Key: blogExists.thumbnail }];
+          cleanUnusedImages(avatarKeyObj);
+        }
+
         return SuccessResponse(res, blog);
       }
       BadRequestError(`Blog does not exists`, STATUS_CODES.NOTFOUND);
@@ -122,12 +140,18 @@ class BlogController {
       body: { id },
     } = req;
     try {
-      const blogs = await Blog.destroy({
+      const query = {
         where: {
           id,
         },
-      });
-      return SuccessResponse(res, { count: blogs });
+      };
+      const blogs = await Blog.findAll(query);
+      const blogKeyobjects = blogs?.map((blog) => ({ Key: blog.thumbnail }));
+      const blogsCount = await Blog.destroy(query);
+      if (blogKeyobjects.length > 0) {
+        cleanUnusedImages(blogKeyobjects);
+      }
+      return SuccessResponse(res, { count: blogsCount });
     } catch (e) {
       next(e);
     }

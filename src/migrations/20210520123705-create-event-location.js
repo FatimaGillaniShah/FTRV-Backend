@@ -1,6 +1,6 @@
 'use strict';
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface, { INTEGER, DATE }) => {
     await queryInterface.createTable({
       tableName: 'EventLocations',
       schema: process.env.SCHEMA_NAME
@@ -9,21 +9,33 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: INTEGER
       },
       locationId: {
-        type: Sequelize.INTEGER,
+        type: INTEGER,
+        references: {
+          model: 'Locations',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       eventId: {
-        type: Sequelize.INTEGER
+        type: INTEGER,
+        references: {
+          model: 'Events',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DATE
       }
     });
   },
