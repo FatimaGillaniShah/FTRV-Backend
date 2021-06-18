@@ -100,7 +100,12 @@ class EventsController {
         where: {
           id,
         },
-        include: { model: Location, as: 'locationIds', through: { attributes: [] } },
+        include: {
+          model: Location,
+          as: 'locationIds',
+          attributes: ['id', 'name'],
+          through: { attributes: [] },
+        },
       });
       return SuccessResponse(res, event);
     } catch (e) {
