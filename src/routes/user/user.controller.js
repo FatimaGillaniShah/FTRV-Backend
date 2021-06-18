@@ -295,6 +295,7 @@ class UserController {
           id: ids,
         },
       };
+      const users = await User.findAll(query);
 
       const user = await User.destroy({
         where: {
@@ -302,7 +303,6 @@ class UserController {
         },
         force: true,
       });
-      const users = await User.findAll(query);
       const userKeyobjects = users?.map((userInfo) => ({ Key: userInfo.avatar }));
       if (userKeyobjects.length > 0) {
         cleanUnusedImages(userKeyobjects);
