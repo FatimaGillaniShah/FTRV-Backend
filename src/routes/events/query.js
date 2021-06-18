@@ -12,6 +12,8 @@ export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize, rol
         include: {
           model: Event,
           as: 'eventIds',
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          through: { attributes: [] },
         },
       },
     };
