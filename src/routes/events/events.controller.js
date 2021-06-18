@@ -37,7 +37,7 @@ class EventsController {
         pageSize,
         role,
       });
-      if (role === 'admin') {
+      if (role !== 'admin') {
         events = await User.findOne(query);
         events = pick(events.locationIds, ['eventIds']);
       } else {
