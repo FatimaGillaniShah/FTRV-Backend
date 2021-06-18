@@ -7,8 +7,11 @@ export default (sequelize, { INTEGER, STRING }) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate() {
-      // define association here
+    static associate({ User }) {
+      this.hasMany(User, {
+        as: 'users',
+        foreignKey: 'departmentId',
+      });
     }
   }
   Department.init(

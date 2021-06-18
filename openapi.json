@@ -105,9 +105,9 @@
             "type": "string"
           },
           {
-            "name": "department",
+            "name": "departmentId",
             "in": "query",
-            "type": "string"
+            "type": "number"
           },
           {
             "name": "title",
@@ -120,9 +120,9 @@
             "type": "string"
           },
           {
-            "name": "location",
+            "name": "locationId",
             "in": "query",
-            "type": "string"
+            "type": "number"
           }
         ],
         "responses": {
@@ -2319,10 +2319,10 @@
           "title": {
             "type": "string"
           },
-          "location": {
+          "locationId": {
             "type": "string"
           },
-          "department": {
+          "departmentId": {
             "type": "string"
           },
           "joiningDate": {
@@ -2340,6 +2340,44 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "department": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
           }
         }
       },
@@ -2518,11 +2556,11 @@
                 "title": {
                   "type": "string"
                 },
-                "location": {
-                  "type": "string"
+                "locationId": {
+                  "type": "number"
                 },
-                "department": {
-                  "type": "string"
+                "departmentId": {
+                  "type": "number"
                 },
                 "file": {
                   "type": "string",

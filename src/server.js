@@ -1,7 +1,6 @@
 import debugObj from 'debug';
 import http from 'http';
 import app from './app';
-import models from './models';
 
 const debug = debugObj('api:server');
 const port = normalizePort(process.env.PORT || '3000');
@@ -10,7 +9,6 @@ const server = http.createServer(app);
 init();
 
 async function init() {
-  await models.sequelize.sync();
   // eslint-disable-next-line no-console
   server.listen(port, address, () => console.log(`Server running on http://${address}:${port}`));
   server.on('error', onError);

@@ -76,6 +76,16 @@
         "resource": "/bannerImage",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/locations",
+        "methods": ["GET"],
+        "action": "allow"
+      },
+      {
+        "resource": "/departments",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }

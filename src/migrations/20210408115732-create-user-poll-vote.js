@@ -1,6 +1,6 @@
 'use strict';
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface, { INTEGER, DATE }) => {
     await queryInterface.createTable({
       tableName: 'UserPollVotes',
       schema: process.env.SCHEMA_NAME
@@ -9,24 +9,45 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: INTEGER
       },
       userId: {
-        type: Sequelize.INTEGER
+        type: INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       pollId: {
-        type: Sequelize.INTEGER
+        type: INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Polls',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       pollOptionId: {
-        type: Sequelize.INTEGER
+        type: INTEGER,
+        allowNull: false,
+        references: {
+          model: 'PollOptions',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DATE
       }
     });
   },

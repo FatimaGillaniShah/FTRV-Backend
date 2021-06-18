@@ -2,12 +2,20 @@ import { Model } from 'sequelize';
 
 export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
   class User extends Model {
-    static associate({ Department, Location }) {
+    static associate({ Department, Location, Blog, UserPollVote }) {
       this.belongsTo(Location, {
         foreignKey: 'locationId',
+        as: 'location',
       });
       this.belongsTo(Department, {
         foreignKey: 'departmentId',
+        as: 'department',
+      });
+      this.hasMany(Blog, {
+        foreignKey: 'userId',
+      });
+      this.hasMany(UserPollVote, {
+        foreignKey: 'userId',
       });
     }
   }
@@ -49,14 +57,6 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
         allowNull: true,
       },
       title: {
-        type: STRING,
-        allowNull: true,
-      },
-      location: {
-        type: STRING,
-        allowNull: true,
-      },
-      department: {
         type: STRING,
         allowNull: true,
       },
