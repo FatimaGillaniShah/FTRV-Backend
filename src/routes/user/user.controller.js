@@ -15,6 +15,7 @@ import { birthdayQuery, getUserByIdQuery, listQuery } from './query';
 
 import {
   BadRequestError,
+  cleanUnusedImages,
   generateHash,
   generateJWT,
   generatePreSignedUrlForGetObject,
@@ -268,6 +269,11 @@ class UserController {
         if (id === parseInt(userId, 10)) {
           UserController.generatePreSignedUrl([userPayload]);
         }
+
+        if (file?.key && userExists?.avatar) {
+          const avatarKeyObj = [{ Key: userExists.avatar }];
+          cleanUnusedImages(avatarKeyObj);
+        }
         return SuccessResponse(res, userPayload);
       }
       BadRequestError(`User does not exists`, STATUS_CODES.NOTFOUND);
@@ -284,12 +290,23 @@ class UserController {
       if (ids.length < 1) {
         BadRequestError(`User ids required`, STATUS_CODES.INVALID_INPUT);
       }
+      const query = {
+        where: {
+          id: ids,
+        },
+      };
+      const users = await User.findAll(query);
+
       const user = await User.destroy({
         where: {
           id: ids,
         },
         force: true,
       });
+      const userKeyobjects = users?.map((userInfo) => ({ Key: userInfo.avatar }));
+      if (userKeyobjects.length > 0) {
+        cleanUnusedImages(userKeyobjects);
+      }
       return SuccessResponse(res, { count: user });
     } catch (e) {
       next(e);

@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import express from 'express';
-import models from '../../models';
+import models from '../../models/index';
 
 import {
   stripHtmlTags,
@@ -8,6 +8,7 @@ import {
   getErrorMessages,
   SuccessResponse,
   generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
 } from '../../utils/helper';
 import { blogCreateSchema, blogUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
@@ -121,6 +122,11 @@ class BlogController {
         blogPayload.thumbnail = file.key;
         blogPayload.shortText = stripHtmlTags(blogPayload.content).substring(0, 200);
         const blog = await Blog.update(blogPayload, query);
+        if (file.key && blogExists.thumbnail) {
+          const avatarKeyObj = [{ Key: blogExists.thumbnail }];
+          cleanUnusedImages(avatarKeyObj);
+        }
+
         return SuccessResponse(res, blog);
       }
       BadRequestError(`Blog does not exists`, STATUS_CODES.NOTFOUND);
@@ -134,12 +140,18 @@ class BlogController {
       body: { id },
     } = req;
     try {
-      const blogs = await Blog.destroy({
+      const query = {
         where: {
           id,
         },
-      });
-      return SuccessResponse(res, { count: blogs });
+      };
+      const blogs = await Blog.findAll(query);
+      const blogKeyobjects = blogs?.map((blog) => ({ Key: blog.thumbnail }));
+      const blogsCount = await Blog.destroy(query);
+      if (blogKeyobjects.length > 0) {
+        cleanUnusedImages(blogKeyobjects);
+      }
+      return SuccessResponse(res, { count: blogsCount });
     } catch (e) {
       next(e);
     }

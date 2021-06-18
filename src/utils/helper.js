@@ -76,6 +76,14 @@ const SuccessResponse = (res, data) => {
 
 const stripHtmlTags = (htmlString) => htmlString.replace(/(<([^>]+)>)/gi, '');
 
+const cleanUnusedImages = async (objects) => {
+  const params = {
+    Bucket: AWS_CONFIG.BUCKET,
+    Delete: { Objects: objects },
+  };
+  await s3.deleteObjects(params).promise();
+};
+
 const generatePreSignedUrlForGetObject = (key) =>
   s3.getSignedUrl('getObject', {
     Bucket: AWS_CONFIG.BUCKET,
@@ -94,4 +102,5 @@ export {
   NotFoundError,
   SuccessResponse,
   generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
 };

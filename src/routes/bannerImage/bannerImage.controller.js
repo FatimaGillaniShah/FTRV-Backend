@@ -5,6 +5,7 @@ import uploadFile from '../../middlewares/upload';
 import {
   BadRequestError,
   generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
   SuccessResponse,
 } from '../../utils/helper';
 import { STATUS_CODES } from '../../utils/constants';
@@ -39,7 +40,8 @@ class BannerImageController {
       if (!file) {
         BadRequestError('File required', STATUS_CODES.INVALID_INPUT);
       }
-      const query = {
+      const query = listQuery();
+      const updateQuery = {
         where: {
           name: 'HOME-BANNER-IMAGE',
         },
@@ -47,7 +49,18 @@ class BannerImageController {
       const data = {
         fileName: file.key,
       };
-      await Content.update({ data }, query);
+
+      const {
+        data: { fileName },
+      } = await Content.findOne(query);
+
+      await Content.update({ data }, updateQuery);
+
+      if (fileName && file.key) {
+        const fileKeyObj = [{ Key: fileName }];
+        cleanUnusedImages(fileKeyObj);
+      }
+
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);

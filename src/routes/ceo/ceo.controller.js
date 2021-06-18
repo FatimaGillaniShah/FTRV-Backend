@@ -5,6 +5,7 @@ import { listQuery } from './query';
 import {
   BadRequestError,
   generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
   getErrorMessages,
   SuccessResponse,
 } from '../../utils/helper';
@@ -60,6 +61,10 @@ class CeoController {
       };
 
       await Content.update({ data }, query);
+      if (file.key && existingContent.avatar) {
+        const avatarKeyObj = [{ Key: existingContent.avatar }];
+        cleanUnusedImages(avatarKeyObj);
+      }
       return SuccessResponse(res, data);
     } catch (e) {
       next(e);
