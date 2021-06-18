@@ -5,7 +5,7 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
     static associate({ Department, Location, Blog, UserPollVote }) {
       this.belongsTo(Location, {
         foreignKey: 'locationId',
-        as: 'locationIds',
+        as: 'location',
       });
       this.belongsTo(Department, {
         foreignKey: 'departmentId',
