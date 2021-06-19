@@ -5,7 +5,7 @@ import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
-import { STATUS_CODES } from '../../utils/constants';
+import { ROLES, STATUS_CODES } from '../../utils/constants';
 
 const { Event, EventLocation, Location, User } = models;
 class EventsController {
@@ -27,7 +27,7 @@ class EventsController {
       user,
       query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
     } = req;
-    const { role } = user;
+    const { id, role } = user;
     try {
       let events;
       const query = listQuery({
@@ -36,12 +36,14 @@ class EventsController {
         pageNumber,
         pageSize,
         role,
+        id,
       });
-      if (role !== 'admin') {
-        events = await User.findOne(query);
-        events = pick(events.locationIds, ['eventIds']);
-      } else {
-        events = await Event.findAndCountAll(query);
+      if (role === ROLES.ADMIN) {
+        events = await Event.findAndCountAll();
+      } else if (role === ROLES.USER) {
+        const UserObj = await User.findOne(query);
+        const data = pick(UserObj.location, ['eventIds']);
+        events = { rows: data.eventIds };
       }
       return SuccessResponse(res, events);
     } catch (e) {

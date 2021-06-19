@@ -14,3 +14,8 @@ export const AWS_CONFIG = {
   CEO_PAGE: [process.env.FOLDER_ALIAS, 'ceo-page'].join('-'),
   BANNER_IMAGE: [process.env.FOLDER_ALIAS, 'banner-image'].join('-'),
 };
+
+export const ROLES = {
+  ADMIN: 'admin',
+  USER: 'user',
+};
