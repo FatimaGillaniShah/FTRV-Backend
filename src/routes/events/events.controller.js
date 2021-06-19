@@ -41,9 +41,11 @@ class EventsController {
       if (role === ROLES.ADMIN) {
         events = await Event.findAndCountAll();
       } else if (role === ROLES.USER) {
-        const UserObj = await User.findOne(query);
-        const data = pick(UserObj.location, ['eventIds']);
-        events = { rows: data.eventIds };
+        const userObj = await User.findOne(query);
+        const data = pick(userObj.location, ['eventIds']);
+        events = {
+          rows: data.eventIds,
+        };
       }
       return SuccessResponse(res, events);
     } catch (e) {
