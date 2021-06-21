@@ -2293,7 +2293,6 @@
       },
       "User": {
         "type": "object",
-
         "properties": {
           "id": {
             "type": "number"
@@ -2428,12 +2427,6 @@
           "endDate": {
             "type": "string",
             "format": "date-time"
-          },
-          "locationIds": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
           }
         }
       },
