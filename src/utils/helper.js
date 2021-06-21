@@ -1,7 +1,14 @@
 import crypto from 'crypto';
-
 import jwt from 'jsonwebtoken';
+import AWS from 'aws-sdk';
+import { AWS_CONFIG } from './constants';
+
 import { BadRequest, NotFound } from '../error';
+
+const s3 = new AWS.S3({
+  accessKeyId: AWS_CONFIG.AWS_ACCESS_KEY,
+  secretAccessKey: AWS_CONFIG.AWS_SECRET_KEY,
+});
 
 /**
  * Validates that the provided password matches the hashed counterpart
@@ -69,6 +76,21 @@ const SuccessResponse = (res, data) => {
 
 const stripHtmlTags = (htmlString) => htmlString.replace(/(<([^>]+)>)/gi, '');
 
+const cleanUnusedImages = async (objects) => {
+  const params = {
+    Bucket: AWS_CONFIG.BUCKET,
+    Delete: { Objects: objects },
+  };
+  await s3.deleteObjects(params).promise();
+};
+
+const generatePreSignedUrlForGetObject = (key) =>
+  s3.getSignedUrl('getObject', {
+    Bucket: AWS_CONFIG.BUCKET,
+    Key: key,
+    Expires: 60 * 60 * 24, // 1 day expiry
+  });
+
 export {
   stripHtmlTags,
   generateHash,
@@ -79,4 +101,6 @@ export {
   BadRequestError,
   NotFoundError,
   SuccessResponse,
+  generatePreSignedUrlForGetObject,
+  cleanUnusedImages,
 };

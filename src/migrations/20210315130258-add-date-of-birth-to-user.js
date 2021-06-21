@@ -1,7 +1,7 @@
 'use strict';
 const tableName = 'Users';
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface, { DATEONLY }) => {
   return queryInterface.describeTable({
       tableName,
       schema: process.env.SCHEMA_NAME,
@@ -14,7 +14,7 @@ module.exports = {
               schema: process.env.SCHEMA_NAME,
               },
               'dob',
-              Sequelize.DATEONLY
+              DATEONLY
           );
       });
   },

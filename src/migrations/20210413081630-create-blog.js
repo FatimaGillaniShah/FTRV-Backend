@@ -18,7 +18,14 @@ module.exports = {
         type: TEXT
       },
       userId: {
-        type: INTEGER
+        type: INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       shortText: {
         type: STRING

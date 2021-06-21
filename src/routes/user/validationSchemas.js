@@ -13,9 +13,9 @@ export const userSignUpSchema = Joi.object()
     lastName: Joi.string().min(2).max(100).required(),
     contactNo: Joi.string().alphanum(),
     extension: Joi.string(),
-    location: Joi.string().required(),
+    locationId: Joi.number().required(),
     title: Joi.string().required(),
-    department: Joi.string().required(),
+    departmentId: Joi.number().required(),
     joiningDate: Joi.date(),
     dob: Joi.date(),
   })
@@ -28,9 +28,9 @@ export const userUpdateSchema = Joi.object()
     lastName: Joi.string().min(2).max(100),
     contactNo: Joi.string().alphanum(),
     extension: Joi.string(),
-    location: Joi.string(),
+    locationId: Joi.number(),
     title: Joi.string(),
-    department: Joi.string(),
+    departmentId: Joi.number(),
     joiningDate: Joi.date(),
     dob: Joi.date(),
   })
