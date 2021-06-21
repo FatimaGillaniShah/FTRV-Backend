@@ -1,13 +1,13 @@
 import Joi from 'joi';
 import express from 'express';
+import { omit, pick } from 'lodash';
 import models from '../../models';
-
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
-import { STATUS_CODES } from '../../utils/constants';
+import { ROLES, STATUS_CODES } from '../../utils/constants';
 
-const { Event } = models;
+const { Event, EventLocation, Location, User } = models;
 class EventsController {
   static router;
 
@@ -24,16 +24,29 @@ class EventsController {
 
   static async list(req, res, next) {
     const {
+      user,
       query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
     } = req;
+    const { id, role } = user;
     try {
+      let events;
       const query = listQuery({
         sortColumn,
         sortOrder,
         pageNumber,
         pageSize,
+        role,
+        id,
       });
-      const events = await Event.findAndCountAll(query);
+      if (role === ROLES.ADMIN) {
+        events = await Event.findAndCountAll();
+      } else if (role === ROLES.USER) {
+        const userObj = await User.findOne(query);
+        const data = pick(userObj.location, ['eventIds']);
+        events = {
+          rows: data.eventIds,
+        };
+      }
       return SuccessResponse(res, events);
     } catch (e) {
       next(e);
@@ -47,9 +60,13 @@ class EventsController {
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
-
-      const event = await Event.create(eventPayload);
+      const event = await Event.create(omit(eventPayload, ['locationIds']));
       const eventResponse = event.toJSON();
+      const eventLocationPromises = EventsController.getEventLocationData(
+        eventResponse.id,
+        eventPayload.locationIds
+      );
+      await Promise.all(eventLocationPromises);
       return SuccessResponse(res, eventResponse);
     } catch (e) {
       next(e);
@@ -79,7 +96,6 @@ class EventsController {
     const {
       params: { id },
     } = req;
-
     try {
       if (!id) {
         BadRequestError(`Event id is required`, STATUS_CODES.INVALID_INPUT);
@@ -88,8 +104,11 @@ class EventsController {
         where: {
           id,
         },
-        attributes: {
-          exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+        include: {
+          model: Location,
+          as: 'locationIds',
+          attributes: ['id', 'name'],
+          through: { attributes: [] },
         },
       });
       return SuccessResponse(res, event);
@@ -113,16 +132,35 @@ class EventsController {
           id: eventId,
         },
       };
-
       const eventExists = await Event.findOne(query);
       if (eventExists) {
-        const event = await Event.update(eventPayload, query);
+        const event = await Event.update(omit(eventPayload, ['locationIds']), query);
+        await EventLocation.destroy({
+          where: {
+            eventId,
+          },
+        });
+        const eventLocationPromises = EventsController.getEventLocationData(
+          eventId,
+          eventPayload.locationIds
+        );
+        await Promise.all(eventLocationPromises);
         return SuccessResponse(res, event);
       }
       BadRequestError(`Event does not exists`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }
+  }
+
+  static getEventLocationData(eventId, locationIds) {
+    return locationIds.map((locationId) => {
+      const eventLocationCreateParams = {
+        eventId,
+        locationId,
+      };
+      return EventLocation.create(eventLocationCreateParams);
+    });
   }
 }
 

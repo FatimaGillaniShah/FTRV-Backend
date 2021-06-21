@@ -56,6 +56,14 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
         type: STRING,
         allowNull: true,
       },
+      locationId: {
+        type: INTEGER,
+        allowNull: false,
+      },
+      departmentId: {
+        type: INTEGER,
+        allowNull: false,
+      },
       title: {
         type: STRING,
         allowNull: true,
