@@ -2427,12 +2427,6 @@
           "endDate": {
             "type": "string",
             "format": "date-time"
-          },
-          "locationIds": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
           }
         }
       },

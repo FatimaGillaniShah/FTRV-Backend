@@ -1,13 +1,13 @@
 import Joi from 'joi';
 import express from 'express';
-import { omit } from 'lodash';
+import { omit, pick } from 'lodash';
 import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
-import { STATUS_CODES } from '../../utils/constants';
+import { ROLES, STATUS_CODES } from '../../utils/constants';
 
-const { Event, EventLocation, Location } = models;
+const { Event, EventLocation, Location, User } = models;
 class EventsController {
   static router;
 
@@ -24,17 +24,29 @@ class EventsController {
 
   static async list(req, res, next) {
     const {
+      user,
       query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
     } = req;
+    const { id, role } = user;
     try {
+      let events;
       const query = listQuery({
         sortColumn,
         sortOrder,
         pageNumber,
         pageSize,
+        role,
+        id,
       });
-
-      const events = await Event.findAndCountAll(query);
+      if (role === ROLES.ADMIN) {
+        events = await Event.findAndCountAll();
+      } else if (role === ROLES.USER) {
+        const userObj = await User.findOne(query);
+        const data = pick(userObj.location, ['eventIds']);
+        events = {
+          rows: data.eventIds,
+        };
+      }
       return SuccessResponse(res, events);
     } catch (e) {
       next(e);
