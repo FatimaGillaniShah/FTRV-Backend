@@ -58,11 +58,11 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       },
       locationId: {
         type: INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       departmentId: {
         type: INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       title: {
         type: STRING,
