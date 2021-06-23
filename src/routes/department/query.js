@@ -10,6 +10,6 @@ export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) =
   if (sortColumn && sortOrder) {
     query.order = [[sortColumn, sortOrder]];
   }
-
+  query.order = [['name', 'asc']];
   return query;
 };

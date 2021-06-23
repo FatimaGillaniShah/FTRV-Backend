@@ -118,7 +118,11 @@ export const listQuery = ({
   }
 
   // for sorting
-  if (sortColumn && sortOrder) {
+  if (sortColumn === 'location.name') {
+    query.order = [[{ model: Location, as: 'location' }, 'name', sortOrder]];
+  } else if (sortColumn === 'department.name') {
+    query.order = [[{ model: Department, as: 'department' }, 'name', sortOrder]];
+  } else if (sortColumn && sortOrder) {
     query.order = [[sortColumn, sortOrder]];
   }
 
