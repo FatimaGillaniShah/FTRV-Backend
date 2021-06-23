@@ -3,6 +3,8 @@ import passport from 'passport';
 import path from 'path';
 import xlsx from 'node-xlsx';
 import debugObj from 'debug';
+import moment from 'moment';
+import _ from 'lodash';
 import fs from 'fs';
 import { promisify } from 'util';
 import express from 'express';
@@ -47,7 +49,7 @@ class UserController {
   }
 
   static generatePreSignedUrl(users) {
-    users?.forEach((user) => {
+    users.forEach((user) => {
       if (user.avatar) {
         // eslint-disable-next-line no-param-reassign
         user.avatar = generatePreSignedUrlForGetObject(user.avatar);
@@ -270,7 +272,7 @@ class UserController {
           UserController.generatePreSignedUrl([userPayload]);
         }
 
-        if (file?.key && userExists?.avatar) {
+        if (file.key && userExists.avatar) {
           const avatarKeyObj = [{ Key: userExists.avatar }];
           cleanUnusedImages(avatarKeyObj);
         }
@@ -303,7 +305,10 @@ class UserController {
         },
         force: true,
       });
-      const userKeyobjects = users?.map((userInfo) => ({ Key: userInfo.avatar }));
+      const userKeyobjects = _.chain(users)
+        .filter((userInfo) => !!userInfo.avatar)
+        .map((userInfo) => ({ Key: userInfo.avatar }))
+        .value();
       if (userKeyobjects.length > 0) {
         cleanUnusedImages(userKeyobjects);
       }
@@ -392,6 +397,8 @@ class UserController {
       extIndex: headerRow.indexOf('Extension'),
       cellNoIndex: headerRow.indexOf('CellPhone'),
       emailIndex: headerRow.indexOf('Email'),
+      dobIndex: headerRow.indexOf('DOB'),
+      joiningDateIndex: headerRow.indexOf('JoiningDate'),
     };
   }
 
@@ -413,6 +420,12 @@ class UserController {
       title: row[attributeIndexes.titleIndex],
       department: row[attributeIndexes.deptIndex],
       location: row[attributeIndexes.locIndex],
+      dob: row[attributeIndexes.dobIndex]
+        ? moment(row[attributeIndexes.dobIndex], 'MM-DD-YYYY')
+        : null,
+      joiningDate: row[attributeIndexes.joiningDateIndex]
+        ? moment(row[attributeIndexes.joiningDateIndex], 'MM-DD-YYYY')
+        : null,
     };
   }
 
