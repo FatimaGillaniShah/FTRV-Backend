@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import express from 'express';
+import _ from 'lodash';
 import models from '../../models/index';
 
 import {
@@ -32,7 +33,7 @@ class BlogController {
   }
 
   static generatePreSignedUrl(blogs) {
-    blogs?.forEach((blog) => {
+    blogs.forEach((blog) => {
       if (blog.thumbnail) {
         // eslint-disable-next-line no-param-reassign
         blog.thumbnail = generatePreSignedUrlForGetObject(blog.thumbnail);
@@ -146,7 +147,10 @@ class BlogController {
         },
       };
       const blogs = await Blog.findAll(query);
-      const blogKeyobjects = blogs?.map((blog) => ({ Key: blog.thumbnail }));
+      const blogKeyobjects = _.chain(blogs)
+        .filter((blog) => !!blog.thumbnail)
+        .map((blog) => ({ Key: blog.thumbnail }))
+        .value();
       const blogsCount = await Blog.destroy(query);
       if (blogKeyobjects.length > 0) {
         cleanUnusedImages(blogKeyobjects);
