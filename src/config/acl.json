@@ -86,6 +86,11 @@
         "resource": "/departments",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "users/workAnniversary",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
