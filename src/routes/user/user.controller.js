@@ -13,7 +13,7 @@ import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, STATUS_CODES, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
-import { birthdayQuery, getUserByIdQuery, listQuery } from './query';
+import { birthdayQuery, anniversaryQuery, getUserByIdQuery, listQuery } from './query';
 
 import {
   BadRequestError,
@@ -38,6 +38,7 @@ class UserController {
     this.router.get('/', this.list);
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.get('/birthday', this.birthdays);
+    this.router.get('/workAnniversary', this.workAnniversaries);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.get('/:id', this.getUserById);
     this.router.post('/login', this.login);
@@ -62,6 +63,19 @@ class UserController {
 
     try {
       const query = birthdayQuery(date);
+      const data = await User.findAll(query);
+      UserController.generatePreSignedUrl(data);
+      return SuccessResponse(res, data);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async workAnniversaries(req, res, next) {
+    const { date = new Date() } = req.query;
+
+    try {
+      const query = anniversaryQuery(date);
       const data = await User.findAll(query);
       UserController.generatePreSignedUrl(data);
       return SuccessResponse(res, data);

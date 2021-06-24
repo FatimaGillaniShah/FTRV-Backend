@@ -35,6 +35,42 @@ export const birthdayQuery = (date) => {
   return query;
 };
 
+export const anniversaryQuery = (date) => {
+  const query = {
+    where: {
+      [Op.and]: [
+        sequelize.where(
+          fn('date_part', 'day', sequelize.col('joiningDate')),
+          fn('date_part', 'day', cast(date, 'date'))
+        ),
+        sequelize.where(
+          fn('date_part', 'month', sequelize.col('joiningDate')),
+          fn('date_part', 'month', cast(date, 'date'))
+        ),
+        // only get those users which have spent at least 1 year with organization
+        sequelize.where(
+          fn('date_part', 'year', fn('AGE', cast(date, 'date'), sequelize.col('joiningDate'))),
+          {
+            [Op.gt]: 0,
+          }
+        ),
+      ],
+    },
+  };
+  query.attributes = [
+    'id',
+    'firstName',
+    'lastName',
+    'joiningDate',
+    'avatar',
+    'fullName',
+    [fn('date_part', 'year', fn('AGE', cast(date, 'date'), sequelize.col('joiningDate'))), 'years'],
+  ];
+  query.group = ['id'];
+
+  return query;
+};
+
 export const listQuery = ({
   status,
   searchString,
