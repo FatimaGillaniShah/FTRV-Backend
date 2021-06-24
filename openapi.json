@@ -472,17 +472,9 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "count": {
-                      "type": "number"
-                    },
-                    "rows": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/User"
-                      }
-                    }
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkAnniversary"
                   }
                 }
               }
@@ -2554,6 +2546,33 @@
           },
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "WorkAnniversary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "joiningDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "years": {
+            "type": "number"
           }
         }
       }
