@@ -1,24 +1,20 @@
 const { Model } = require('sequelize');
 
 export default (sequelize, { INTEGER, STRING }) => {
-  class Department extends Model {
+  class Document extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Document }) {
-      this.hasMany(User, {
-        as: 'users',
+    static associate({ Department }) {
+      this.belongsTo(Department, {
         foreignKey: 'departmentId',
-      });
-      this.hasMany(Document, {
-        as: 'documents',
-        foreignKey: 'departmentId',
+        as: 'department',
       });
     }
   }
-  Department.init(
+  Document.init(
     {
       id: {
         allowNull: false,
@@ -27,11 +23,18 @@ export default (sequelize, { INTEGER, STRING }) => {
         autoIncrement: true,
       },
       name: STRING,
+      description: STRING,
+      url: STRING,
+      departmentId: {
+        type: INTEGER,
+        allowNull: false,
+      },
     },
     {
       sequelize,
-      modelName: 'Department',
+      modelName: 'Document',
+      timestamps: true,
     }
   );
-  return Department;
+  return Document;
 };
