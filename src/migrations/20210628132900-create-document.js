@@ -2,7 +2,7 @@
 module.exports = {
   up: async (queryInterface, { INTEGER, STRING, DATE }) => {
     await queryInterface.createTable({
-      tableName: 'Users',
+      tableName: 'Documents',
       schema: process.env.SCHEMA_NAME,
     },
     {
