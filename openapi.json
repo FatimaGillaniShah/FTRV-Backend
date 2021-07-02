@@ -2314,6 +2314,97 @@
           }
         }
       }
+    },
+    "/documents/{id}": {
+      "get": {
+        "summary": "Retrieve document by id",
+        "tags": ["Document"],
+        "operationId": "getDocumentById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Document",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of Document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Document"],
+        "summary": "An endpoint to update a document",
+        "operationId": "updateDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of document",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Document"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
