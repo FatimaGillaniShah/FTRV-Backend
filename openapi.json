@@ -2279,6 +2279,41 @@
           }
         }
       }
+    },
+    "/documents": {
+      "post": {
+        "summary": "An endpoint to create a document",
+        "tags": ["Document"],
+        "operationId": "createDocument",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Document"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2575,6 +2610,26 @@
             "type": "number"
           }
         }
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "number"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -2831,6 +2886,32 @@
           }
         },
         "required": true
+      },
+      "Document": {
+        "description": "Information about the Document of FTRV",
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "file": {
+                  "type": "string",
+                  "format": "binary"
+                },
+                "departmentId": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "required": true
       }
     },
     "responses": {
@@ -2873,6 +2954,17 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/BannerImage"
+            }
+          }
+        },
+        "required": true
+      },
+      "document": {
+        "description": "Information about the document of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Document"
             }
           }
         },

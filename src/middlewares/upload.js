@@ -52,6 +52,8 @@ const storageS3 = multerS3({
       key = `${AWS_CONFIG.PROFILE_PICTURE}/${fileSuffix}`;
     } else if (req.originalUrl.indexOf('blogs') > -1) {
       key = `${AWS_CONFIG.BLOG_THUMBNAIL}/${fileSuffix}`;
+    } else if (req.originalUrl.indexOf('documents') > -1) {
+      key = `${AWS_CONFIG.DOCUMENT_FILE}/${fileSuffix}`;
     }
     if (!key) {
       return cb('No matching configuration found');
