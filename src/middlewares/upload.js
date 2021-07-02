@@ -25,6 +25,15 @@ const imageFilter = (req, file, cb) => {
   }
 };
 
+const documentFilter = (req, file, cb) => {
+  const notAllowedMimetype = ['application/x-msdos-program'];
+  if (!file.mimetype.includes(notAllowedMimetype)) {
+    cb(null, true);
+  } else {
+    cb({ message: '.exe file is not allowed' }, false);
+  }
+};
+
 const storageDisk = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(path.dirname(require.main.filename), UPLOAD_PATH));
@@ -62,8 +71,18 @@ const storageS3 = multerS3({
   },
 });
 
+const filter = (fileType) => {
+  const filterType = {
+    excel: excelFilter,
+    image: imageFilter,
+    document: documentFilter,
+  };
+  const filterMethod = filterType[fileType];
+  return filterMethod;
+};
+
 export default function (fileType) {
-  const fileFilter = fileType === 'excel' ? excelFilter : imageFilter;
+  const fileFilter = filter(fileType);
   return multer({
     storage: fileType === 'excel' ? storageDisk : storageS3,
     fileFilter,

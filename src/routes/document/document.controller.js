@@ -12,7 +12,7 @@ class DocumentController {
 
   static getRouter() {
     this.router = express.Router();
-    this.router.post('/', uploadFile('image').single('file'), this.createDocument);
+    this.router.post('/', uploadFile('document').single('file'), this.createDocument);
 
     return this.router;
   }
