@@ -1,5 +1,6 @@
 import express from 'express';
 import Joi from 'joi';
+import { chain } from 'lodash';
 import models from '../../models';
 import {
   BadRequestError,
@@ -21,6 +22,7 @@ class DocumentController {
     this.router.post('/', uploadFile('document').single('file'), this.createDocument);
     this.router.put('/:id', uploadFile('document').single('file'), this.updateDocument);
     this.router.get('/:id', this.getDocumentById);
+    this.router.delete('/', this.deleteDocument);
 
     return this.router;
   }
@@ -87,6 +89,34 @@ class DocumentController {
       const query = getDocumentByIdQuery(documentId);
       const document = await Document.findOne(query);
       return SuccessResponse(res, document);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteDocument(req, res, next) {
+    const {
+      body: { ids: documentIds = [] },
+    } = req;
+    try {
+      if (documentIds.length < 1) {
+        BadRequestError(`Document id is required`, STATUS_CODES.INVALID_INPUT);
+      }
+      const query = {
+        where: {
+          id: documentIds,
+        },
+      };
+      const documents = await Document.findAll(query);
+      const documentKeyobjects = chain(documents)
+        .filter((document) => !!document.url)
+        .map((document) => ({ Key: document.url }))
+        .value();
+      const documentCount = await Document.destroy(query);
+      if (documentKeyobjects.length > 0) {
+        cleanUnusedImages(documentKeyobjects);
+      }
+      return SuccessResponse(res, { count: documentCount });
     } catch (e) {
       next(e);
     }
