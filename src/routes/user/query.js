@@ -1,7 +1,7 @@
 import sequelize from 'sequelize';
 import models from '../../models';
 
-const { Op, fn, cast } = sequelize;
+const { Op, fn, cast, col } = sequelize;
 const { Location, Department } = models;
 
 const makeLikeCondition = (columnName, searchValue) => {
@@ -112,12 +112,7 @@ export const listQuery = ({
   if (searchString) {
     const likeClause = { [Op.iLike]: `%${searchString}%` };
     query.where[Op.or] = [
-      {
-        firstName: likeClause,
-      },
-      {
-        lastName: likeClause,
-      },
+      sequelize.where(fn('concat', col('firstName'), ' ', col('lastName')), likeClause),
       {
         email: likeClause,
       },
@@ -130,9 +125,10 @@ export const listQuery = ({
     }
   } else {
     if (name) {
-      query.where[Op.or] = [
-        makeLikeCondition('firstName', name),
-        makeLikeCondition('lastName', name),
+      query.where[Op.and] = [
+        sequelize.where(fn('concat', col('firstName'), ' ', col('lastName')), {
+          [Op.iLike]: `%${name}%`,
+        }),
       ];
     }
     if (departmentId) {
