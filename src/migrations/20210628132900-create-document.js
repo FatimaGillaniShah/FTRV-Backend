@@ -31,6 +31,10 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'RESTRICT',
       },
+      sortOrder: {
+        allowNull: false,
+        type: INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: DATE
