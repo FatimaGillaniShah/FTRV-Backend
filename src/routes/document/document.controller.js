@@ -11,20 +11,43 @@ import {
 import { documentCreateSchema, documentUpdateSchema } from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
 import uploadFile from '../../middlewares/upload';
-import { getDocumentByIdQuery } from './query';
+import { getDocumentByIdQuery, listDocuments } from './query';
 
-const { Document } = models;
+const { Document, Department } = models;
 class DocumentController {
   static router;
 
   static getRouter() {
     this.router = express.Router();
+    this.router.get('/:id', this.list);
     this.router.post('/', uploadFile('document').single('file'), this.createDocument);
     this.router.put('/:id', uploadFile('document').single('file'), this.updateDocument);
     this.router.get('/:id', this.getDocumentById);
     this.router.delete('/', this.deleteDocument);
 
     return this.router;
+  }
+
+  static async list(req, res, next) {
+    const {
+      params: { id: departmentId },
+    } = req;
+
+    try {
+      if (!departmentId) {
+        BadRequestError(`Department id is required`, STATUS_CODES.INVALID_INPUT);
+      }
+      const query = listDocuments(departmentId);
+      let document = await Department.findAndCountAll(query);
+      const documentResponse = document.rows[0].documents;
+      document = {
+        ...document,
+        rows: documentResponse,
+      };
+      return SuccessResponse(res, document);
+    } catch (e) {
+      next(e);
+    }
   }
 
   static async createDocument(req, res, next) {
