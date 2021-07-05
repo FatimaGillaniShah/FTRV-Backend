@@ -29,6 +29,10 @@ export default (sequelize, { INTEGER, STRING }) => {
         type: INTEGER,
         allowNull: false,
       },
+      sortOrder: {
+        allowNull: false,
+        type: INTEGER,
+      },
     },
     {
       sequelize,
