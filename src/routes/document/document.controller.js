@@ -3,7 +3,7 @@ import Joi from 'joi';
 import models from '../../models';
 import {
   BadRequestError,
-  cleanUnusedImages,
+  cleanUnusedFiles,
   getErrorMessages,
   SuccessResponse,
 } from '../../utils/helper';
@@ -65,7 +65,7 @@ class DocumentController {
         const document = await Document.update(documentPayload, updateQuery);
         if (file.key && documentExist.url) {
           const urlKeyObj = [{ Key: documentExist.url }];
-          cleanUnusedImages(urlKeyObj);
+          cleanUnusedFiles(urlKeyObj);
         }
         return SuccessResponse(res, document);
       }

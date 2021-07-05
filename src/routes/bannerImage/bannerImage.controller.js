@@ -5,7 +5,7 @@ import uploadFile from '../../middlewares/upload';
 import {
   BadRequestError,
   generatePreSignedUrlForGetObject,
-  cleanUnusedImages,
+  cleanUnusedFiles,
   SuccessResponse,
 } from '../../utils/helper';
 import { STATUS_CODES } from '../../utils/constants';
@@ -58,7 +58,7 @@ class BannerImageController {
 
       if (fileName && file.key) {
         const fileKeyObj = [{ Key: fileName }];
-        cleanUnusedImages(fileKeyObj);
+        cleanUnusedFiles(fileKeyObj);
       }
 
       return SuccessResponse(res, data);
