@@ -2280,14 +2280,14 @@
         }
       }
     },
-    "/documents/{id}": {
+    "/documents/{departmentId}": {
       "get": {
         "summary": "Retrieve list of all documents",
         "tags": ["Document"],
         "operationId": "getDocumentsList",
         "parameters": [
           {
-            "name": "id",
+            "name": "departmentId",
             "in": "path",
             "description": "ID of Department",
             "required": true,

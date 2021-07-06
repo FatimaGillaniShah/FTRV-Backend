@@ -19,7 +19,7 @@ class DocumentController {
 
   static getRouter() {
     this.router = express.Router();
-    this.router.get('/:id', this.list);
+    this.router.get('/:departmentId', this.list);
     this.router.post('/', uploadFile('document').single('file'), this.createDocument);
     this.router.put('/:id', uploadFile('document').single('file'), this.updateDocument);
     this.router.get('/:id', this.getDocumentById);
@@ -30,7 +30,7 @@ class DocumentController {
 
   static async list(req, res, next) {
     const {
-      params: { id: departmentId },
+      params: { departmentId },
     } = req;
 
     try {
