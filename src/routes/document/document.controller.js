@@ -5,6 +5,7 @@ import models from '../../models';
 import {
   BadRequestError,
   cleanUnusedImages,
+  generatePreSignedUrlForGetObject,
   getErrorMessages,
   SuccessResponse,
 } from '../../utils/helper';
@@ -28,6 +29,15 @@ class DocumentController {
     return this.router;
   }
 
+  static generatePreSignedUrl(documents) {
+    documents.forEach((document) => {
+      if (document.url) {
+        // eslint-disable-next-line no-param-reassign
+        document.url = generatePreSignedUrlForGetObject(document.url);
+      }
+    });
+  }
+
   static async list(req, res, next) {
     const {
       query: { departmentId },
@@ -43,6 +53,7 @@ class DocumentController {
         ...document,
         rows: documentResponse,
       };
+      DocumentController.generatePreSignedUrl(document.rows);
       return SuccessResponse(res, document);
     } catch (e) {
       next(e);
@@ -110,6 +121,7 @@ class DocumentController {
       }
       const query = getDocumentByIdQuery(documentId);
       const document = await Document.findOne(query);
+      DocumentController.generatePreSignedUrl([document]);
       return SuccessResponse(res, document);
     } catch (e) {
       next(e);
