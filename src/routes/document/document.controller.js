@@ -19,7 +19,7 @@ class DocumentController {
 
   static getRouter() {
     this.router = express.Router();
-    this.router.get('/:departmentId', this.list);
+    this.router.get('/', this.list);
     this.router.post('/', uploadFile('document').single('file'), this.createDocument);
     this.router.put('/:id', uploadFile('document').single('file'), this.updateDocument);
     this.router.get('/:id', this.getDocumentById);
@@ -30,9 +30,8 @@ class DocumentController {
 
   static async list(req, res, next) {
     const {
-      params: { departmentId },
+      query: { departmentId },
     } = req;
-
     try {
       if (!departmentId) {
         BadRequestError(`Department id is required`, STATUS_CODES.INVALID_INPUT);

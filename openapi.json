@@ -2280,41 +2280,6 @@
         }
       }
     },
-    "/documents/{departmentId}": {
-      "get": {
-        "summary": "Retrieve list of all documents",
-        "tags": ["Document"],
-        "operationId": "getDocumentsList",
-        "parameters": [
-          {
-            "name": "departmentId",
-            "in": "path",
-            "description": "ID of Department",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Array of Documents",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Document"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/documents": {
       "post": {
         "summary": "An endpoint to create a document",
@@ -2346,6 +2311,39 @@
           },
           "401": {
             "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve list of all documents",
+        "tags": ["Document"],
+        "operationId": "getDocumentsList",
+        "parameters": [
+          {
+            "name": "departmentId",
+            "in": "query",
+            "description": "ID of Department",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Documents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Document"
+                  }
+                }
+              }
+            }
           }
         }
       },
