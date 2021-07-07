@@ -2323,7 +2323,6 @@
             "name": "departmentId",
             "in": "query",
             "description": "ID of Department",
-            "required": true,
             "style": "simple",
             "explode": false,
             "schema": {
