@@ -5,6 +5,7 @@ import models from '../../models';
 import {
   BadRequestError,
   cleanUnusedImages,
+  generatePreSignedUrlForGetObject,
   getErrorMessages,
   SuccessResponse,
 } from '../../utils/helper';
@@ -23,7 +24,7 @@ class DocumentController {
 
   static getRouter() {
     this.router = express.Router();
-    this.router.get('/:id', this.list);
+    this.router.get('/', this.list);
     this.router.put('/updateSortOrder', this.updateSortOrder);
     this.router.post('/', uploadFile('document').single('file'), this.createDocument);
     this.router.put('/:id', uploadFile('document').single('file'), this.updateDocument);
@@ -33,22 +34,23 @@ class DocumentController {
     return this.router;
   }
 
+  static generatePreSignedUrl(documents) {
+    documents.forEach((document) => {
+      if (document.url) {
+        // eslint-disable-next-line no-param-reassign
+        document.url = generatePreSignedUrlForGetObject(document.url);
+      }
+    });
+  }
+
   static async list(req, res, next) {
     const {
-      params: { id: departmentId },
+      query: { departmentId },
     } = req;
-
     try {
-      if (!departmentId) {
-        BadRequestError(`Department id is required`, STATUS_CODES.INVALID_INPUT);
-      }
       const query = listDocuments(departmentId);
-      let document = await Department.findAndCountAll(query);
-      const documentResponse = document.rows[0].documents;
-      document = {
-        ...document,
-        rows: documentResponse,
-      };
+      const document = await Department.findAndCountAll(query);
+      DocumentController.generatePreSignedUrl(document.rows);
       return SuccessResponse(res, document);
     } catch (e) {
       next(e);
@@ -119,6 +121,7 @@ class DocumentController {
       }
       const query = getDocumentByIdQuery(documentId);
       const document = await Document.findOne(query);
+      DocumentController.generatePreSignedUrl([document]);
       return SuccessResponse(res, document);
     } catch (e) {
       next(e);

@@ -14,13 +14,13 @@ export const getDocumentByIdQuery = (documentId) => {
 };
 
 export const listDocuments = (departmentId) => {
-  const query = {
-    where: { id: departmentId },
-  };
-  query.attributes = ['id'];
+  const query = {};
+  query.where = departmentId ? { id: departmentId } : {};
+  query.attributes = ['id', 'name'];
   query.include = {
     model: Document,
     as: 'documents',
+    required: !departmentId,
     attributes: { exclude: ['createdAt', 'updatedAt'] },
   };
   query.order = [[{ model: Document, as: 'documents' }, 'sortOrder', 'asc']];
