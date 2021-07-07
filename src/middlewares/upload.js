@@ -30,7 +30,7 @@ const documentFilter = (req, file, cb) => {
   if (!file.mimetype.includes(notAllowedMimetype)) {
     cb(null, true);
   } else {
-    cb({ message: '.exe file is not allowed' }, false);
+    cb({ message: 'Only non executable files are allowed!' }, false);
   }
 };
 
@@ -82,14 +82,13 @@ const filter = (fileType) => {
     image: imageFilter,
     document: documentFilter,
   };
-  const filterMethod = filterType[fileType];
-  return filterMethod;
+  return filterType[fileType];
 };
 
-export default function (fileType) {
+export default (fileType) => {
   const fileFilter = filter(fileType);
   return multer({
     storage: fileType === 'excel' ? storageDisk : storageS3,
     fileFilter,
   });
-}
+};

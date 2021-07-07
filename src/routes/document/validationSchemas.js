@@ -15,3 +15,10 @@ export const documentUpdateSchema = Joi.object()
     departmentId: Joi.number().optional(),
   })
   .unknown(true);
+
+const sortDocumentSchema = Joi.object().keys({
+  id: Joi.number().required(),
+  sortOrder: Joi.number().required(),
+});
+
+export const sortDocumentsSchema = Joi.array().items(sortDocumentSchema);

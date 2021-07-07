@@ -2494,6 +2494,65 @@
           }
         }
       }
+    },
+    "/documents/updateSortOrder": {
+      "put": {
+        "tags": ["Document"],
+        "summary": "An endpoint to update sort order of documents",
+        "operationId": "updateDocumentsSortOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documents": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "sortOrder": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["ids"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2805,6 +2864,9 @@
           },
           "file": {
             "type": "string"
+          },
+          "departmentId": {
+            "type": "number"
           },
           "departmentId": {
             "type": "number"
