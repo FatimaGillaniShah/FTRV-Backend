@@ -12,7 +12,7 @@ import {
 import { documentCreateSchema, documentUpdateSchema } from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
 import uploadFile from '../../middlewares/upload';
-import { getDocumentByIdQuery, listDocuments } from './query';
+import { getDocumentByIdQuery, listDocuments, listDocumentsByDepartmentId } from './query';
 
 const { Document, Department } = models;
 class DocumentController {
@@ -43,16 +43,8 @@ class DocumentController {
       query: { departmentId },
     } = req;
     try {
-      if (!departmentId) {
-        BadRequestError(`Department id is required`, STATUS_CODES.INVALID_INPUT);
-      }
-      const query = listDocuments(departmentId);
-      let document = await Department.findAndCountAll(query);
-      const documentResponse = document.rows[0].documents;
-      document = {
-        ...document,
-        rows: documentResponse,
-      };
+      const query = departmentId ? listDocumentsByDepartmentId(departmentId) : listDocuments();
+      const document = await Department.findAndCountAll(query);
       DocumentController.generatePreSignedUrl(document.rows);
       return SuccessResponse(res, document);
     } catch (e) {
