@@ -2401,7 +2401,7 @@
         }
       }
     },
-    "/document/{id}": {
+    "/documents/{id}": {
       "get": {
         "summary": "Retrieve document by id",
         "tags": ["Document"],
