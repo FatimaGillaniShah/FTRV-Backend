@@ -2865,7 +2865,7 @@
           "departmentId": {
             "type": "number"
           },
-          "departmentId": {
+          "sortOrder": {
             "type": "number"
           }
         }
