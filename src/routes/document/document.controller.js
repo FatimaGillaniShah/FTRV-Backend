@@ -12,7 +12,7 @@ import {
 import { documentCreateSchema, documentUpdateSchema } from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
 import uploadFile from '../../middlewares/upload';
-import { getDocumentByIdQuery, listDocuments, listDocumentsByDepartmentId } from './query';
+import { getDocumentByIdQuery, listDocuments } from './query';
 
 const { Document, Department } = models;
 class DocumentController {
@@ -43,7 +43,7 @@ class DocumentController {
       query: { departmentId },
     } = req;
     try {
-      const query = departmentId ? listDocumentsByDepartmentId(departmentId) : listDocuments();
+      const query = listDocuments(departmentId);
       const document = await Department.findAndCountAll(query);
       DocumentController.generatePreSignedUrl(document.rows);
       return SuccessResponse(res, document);

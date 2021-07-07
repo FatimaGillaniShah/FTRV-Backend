@@ -13,26 +13,14 @@ export const getDocumentByIdQuery = (documentId) => {
   return query;
 };
 
-export const listDocuments = () => {
+export const listDocuments = (departmentId) => {
   const query = {};
+  query.where = departmentId ? { id: departmentId } : {};
   query.attributes = ['id', 'name'];
   query.include = {
     model: Document,
     as: 'documents',
-    required: true,
-    attributes: { exclude: ['createdAt', 'updatedAt'] },
-  };
-  return query;
-};
-
-export const listDocumentsByDepartmentId = (departmentId) => {
-  const query = {
-    where: { id: departmentId },
-  };
-  query.attributes = ['id', 'name'];
-  query.include = {
-    model: Document,
-    as: 'documents',
+    required: !departmentId,
     attributes: { exclude: ['createdAt', 'updatedAt'] },
   };
   return query;
