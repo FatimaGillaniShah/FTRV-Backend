@@ -30,7 +30,7 @@ const documentFilter = (req, file, cb) => {
   if (!file.mimetype.includes(notAllowedMimetype)) {
     cb(null, true);
   } else {
-    cb({ message: 'Only non executable files are allowed!' }, false);
+    cb({ message: 'Executable files are not allowed!' }, false);
   }
 };
 
