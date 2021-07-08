@@ -51,7 +51,7 @@ class UserController {
 
   static generatePreSignedUrl(users) {
     users.forEach((user) => {
-      if (user.avatar) {
+      if (user.avatar && !user?.avatar?.includes('googleusercontent.com')) {
         // eslint-disable-next-line no-param-reassign
         user.avatar = generatePreSignedUrlForGetObject(user.avatar);
       }
