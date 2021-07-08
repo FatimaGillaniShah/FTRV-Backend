@@ -108,13 +108,13 @@ class DocumentController {
         },
       };
       const documents = await Document.findAll(query);
-      const documentKeyobjects = chain(documents)
+      const documentKeyObjects = chain(documents)
         .filter((document) => !!document.url)
         .map((document) => ({ Key: document.url }))
         .value();
       const documentCount = await Document.destroy(query);
-      if (documentKeyobjects.length > 0) {
-        cleanUnusedImages(documentKeyobjects);
+      if (documentKeyObjects.length > 0) {
+        cleanUnusedImages(documentKeyObjects);
       }
       return SuccessResponse(res, { count: documentCount });
     } catch (e) {
