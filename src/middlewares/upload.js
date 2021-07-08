@@ -26,8 +26,8 @@ const imageFilter = (req, file, cb) => {
 };
 
 const documentFilter = (req, file, cb) => {
-  const notAllowedMimetype = ['application/x-msdos-program'];
-  if (!file.mimetype.includes(notAllowedMimetype)) {
+  const notAllowedMimetypes = ['application/x-msdos-program'];
+  if (!file.mimetype.includes(notAllowedMimetypes)) {
     cb(null, true);
   } else {
     cb({ message: '.exe file is not allowed' }, false);
