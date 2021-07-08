@@ -29,12 +29,15 @@ class DocumentController {
     return this.router;
   }
 
-  static generatePreSignedUrl(documents) {
-    documents.forEach((document) => {
-      if (document.url) {
-        // eslint-disable-next-line no-param-reassign
-        document.url = generatePreSignedUrlForGetObject(document.url);
-      }
+  static generatePreSignedUrl(departments) {
+    departments.forEach((department) => {
+      department?.documents?.forEach((document) => {
+        if (document.url) {
+          // eslint-disable-next-line no-param-reassign
+          document.url = generatePreSignedUrlForGetObject(document.url);
+        }
+        return false;
+      });
     });
   }
 
