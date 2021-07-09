@@ -25,6 +25,15 @@ const imageFilter = (req, file, cb) => {
   }
 };
 
+const documentFilter = (req, file, cb) => {
+  const notAllowedMimetypes = ['application/x-msdos-program'];
+  if (!file.mimetype.includes(notAllowedMimetypes)) {
+    cb(null, true);
+  } else {
+    cb({ message: 'Executable files are not allowed!' }, false);
+  }
+};
+
 const storageDisk = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(path.dirname(require.main.filename), UPLOAD_PATH));
@@ -42,17 +51,24 @@ const storageS3 = multerS3({
   },
   key(req, file, cb) {
     // get key name
+    const { originalUrl } = req;
+    const { BANNER_IMAGE, CEO_PAGE, PROFILE_PICTURE, BLOG_THUMBNAIL, DOCUMENT_FILE } = AWS_CONFIG;
     let key = '';
+    const s3AllowedPathObj = {
+      bannerImage: BANNER_IMAGE,
+      ceo: CEO_PAGE,
+      users: PROFILE_PICTURE,
+      blogs: BLOG_THUMBNAIL,
+      documents: DOCUMENT_FILE,
+    };
+    const s3AllowedPath = Object.keys(s3AllowedPathObj);
     const fileSuffix = `${req.user.id}-${Date.now()}-${file.originalname}`;
-    if (req.originalUrl.indexOf('bannerImage') > -1) {
-      key = `${AWS_CONFIG.BANNER_IMAGE}/${fileSuffix}`;
-    } else if (req.originalUrl.indexOf('ceo') > -1) {
-      key = `${AWS_CONFIG.CEO_PAGE}/${fileSuffix}`;
-    } else if (req.originalUrl.indexOf('users') > -1) {
-      key = `${AWS_CONFIG.PROFILE_PICTURE}/${fileSuffix}`;
-    } else if (req.originalUrl.indexOf('blogs') > -1) {
-      key = `${AWS_CONFIG.BLOG_THUMBNAIL}/${fileSuffix}`;
-    }
+    s3AllowedPath.map((allowedPath) => {
+      if (originalUrl.includes(allowedPath)) {
+        key = `${s3AllowedPathObj[allowedPath]}/${fileSuffix}`;
+      }
+      return false;
+    });
     if (!key) {
       return cb('No matching configuration found');
     }
@@ -60,10 +76,19 @@ const storageS3 = multerS3({
   },
 });
 
-export default function (fileType) {
-  const fileFilter = fileType === 'excel' ? excelFilter : imageFilter;
+const filter = (fileType) => {
+  const filterType = {
+    excel: excelFilter,
+    image: imageFilter,
+    document: documentFilter,
+  };
+  return filterType[fileType];
+};
+
+export default (fileType) => {
+  const fileFilter = filter(fileType);
   return multer({
     storage: fileType === 'excel' ? storageDisk : storageS3,
     fileFilter,
   });
-}
+};

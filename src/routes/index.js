@@ -12,6 +12,7 @@ import LinkCategoryController from './linkCategory/linkCategory.controller';
 import LocationController from './location/location.controller';
 import BannerImageController from './bannerImage/bannerImage.controller';
 import DepartmentController from './department/department.controller';
+import DocumentController from './document/document.controller';
 
 const router = express.Router();
 
@@ -38,5 +39,6 @@ router.use('/linkCategories', LinkCategoryController.getRouter());
 router.use('/locations', LocationController.getRouter());
 router.use('/bannerImage', BannerImageController.getRouter());
 router.use('/departments', DepartmentController.getRouter());
+router.use('/documents', DocumentController.getRouter());
 
 export default router;
