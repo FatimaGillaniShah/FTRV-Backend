@@ -4,7 +4,7 @@ import { chain } from 'lodash';
 import models from '../../models';
 import {
   BadRequestError,
-  cleanUnusedImages,
+  cleanUnusedFiles,
   generatePreSignedUrlForGetObject,
   getErrorMessages,
   SuccessResponse,
@@ -103,7 +103,7 @@ class DocumentController {
         const document = await Document.update(documentPayload, updateQuery);
         if (file.key && documentExist.url) {
           const urlKeyObj = [{ Key: documentExist.url }];
-          cleanUnusedImages(urlKeyObj);
+          cleanUnusedFiles(urlKeyObj);
         }
         return SuccessResponse(res, document);
       }
@@ -151,7 +151,7 @@ class DocumentController {
         .value();
       const documentCount = await Document.destroy(query);
       if (documentKeyObjects.length > 0) {
-        cleanUnusedImages(documentKeyObjects);
+        cleanUnusedFiles(documentKeyObjects);
       }
       return SuccessResponse(res, { count: documentCount });
     } catch (e) {

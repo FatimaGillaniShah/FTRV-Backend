@@ -9,7 +9,7 @@ import {
   getErrorMessages,
   SuccessResponse,
   generatePreSignedUrlForGetObject,
-  cleanUnusedImages,
+  cleanUnusedFiles,
 } from '../../utils/helper';
 import { blogCreateSchema, blogUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
@@ -125,7 +125,7 @@ class BlogController {
         const blog = await Blog.update(blogPayload, query);
         if (file.key && blogExists.thumbnail) {
           const avatarKeyObj = [{ Key: blogExists.thumbnail }];
-          cleanUnusedImages(avatarKeyObj);
+          cleanUnusedFiles(avatarKeyObj);
         }
 
         return SuccessResponse(res, blog);
@@ -153,7 +153,7 @@ class BlogController {
         .value();
       const blogsCount = await Blog.destroy(query);
       if (blogKeyobjects.length > 0) {
-        cleanUnusedImages(blogKeyobjects);
+        cleanUnusedFiles(blogKeyobjects);
       }
       return SuccessResponse(res, { count: blogsCount });
     } catch (e) {

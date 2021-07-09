@@ -76,7 +76,7 @@ const SuccessResponse = (res, data) => {
 
 const stripHtmlTags = (htmlString) => htmlString.replace(/(<([^>]+)>)/gi, '');
 
-const cleanUnusedImages = async (objects) => {
+const cleanUnusedFiles = async (objects) => {
   const params = {
     Bucket: AWS_CONFIG.BUCKET,
     Delete: { Objects: objects },
@@ -102,5 +102,5 @@ export {
   NotFoundError,
   SuccessResponse,
   generatePreSignedUrlForGetObject,
-  cleanUnusedImages,
+  cleanUnusedFiles,
 };
