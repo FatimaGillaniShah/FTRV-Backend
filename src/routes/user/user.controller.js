@@ -17,7 +17,7 @@ import { birthdayQuery, anniversaryQuery, getUserByIdQuery, listQuery } from './
 
 import {
   BadRequestError,
-  cleanUnusedImages,
+  cleanUnusedFiles,
   generateHash,
   generateJWT,
   generatePreSignedUrlForGetObject,
@@ -288,7 +288,7 @@ class UserController {
 
         if (file.key && userExists.avatar) {
           const avatarKeyObj = [{ Key: userExists.avatar }];
-          cleanUnusedImages(avatarKeyObj);
+          cleanUnusedFiles(avatarKeyObj);
         }
         return SuccessResponse(res, userPayload);
       }
@@ -324,7 +324,7 @@ class UserController {
         .map((userInfo) => ({ Key: userInfo.avatar }))
         .value();
       if (userKeyobjects.length > 0) {
-        cleanUnusedImages(userKeyobjects);
+        cleanUnusedFiles(userKeyobjects);
       }
       return SuccessResponse(res, { count: user });
     } catch (e) {
