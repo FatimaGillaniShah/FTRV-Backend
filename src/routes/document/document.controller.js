@@ -5,26 +5,59 @@ import models from '../../models';
 import {
   BadRequestError,
   cleanUnusedImages,
+  generatePreSignedUrlForGetObject,
   getErrorMessages,
   SuccessResponse,
 } from '../../utils/helper';
-import { documentCreateSchema, documentUpdateSchema } from './validationSchemas';
+import {
+  documentCreateSchema,
+  documentUpdateSchema,
+  sortDocumentsSchema,
+} from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
 import uploadFile from '../../middlewares/upload';
-import { getDocumentByIdQuery } from './query';
+import { getDocumentByIdQuery, listDocuments } from './query';
 
-const { Document } = models;
+const { Document, Department } = models;
 class DocumentController {
   static router;
 
   static getRouter() {
     this.router = express.Router();
+    this.router.get('/', this.list);
+    this.router.put('/updateSortOrder', this.updateSortOrder);
     this.router.post('/', uploadFile('document').single('file'), this.createDocument);
     this.router.put('/:id', uploadFile('document').single('file'), this.updateDocument);
     this.router.get('/:id', this.getDocumentById);
     this.router.delete('/', this.deleteDocument);
 
     return this.router;
+  }
+
+  static generatePreSignedUrl(departments) {
+    departments.forEach((department) => {
+      department?.documents?.forEach((document) => {
+        if (document.url) {
+          // eslint-disable-next-line no-param-reassign
+          document.url = generatePreSignedUrlForGetObject(document.url);
+        }
+        return false;
+      });
+    });
+  }
+
+  static async list(req, res, next) {
+    const {
+      query: { departmentId },
+    } = req;
+    try {
+      const query = listDocuments(departmentId);
+      const document = await Department.findAndCountAll(query);
+      DocumentController.generatePreSignedUrl(document.rows);
+      return SuccessResponse(res, document);
+    } catch (e) {
+      next(e);
+    }
   }
 
   static async createDocument(req, res, next) {
@@ -35,7 +68,10 @@ class DocumentController {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       if (file.key) {
+        const { departmentId } = documentPayload;
+        const sortOrder = await Document.max('sortOrder', { where: { departmentId } });
         documentPayload.url = file.key;
+        documentPayload.sortOrder = sortOrder ? sortOrder + 1 : 1;
         const document = await Document.create(documentPayload);
         return SuccessResponse(res, document);
       }
@@ -88,6 +124,7 @@ class DocumentController {
       }
       const query = getDocumentByIdQuery(documentId);
       const document = await Document.findOne(query);
+      DocumentController.generatePreSignedUrl([document]);
       return SuccessResponse(res, document);
     } catch (e) {
       next(e);
@@ -120,6 +157,38 @@ class DocumentController {
     } catch (e) {
       next(e);
     }
+  }
+
+  static async updateSortOrder(req, res, next) {
+    const {
+      body: { documents },
+    } = req;
+    try {
+      const result = Joi.validate(documents, sortDocumentsSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
+      }
+      const documentSortOrderPromises = DocumentController.updateDocumentsSortOrder(documents);
+      await Promise.all(documentSortOrderPromises);
+      return SuccessResponse(res, documents);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static updateDocumentsSortOrder(documents) {
+    return documents.map((document) => {
+      const { id, sortOrder } = document;
+      const updateQuery = {
+        where: {
+          id,
+        },
+      };
+      const updateParams = {
+        sortOrder,
+      };
+      return Document.update(updateParams, updateQuery);
+    });
   }
 }
 
