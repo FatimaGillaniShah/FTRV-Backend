@@ -9,7 +9,11 @@ import {
   getErrorMessages,
   SuccessResponse,
 } from '../../utils/helper';
-import { documentCreateSchema, documentUpdateSchema } from './validationSchemas';
+import {
+  documentCreateSchema,
+  documentUpdateSchema,
+  sortDocumentsSchema,
+} from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
 import uploadFile from '../../middlewares/upload';
 import { getDocumentByIdQuery, listDocuments } from './query';
@@ -21,6 +25,7 @@ class DocumentController {
   static getRouter() {
     this.router = express.Router();
     this.router.get('/', this.list);
+    this.router.put('/updateSortOrder', this.updateSortOrder);
     this.router.post('/', uploadFile('document').single('file'), this.createDocument);
     this.router.put('/:id', uploadFile('document').single('file'), this.updateDocument);
     this.router.get('/:id', this.getDocumentById);
@@ -63,7 +68,10 @@ class DocumentController {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       if (file.key) {
+        const { departmentId } = documentPayload;
+        const sortOrder = await Document.max('sortOrder', { where: { departmentId } });
         documentPayload.url = file.key;
+        documentPayload.sortOrder = sortOrder ? sortOrder + 1 : 1;
         const document = await Document.create(documentPayload);
         return SuccessResponse(res, document);
       }
@@ -149,6 +157,38 @@ class DocumentController {
     } catch (e) {
       next(e);
     }
+  }
+
+  static async updateSortOrder(req, res, next) {
+    const {
+      body: { documents },
+    } = req;
+    try {
+      const result = Joi.validate(documents, sortDocumentsSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
+      }
+      const documentSortOrderPromises = DocumentController.updateDocumentsSortOrder(documents);
+      await Promise.all(documentSortOrderPromises);
+      return SuccessResponse(res, documents);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static updateDocumentsSortOrder(documents) {
+    return documents.map((document) => {
+      const { id, sortOrder } = document;
+      const updateQuery = {
+        where: {
+          id,
+        },
+      };
+      const updateParams = {
+        sortOrder,
+      };
+      return Document.update(updateParams, updateQuery);
+    });
   }
 }
 

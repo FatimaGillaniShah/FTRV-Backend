@@ -23,5 +23,6 @@ export const listDocuments = (departmentId) => {
     required: !departmentId,
     attributes: { exclude: ['createdAt', 'updatedAt'] },
   };
+  query.order = [[{ model: Document, as: 'documents' }, 'sortOrder', 'asc']];
   return query;
 };
