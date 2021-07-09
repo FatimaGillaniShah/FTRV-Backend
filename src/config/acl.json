@@ -91,6 +91,11 @@
         "resource": "users/workAnniversary",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/documents",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
