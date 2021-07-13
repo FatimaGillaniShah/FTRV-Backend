@@ -2551,7 +2551,7 @@
         }
       }
     },
-    "/ringGroup": {
+    "/ringGroups": {
       "post": {
         "summary": "An endpoint to create a ring group",
         "tags": ["Ring Group"],
@@ -2566,6 +2566,97 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RingGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/ringGroups/{id}": {
+      "get": {
+        "summary": "Retrieve ring group by id",
+        "tags": ["Ring Group"],
+        "operationId": "getRingGroupById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Ring Group",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of Ring Group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RingGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Ring Group"],
+        "summary": "An endpoint to update a Ring Group",
+        "operationId": "updateRingGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Ring Group",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/RingGroup"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of ring group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ring Group"
                 }
               }
             }
