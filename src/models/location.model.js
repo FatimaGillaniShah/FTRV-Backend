@@ -2,9 +2,13 @@ const { Model } = require('sequelize');
 
 export default (sequelize, { INTEGER, STRING }) => {
   class Location extends Model {
-    static associate({ EventLocation, Event, User }) {
+    static associate({ EventLocation, Event, User, RingGroup }) {
       this.hasMany(User, {
         as: 'users',
+        foreignKey: 'locationId',
+      });
+      this.hasMany(RingGroup, {
+        as: 'ringGroups',
         foreignKey: 'locationId',
       });
       this.belongsToMany(Event, {
