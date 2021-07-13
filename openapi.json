@@ -2551,7 +2551,7 @@
         }
       }
     },
-    "/ringGroup": {
+    "/ringGroups": {
       "post": {
         "summary": "An endpoint to create a ring group",
         "tags": ["Ring Group"],

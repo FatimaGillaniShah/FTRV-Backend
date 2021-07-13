@@ -41,6 +41,6 @@ router.use('/locations', LocationController.getRouter());
 router.use('/bannerImage', BannerImageController.getRouter());
 router.use('/departments', DepartmentController.getRouter());
 router.use('/documents', DocumentController.getRouter());
-router.use('/ringGroup', RingGroupController.getRouter());
+router.use('/ringGroups', RingGroupController.getRouter());
 
 export default router;
