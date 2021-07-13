@@ -2550,6 +2550,41 @@
           }
         }
       }
+    },
+    "/ringGroup": {
+      "post": {
+        "summary": "An endpoint to create a ring group",
+        "tags": ["Ring Group"],
+        "operationId": "createRingGroup",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/RingGroup"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of ring group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RingGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2869,6 +2904,26 @@
             "type": "number"
           }
         }
+      },
+      "RingGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "extension": {
+            "type": "string"
+          },
+          "locationId": {
+            "type": "number"
+          },
+          "departmentId": {
+            "type": "number"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -3142,6 +3197,31 @@
                 "file": {
                   "type": "string",
                   "format": "binary"
+                },
+                "departmentId": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "RingGroup": {
+        "description": "Information about the Ring Groups of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "extension": {
+                  "type": "string"
+                },
+                "locationId": {
+                  "type": "number"
                 },
                 "departmentId": {
                   "type": "number"
