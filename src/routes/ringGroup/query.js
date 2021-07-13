@@ -1,10 +1,10 @@
 import models from '../../models';
 
 const { Location, Department } = models;
-export const getRingGroupByIdQuery = (ringGroupId) => {
+export const getRingGroupByIdQuery = (id) => {
   const query = {};
   query.where = {
-    id: ringGroupId,
+    id,
   };
   query.include = [
     {
