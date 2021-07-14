@@ -2584,6 +2584,48 @@
             "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
+      },
+      "get": {
+        "summary": "Retrieve list of all ring group",
+        "tags": ["Ring Group"],
+        "operationId": "getRingGroupList",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Ring Group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RingGroup"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/ringGroups/{id}": {

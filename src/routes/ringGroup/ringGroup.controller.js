@@ -1,10 +1,10 @@
 import express from 'express';
 import Joi from 'joi';
-import { STATUS_CODES } from '../../utils/constants';
+import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { createRingGroupSchema, updateRingGroupSchema } from './validationSchema';
 import models from '../../models';
-import { getRingGroupByIdQuery } from './query';
+import { getRingGroupByIdQuery, listQuery } from './query';
 
 const { RingGroup } = models;
 
@@ -16,6 +16,7 @@ class RingGroupController {
     this.router.post('/', this.createRingGroup);
     this.router.get('/:id', this.getRingGroupById);
     this.router.put('/:id', this.updateRingGroup);
+    this.router.get('/', this.list);
 
     return this.router;
   }
@@ -72,6 +73,19 @@ class RingGroupController {
         return SuccessResponse(res, ringGroup);
       }
       BadRequestError(`Ring Group does not exist`, STATUS_CODES.NOTFOUND);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async list(req, res, next) {
+    const {
+      query: { sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE },
+    } = req;
+    try {
+      const query = listQuery({ sortColumn, sortOrder, pageNumber, pageSize });
+      const ringGroups = await RingGroup.findAndCountAll(query);
+      return SuccessResponse(res, ringGroups);
     } catch (e) {
       next(e);
     }
