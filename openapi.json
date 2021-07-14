@@ -2609,6 +2609,31 @@
             "name": "sortOrder",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "extension",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "locationId",
+            "in": "query",
+            "type": "number"
           }
         ],
         "responses": {
