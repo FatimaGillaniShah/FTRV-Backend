@@ -80,13 +80,8 @@ export const listQuery = ({
     ];
   } else {
     if (name) {
-      query.where[Op.and] = [
-        {
-          name: {
-            [Op.iLike]: `%${name}%`,
-          },
-        },
-      ];
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeLikeCondition('name', name));
     }
     if (departmentId) {
       query.where[Op.and] = query.where[Op.and] || [];
