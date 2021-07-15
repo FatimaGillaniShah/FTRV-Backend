@@ -69,15 +69,9 @@ export const listQuery = ({
 
   // for filtering
   if (searchString) {
-    const likeClause = { [Op.iLike]: `%${searchString}%` };
-    query.where[Op.or] = [
-      {
-        name: likeClause,
-      },
-      {
-        extension: likeClause,
-      },
-    ];
+    query.where[Op.or] = query.where[Op.or] || [];
+    const searchColumns = ['name', 'extension'];
+    searchColumns.map((val) => query.where[Op.or].push(makeLikeCondition(val, searchString)));
   } else {
     if (name) {
       query.where[Op.and] = query.where[Op.and] || [];
