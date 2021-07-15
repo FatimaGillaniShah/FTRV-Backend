@@ -96,6 +96,11 @@
         "resource": "/documents",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/ringGroups",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
