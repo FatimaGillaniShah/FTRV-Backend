@@ -17,6 +17,7 @@ class RingGroupController {
     this.router.get('/:id', this.getRingGroupById);
     this.router.put('/:id', this.updateRingGroup);
     this.router.get('/', this.list);
+    this.router.delete('/', this.deleteRingGroup);
 
     return this.router;
   }
@@ -109,6 +110,27 @@ class RingGroupController {
       });
       const ringGroups = await RingGroup.findAndCountAll(query);
       return SuccessResponse(res, ringGroups);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteRingGroup(req, res, next) {
+    const {
+      body: { ids: ringGroupIds = [] },
+    } = req;
+
+    try {
+      if (ringGroupIds.length < 1) {
+        BadRequestError(`Ring Group id is required`, STATUS_CODES.INVALID_INPUT);
+      }
+      const query = {
+        where: {
+          id: ringGroupIds,
+        },
+      };
+      const ringGroupCount = await RingGroup.destroy(query);
+      return SuccessResponse(res, { count: ringGroupCount });
     } catch (e) {
       next(e);
     }
