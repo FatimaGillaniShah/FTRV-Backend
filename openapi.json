@@ -2550,6 +2550,253 @@
           }
         }
       }
+    },
+    "/ringGroups": {
+      "post": {
+        "summary": "An endpoint to create a ring group",
+        "tags": ["Ring Group"],
+        "operationId": "createRingGroup",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/RingGroup"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of ring group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RingGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve list of all ring group",
+        "tags": ["Ring Group"],
+        "operationId": "getRingGroupList",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "extension",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "locationId",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Ring Group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RingGroup"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Ring Group"],
+        "summary": "An endpoint to delete ring group",
+        "operationId": "deleteRingGroup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["ids"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful deletion of ring group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/ringGroups/{id}": {
+      "get": {
+        "summary": "Retrieve ring group by id",
+        "tags": ["Ring Group"],
+        "operationId": "getRingGroupById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Ring Group",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of Ring Group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RingGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Ring Group"],
+        "summary": "An endpoint to update a Ring Group",
+        "operationId": "updateRingGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Ring Group",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/RingGroup"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of ring group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ring Group"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2869,6 +3116,26 @@
             "type": "number"
           }
         }
+      },
+      "RingGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "extension": {
+            "type": "string"
+          },
+          "locationId": {
+            "type": "number"
+          },
+          "departmentId": {
+            "type": "number"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -3142,6 +3409,31 @@
                 "file": {
                   "type": "string",
                   "format": "binary"
+                },
+                "departmentId": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "RingGroup": {
+        "description": "Information about the Ring Groups of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "extension": {
+                  "type": "string"
+                },
+                "locationId": {
+                  "type": "number"
                 },
                 "departmentId": {
                   "type": "number"

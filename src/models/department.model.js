@@ -7,13 +7,17 @@ export default (sequelize, { INTEGER, STRING }) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Document }) {
+    static associate({ User, Document, RingGroup }) {
       this.hasMany(User, {
         as: 'users',
         foreignKey: 'departmentId',
       });
       this.hasMany(Document, {
         as: 'documents',
+        foreignKey: 'departmentId',
+      });
+      this.hasMany(RingGroup, {
+        as: 'ringGroups',
         foreignKey: 'departmentId',
       });
     }

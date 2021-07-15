@@ -1,19 +1,9 @@
 import sequelize from 'sequelize';
 import models from '../../models';
+import { makeEqualityCondition, makeLikeCondition } from '../../utils/helper';
 
 const { Op, fn, cast, col } = sequelize;
 const { Location, Department } = models;
-
-const makeLikeCondition = (columnName, searchValue) => {
-  const condition = {};
-  condition[columnName] = { [Op.iLike]: `%${searchValue}%` };
-  return condition;
-};
-const makeEqualityCondition = (columnName, searchValue) => {
-  const condition = {};
-  condition[columnName] = { [Op.eq]: `${searchValue}` };
-  return condition;
-};
 
 export const birthdayQuery = (date) => {
   const query = {
