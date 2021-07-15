@@ -69,7 +69,7 @@ export const listQuery = ({
 
   // for filtering
   if (searchString) {
-    query.where[Op.or] = query.where[Op.or] || [];
+    query.where[Op.or] = [];
     const searchColumns = ['name', 'extension'];
     searchColumns.map((val) => query.where[Op.or].push(makeLikeCondition(val, searchString)));
   } else {
