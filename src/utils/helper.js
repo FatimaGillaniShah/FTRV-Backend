@@ -1,9 +1,11 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import AWS from 'aws-sdk';
+import sequelize from 'sequelize';
 import { AWS_CONFIG } from './constants';
-
 import { BadRequest, NotFound } from '../error';
+
+const { Op } = sequelize;
 
 const s3 = new AWS.S3({
   accessKeyId: AWS_CONFIG.AWS_ACCESS_KEY,
@@ -91,6 +93,17 @@ const generatePreSignedUrlForGetObject = (key) =>
     Expires: 60 * 60 * 24, // 1 day expiry
   });
 
+const makeLikeCondition = (columnName, searchValue) => {
+  const condition = {};
+  condition[columnName] = { [Op.iLike]: `%${searchValue}%` };
+  return condition;
+};
+const makeEqualityCondition = (columnName, searchValue) => {
+  const condition = {};
+  condition[columnName] = { [Op.eq]: `${searchValue}` };
+  return condition;
+};
+
 export {
   stripHtmlTags,
   generateHash,
@@ -103,4 +116,6 @@ export {
   SuccessResponse,
   generatePreSignedUrlForGetObject,
   cleanUnusedFiles,
+  makeLikeCondition,
+  makeEqualityCondition,
 };

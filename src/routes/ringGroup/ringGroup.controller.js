@@ -80,10 +80,33 @@ class RingGroupController {
 
   static async list(req, res, next) {
     const {
-      query: { sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE },
+      query: {
+        sortOrder,
+        sortColumn,
+        pageNumber = 1,
+        pageSize = PAGE_SIZE,
+        searchString,
+        name,
+        departmentId,
+        extension,
+        locationId,
+      },
     } = req;
     try {
-      const query = listQuery({ sortColumn, sortOrder, pageNumber, pageSize });
+      if (pageNumber <= 0) {
+        BadRequestError('Invalid page number', STATUS_CODES.INVALID_INPUT);
+      }
+      const query = listQuery({
+        sortColumn,
+        sortOrder,
+        pageNumber,
+        pageSize,
+        searchString,
+        name,
+        departmentId,
+        extension,
+        locationId,
+      });
       const ringGroups = await RingGroup.findAndCountAll(query);
       return SuccessResponse(res, ringGroups);
     } catch (e) {
