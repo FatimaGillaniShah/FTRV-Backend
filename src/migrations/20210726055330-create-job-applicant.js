@@ -2,7 +2,7 @@
 module.exports = {
   up: async (queryInterface, { INTEGER, STRING, DATE }) => {
     await queryInterface.createTable({
-          tableName: 'Applicants',
+          tableName: 'JobApplicants',
           schema: process.env.SCHEMA_NAME,
         },
         {
@@ -31,6 +31,6 @@ module.exports = {
         });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Applicants');
+    await queryInterface.dropTable('JobApplicants');
   }
 };
