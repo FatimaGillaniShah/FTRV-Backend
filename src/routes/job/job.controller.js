@@ -3,7 +3,8 @@ import Joi from 'joi';
 import { STATUS_CODES } from '../../utils/constants';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
-import { createJobSchema } from './validationSchema';
+import { createJobSchema, updateJobSchema } from './validationSchema';
+import { getJobByIdQuery } from './query';
 
 const { Job } = models;
 
@@ -13,6 +14,8 @@ class JobController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createJob);
+    this.router.get('/:id', this.getJobById);
+    this.router.put('/:id', this.updateJob);
 
     return this.router;
   }
@@ -27,6 +30,49 @@ class JobController {
       jobPayload.userId = user.id;
       const job = await Job.create(jobPayload);
       return SuccessResponse(res, job);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async getJobById(req, res, next) {
+    const {
+      params: { id: jobId },
+    } = req;
+    try {
+      if (!jobId) {
+        BadRequestError(`Job id is required`, STATUS_CODES.INVALID_INPUT);
+      }
+      const query = getJobByIdQuery(jobId);
+      const job = await Job.findOne(query);
+      return SuccessResponse(res, job);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async updateJob(req, res, next) {
+    const {
+      body: jobPayload,
+      params: { id: jobId },
+    } = req;
+    try {
+      const result = Joi.validate(jobPayload, updateJobSchema);
+      if (result.error) {
+        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
+      }
+      const updateQuery = {
+        where: {
+          id: jobId,
+        },
+      };
+
+      const jobExist = await Job.findOne(updateQuery);
+      if (jobExist) {
+        const job = await Job.update(jobPayload, updateQuery);
+        return SuccessResponse(res, job);
+      }
+      BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }
