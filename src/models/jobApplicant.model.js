@@ -1,9 +1,9 @@
 import { Model } from 'sequelize';
 
 export default (sequelize, { STRING, INTEGER }) => {
-  class Applicant extends Model {}
+  class JobApplicant extends Model {}
 
-  Applicant.init(
+  JobApplicant.init(
     {
       id: {
         allowNull: false,
@@ -22,9 +22,9 @@ export default (sequelize, { STRING, INTEGER }) => {
     },
     {
       sequelize,
-      modelName: 'Applicant',
+      modelName: 'JobApplicant',
       timestamps: true,
     }
   );
-  return Applicant;
+  return JobApplicant;
 };
