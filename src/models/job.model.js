@@ -28,7 +28,7 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
       },
       title: {
         type: STRING,
-        allowNull: true,
+        allowNull: false,
       },
       description: {
         type: STRING,
@@ -53,7 +53,7 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
     },
     {
       sequelize,
-      modelName: 'Jobs',
+      modelName: 'Job',
       timestamps: true,
     }
   );

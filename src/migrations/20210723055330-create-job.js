@@ -14,7 +14,7 @@ module.exports = {
           },
           title: {
             type: STRING,
-            allowNull: true,
+            allowNull: false,
           },
           jobDescription: {
             type: STRING,
