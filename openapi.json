@@ -2797,6 +2797,41 @@
           }
         }
       }
+    },
+    "/jobs": {
+      "post": {
+        "summary": "An endpoint to create a job",
+        "tags": ["Job"],
+        "operationId": "createJob",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Job"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of Job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3136,6 +3171,30 @@
             "type": "number"
           }
         }
+      },
+      "Job": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "locationId": {
+            "type": "number"
+          },
+          "departmentId": {
+            "type": "number"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -3437,6 +3496,35 @@
                 },
                 "departmentId": {
                   "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "Job": {
+        "description": "Information about the Jobs of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "locationId": {
+                  "type": "number"
+                },
+                "departmentId": {
+                  "type": "number"
+                },
+                "expiryDate": {
+                  "type": "string",
+                  "format": "date-time"
                 }
               }
             }

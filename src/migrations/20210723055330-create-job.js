@@ -16,7 +16,7 @@ module.exports = {
             type: STRING,
             allowNull: false,
           },
-          jobDescription: {
+          description: {
             type: STRING,
             allowNull: false,
           },

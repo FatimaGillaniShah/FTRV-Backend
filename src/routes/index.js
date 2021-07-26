@@ -14,6 +14,7 @@ import BannerImageController from './bannerImage/bannerImage.controller';
 import DepartmentController from './department/department.controller';
 import DocumentController from './document/document.controller';
 import RingGroupController from './ringGroup/ringGroup.controller';
+import JobController from './job/job.controller';
 
 const router = express.Router();
 
@@ -42,5 +43,6 @@ router.use('/bannerImage', BannerImageController.getRouter());
 router.use('/departments', DepartmentController.getRouter());
 router.use('/documents', DocumentController.getRouter());
 router.use('/ringGroups', RingGroupController.getRouter());
+router.use('/jobs', JobController.getRouter());
 
 export default router;
