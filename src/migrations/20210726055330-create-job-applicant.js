@@ -20,6 +20,26 @@ module.exports = {
             type: STRING,
             allowNull: true,
           },
+          userId: {
+            type: INTEGER,
+            allowNull: false,
+            references: {
+              model: 'Users',
+              key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL',
+          },
+          jobId: {
+            type: INTEGER,
+            allowNull: false,
+            references: {
+              model: 'Jobs',
+              key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
+          },
           createdAt: {
             allowNull: false,
             type: DATE
