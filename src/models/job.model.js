@@ -30,7 +30,7 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
         type: STRING,
         allowNull: true,
       },
-      jobDescription: {
+      description: {
         type: STRING,
         allowNull: false,
       },
