@@ -2823,6 +2823,26 @@
             "name": "sortOrder",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "locationId",
+            "in": "query",
+            "type": "number"
           }
         ],
         "responses": {

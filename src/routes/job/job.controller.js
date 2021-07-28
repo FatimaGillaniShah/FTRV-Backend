@@ -23,10 +23,28 @@ class JobController {
 
   static async list(req, res, next) {
     const {
-      query: { sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE },
+      query: {
+        sortOrder,
+        sortColumn,
+        pageNumber = 1,
+        pageSize = PAGE_SIZE,
+        searchString,
+        title,
+        departmentId,
+        locationId,
+      },
     } = req;
     try {
-      const query = listJobs({ sortOrder, sortColumn, pageNumber, pageSize });
+      const query = listJobs({
+        sortOrder,
+        sortColumn,
+        pageNumber,
+        pageSize,
+        searchString,
+        title,
+        departmentId,
+        locationId,
+      });
       const jobs = await Job.findAndCountAll(query);
       return SuccessResponse(res, jobs);
     } catch (e) {
