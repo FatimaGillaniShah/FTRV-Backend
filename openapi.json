@@ -3283,7 +3283,7 @@
           },
           "expiryDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "createdBy": {
             "type": "string"
@@ -3621,7 +3621,7 @@
                 },
                 "expiryDate": {
                   "type": "string",
-                  "format": "date-time"
+                  "format": "date"
                 }
               }
             }
