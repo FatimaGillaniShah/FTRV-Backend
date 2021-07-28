@@ -28,7 +28,7 @@ module.exports = {
               key: 'id',
             },
             onUpdate: 'CASCADE',
-            onDelete: 'SET NULL',
+            onDelete: 'CASCADE',
           },
           jobId: {
             type: INTEGER,
@@ -38,7 +38,7 @@ module.exports = {
               key: 'id'
             },
             onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onDelete: 'CASCADE'
           },
           createdAt: {
             allowNull: false,
