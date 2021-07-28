@@ -2,7 +2,7 @@ import { Model } from 'sequelize';
 
 export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
   class User extends Model {
-    static associate({ Department, Location, Blog, UserPollVote, Job }) {
+    static associate({ Department, Location, Blog, UserPollVote, Job, JobApplicant }) {
       this.belongsTo(Location, {
         foreignKey: 'locationId',
         as: 'location',
@@ -18,6 +18,9 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
         foreignKey: 'userId',
       });
       this.hasMany(UserPollVote, {
+        foreignKey: 'userId',
+      });
+      this.hasMany(JobApplicant, {
         foreignKey: 'userId',
       });
     }
