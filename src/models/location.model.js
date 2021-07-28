@@ -2,7 +2,7 @@ const { Model } = require('sequelize');
 
 export default (sequelize, { INTEGER, STRING }) => {
   class Location extends Model {
-    static associate({ EventLocation, Event, User, RingGroup }) {
+    static associate({ EventLocation, Event, User, RingGroup, Job }) {
       this.hasMany(User, {
         as: 'users',
         foreignKey: 'locationId',
@@ -16,6 +16,10 @@ export default (sequelize, { INTEGER, STRING }) => {
         foreignKey: 'locationId',
         otherKey: 'eventId',
         as: 'eventIds',
+      });
+      this.hasMany(Job, {
+        as: 'jobs',
+        foreignKey: 'locationId',
       });
     }
   }
