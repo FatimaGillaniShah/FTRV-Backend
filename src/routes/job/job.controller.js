@@ -27,7 +27,7 @@ class JobController {
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
-      jobPayload.userId = user.id;
+      jobPayload.createdBy = user.id;
       const job = await Job.create(jobPayload);
       return SuccessResponse(res, job);
     } catch (e) {
@@ -55,6 +55,7 @@ class JobController {
     const {
       body: jobPayload,
       params: { id: jobId },
+      user,
     } = req;
     try {
       const result = Joi.validate(jobPayload, updateJobSchema);
@@ -69,6 +70,7 @@ class JobController {
 
       const jobExist = await Job.findOne(updateQuery);
       if (jobExist) {
+        jobPayload.updatedBy = user.id;
         const job = await Job.update(jobPayload, updateQuery);
         return SuccessResponse(res, job);
       }

@@ -24,7 +24,12 @@ export const getJobByIdQuery = (id) => {
     },
     {
       model: User,
-      as: 'user',
+      as: 'createdByUser',
+      attributes: ['fullName', 'firstName', 'lastName'],
+    },
+    {
+      model: User,
+      as: 'updatedByUser',
       attributes: ['fullName', 'firstName', 'lastName'],
     },
   ];

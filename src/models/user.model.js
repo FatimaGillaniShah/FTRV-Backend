@@ -15,7 +15,10 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
         foreignKey: 'userId',
       });
       this.hasMany(Job, {
-        foreignKey: 'userId',
+        foreignKey: 'createdBy',
+      });
+      this.hasMany(Job, {
+        foreignKey: 'updatedBy',
       });
       this.hasMany(UserPollVote, {
         foreignKey: 'userId',

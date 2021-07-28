@@ -12,8 +12,12 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
         as: 'department',
       });
       this.belongsTo(User, {
-        as: 'user',
-        foreignKey: 'userId',
+        foreignKey: 'createdBy',
+        as: 'createdByUser',
+      });
+      this.belongsTo(User, {
+        foreignKey: 'updatedBy',
+        as: 'updatedByUser',
       });
     }
   }
@@ -42,13 +46,17 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
         type: INTEGER,
         allowNull: false,
       },
-      userId: {
-        type: INTEGER,
-        allowNull: false,
-      },
       expiryDate: {
         type: DATE,
         allowNull: false,
+      },
+      createdBy: {
+        type: INTEGER,
+        allowNull: false,
+      },
+      updatedBy: {
+        type: INTEGER,
+        allowNull: true,
       },
     },
     {
