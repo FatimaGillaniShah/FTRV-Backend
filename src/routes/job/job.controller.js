@@ -1,10 +1,10 @@
 import express from 'express';
 import Joi from 'joi';
-import { STATUS_CODES } from '../../utils/constants';
+import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { createJobSchema, updateJobSchema } from './validationSchema';
-import { getJobByIdQuery } from './query';
+import { getJobByIdQuery, listJobs } from './query';
 
 const { Job } = models;
 
@@ -13,11 +13,25 @@ class JobController {
 
   static getRouter() {
     this.router = express.Router();
+    this.router.get('/', this.list);
     this.router.post('/', this.createJob);
     this.router.get('/:id', this.getJobById);
     this.router.put('/:id', this.updateJob);
 
     return this.router;
+  }
+
+  static async list(req, res, next) {
+    const {
+      query: { sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE },
+    } = req;
+    try {
+      const query = listJobs({ sortOrder, sortColumn, pageNumber, pageSize });
+      const jobs = await Job.findAndCountAll(query);
+      return SuccessResponse(res, jobs);
+    } catch (e) {
+      next(e);
+    }
   }
 
   static async createJob(req, res, next) {

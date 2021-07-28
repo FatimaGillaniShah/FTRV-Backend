@@ -101,6 +101,16 @@
         "resource": "/ringGroups",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/jobs",
+        "methods": ["GET"],
+        "action": "allow"
+      },
+      {
+        "resource": "/jobs/:id",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
