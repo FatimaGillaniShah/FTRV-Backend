@@ -3192,7 +3192,7 @@
           },
           "expiryDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           }
         }
       }
@@ -3524,7 +3524,7 @@
                 },
                 "expiryDate": {
                   "type": "string",
-                  "format": "date-time"
+                  "format": "date"
                 }
               }
             }
