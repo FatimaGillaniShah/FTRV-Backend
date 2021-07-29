@@ -17,6 +17,7 @@ class JobController {
     this.router.post('/', this.createJob);
     this.router.get('/:id', this.getJobById);
     this.router.put('/:id', this.updateJob);
+    this.router.delete('/', this.deleteJob);
 
     return this.router;
   }
@@ -107,6 +108,27 @@ class JobController {
         return SuccessResponse(res, job);
       }
       BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteJob(req, res, next) {
+    const {
+      body: { ids: jobIds = [] },
+    } = req;
+
+    try {
+      if (jobIds.length < 1) {
+        BadRequestError(`Job id is required`, STATUS_CODES.INVALID_INPUT);
+      }
+      const query = {
+        where: {
+          id: jobIds,
+        },
+      };
+      const jobCount = await Job.destroy(query);
+      return SuccessResponse(res, { count: jobCount });
     } catch (e) {
       next(e);
     }
