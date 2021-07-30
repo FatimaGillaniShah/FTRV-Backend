@@ -1,10 +1,10 @@
 import express from 'express';
 import Joi from 'joi';
-import { STATUS_CODES } from '../../utils/constants';
+import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { createJobSchema, updateJobSchema } from './validationSchema';
-import { getJobByIdQuery } from './query';
+import { getJobByIdQuery, listJobs } from './query';
 
 const { Job } = models;
 
@@ -13,11 +13,44 @@ class JobController {
 
   static getRouter() {
     this.router = express.Router();
+    this.router.get('/', this.list);
     this.router.post('/', this.createJob);
     this.router.get('/:id', this.getJobById);
     this.router.put('/:id', this.updateJob);
+    this.router.delete('/', this.deleteJob);
 
     return this.router;
+  }
+
+  static async list(req, res, next) {
+    const {
+      query: {
+        sortOrder,
+        sortColumn,
+        pageNumber = 1,
+        pageSize = PAGE_SIZE,
+        searchString,
+        title,
+        departmentId,
+        locationId,
+      },
+    } = req;
+    try {
+      const query = listJobs({
+        sortOrder,
+        sortColumn,
+        pageNumber,
+        pageSize,
+        searchString,
+        title,
+        departmentId,
+        locationId,
+      });
+      const jobs = await Job.findAndCountAll(query);
+      return SuccessResponse(res, jobs);
+    } catch (e) {
+      next(e);
+    }
   }
 
   static async createJob(req, res, next) {
@@ -75,6 +108,27 @@ class JobController {
         return SuccessResponse(res, job);
       }
       BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async deleteJob(req, res, next) {
+    const {
+      body: { ids: jobIds = [] },
+    } = req;
+
+    try {
+      if (jobIds.length < 1) {
+        BadRequestError(`Job id is required`, STATUS_CODES.INVALID_INPUT);
+      }
+      const query = {
+        where: {
+          id: jobIds,
+        },
+      };
+      const jobCount = await Job.destroy(query);
+      return SuccessResponse(res, { count: jobCount });
     } catch (e) {
       next(e);
     }
