@@ -3286,10 +3286,10 @@
             "format": "date"
           },
           "createdBy": {
-            "type": "string"
+            "type": "number"
           },
           "updatedBy": {
-            "type": "string"
+            "type": "number"
           }
         }
       }
