@@ -40,9 +40,19 @@ module.exports = {
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
           },
-          userId: {
+          createdBy: {
             type: INTEGER,
             allowNull: false,
+            references: {
+              model: 'Users',
+              key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL',
+          },
+          updatedBy: {
+            type: INTEGER,
+            allowNull: true,
             references: {
               model: 'Users',
               key: 'id',

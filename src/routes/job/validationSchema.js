@@ -7,3 +7,11 @@ export const createJobSchema = Joi.object().keys({
   departmentId: Joi.number().required(),
   expiryDate: Joi.date().required(),
 });
+
+export const updateJobSchema = Joi.object().keys({
+  title: Joi.string().optional(),
+  description: Joi.string().optional(),
+  locationId: Joi.number().optional(),
+  departmentId: Joi.number().optional(),
+  expiryDate: Joi.date().optional(),
+});
