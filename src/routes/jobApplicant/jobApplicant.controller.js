@@ -35,8 +35,8 @@ class JobApplicantController {
           userId: user.id,
         },
       };
-      const hasApplied = JobApplicant.findAll(hasAppliedQuery);
-      if (hasApplied.length <= 0) {
+      const hasApplied = await JobApplicant.findAll(hasAppliedQuery);
+      if (hasApplied.length >= 0) {
         BadRequestError(`You have already applied to this job`, STATUS_CODES.INVALID_INPUT);
       }
       const jobExistQuery = {
@@ -44,7 +44,7 @@ class JobApplicantController {
           id: jobId,
         },
       };
-      const jobExist = Job.findOne(jobExistQuery);
+      const jobExist = await Job.findOne(jobExistQuery);
       if (new Date(jobExist.expiryDate).getTime() < new Date().getTime()) {
         BadRequestError(`Job has been expired`, STATUS_CODES.INVALID_INPUT);
       }

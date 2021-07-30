@@ -1,7 +1,8 @@
 import Joi from 'joi';
 
-export const createJobApplicantSchema = Joi.object().keys({
-  resume: Joi.string().required(),
-  note: Joi.string().required(),
-  jobId: Joi.number().required(),
-});
+export const createJobApplicantSchema = Joi.object()
+  .keys({
+    note: Joi.string().optional(),
+    jobId: Joi.number().required(),
+  })
+  .unknown(true);
