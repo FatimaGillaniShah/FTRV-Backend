@@ -107,15 +107,19 @@ export const listJobs = ({
     query.where[Op.or] = [];
     const searchColumns = ['title', 'description'];
     searchColumns.map((val) => query.where[Op.or].push(makeLikeCondition(val, searchString)));
-  } else if (title) {
-    query.where[Op.and] = query.where[Op.and] || [];
-    query.where[Op.and].push(makeLikeCondition('title', title));
-  } else if (departmentId) {
-    query.where[Op.and] = query.where[Op.and] || [];
-    query.where[Op.and].push(makeEqualityCondition('departmentId', departmentId));
-  } else if (locationId) {
-    query.where[Op.and] = query.where[Op.and] || [];
-    query.where[Op.and].push(makeEqualityCondition('locationId', locationId));
+  } else {
+    if (title) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeLikeCondition('title', title));
+    }
+    if (departmentId) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeEqualityCondition('departmentId', departmentId));
+    }
+    if (locationId) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeEqualityCondition('locationId', locationId));
+    }
   }
 
   // for sorting
