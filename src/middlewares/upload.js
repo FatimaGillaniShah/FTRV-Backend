@@ -52,7 +52,14 @@ const storageS3 = multerS3({
   key(req, file, cb) {
     // get key name
     const { originalUrl } = req;
-    const { BANNER_IMAGE, CEO_PAGE, PROFILE_PICTURE, BLOG_THUMBNAIL, DOCUMENT_FILE } = AWS_CONFIG;
+    const {
+      BANNER_IMAGE,
+      CEO_PAGE,
+      PROFILE_PICTURE,
+      BLOG_THUMBNAIL,
+      DOCUMENT_FILE,
+      APPLICANT_RESUME,
+    } = AWS_CONFIG;
     let key = '';
     const s3AllowedPathObj = {
       bannerImage: BANNER_IMAGE,
@@ -60,6 +67,7 @@ const storageS3 = multerS3({
       users: PROFILE_PICTURE,
       blogs: BLOG_THUMBNAIL,
       documents: DOCUMENT_FILE,
+      jobApplicant: APPLICANT_RESUME,
     };
     const s3AllowedPath = Object.keys(s3AllowedPathObj);
     const fileSuffix = `${req.user.id}-${Date.now()}-${file.originalname}`;

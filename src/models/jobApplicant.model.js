@@ -7,8 +7,10 @@ export default (sequelize, { STRING, INTEGER }) => {
         as: 'user',
         foreignKey: 'userId',
       });
-      this.belongsTo(Job, {
+      this.belongsToMany(Job, {
+        through: User,
         as: 'job',
+        otherKey: 'userId',
         foreignKey: 'jobId',
       });
     }
