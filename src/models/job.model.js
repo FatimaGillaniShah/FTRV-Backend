@@ -12,11 +12,18 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
         as: 'department',
       });
       this.belongsTo(User, {
-        as: 'user',
-        foreignKey: 'userId',
+        foreignKey: 'createdBy',
+        as: 'createdByUser',
       });
-      this.hasMany(JobApplicant, {
-        foreignKey: 'jobId',
+      this.belongsTo(User, {
+        foreignKey: 'updatedBy',
+        as: 'updatedByUser',
+      });
+      this.belongsToMany(User, {
+        through: JobApplicant,
+        as: 'user',
+        otherKey: 'jobId',
+        foreignKey: 'userId',
       });
     }
   }
@@ -45,13 +52,17 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
         type: INTEGER,
         allowNull: false,
       },
-      userId: {
-        type: INTEGER,
-        allowNull: false,
-      },
       expiryDate: {
         type: DATE,
         allowNull: false,
+      },
+      createdBy: {
+        type: INTEGER,
+        allowNull: false,
+      },
+      updatedBy: {
+        type: INTEGER,
+        allowNull: true,
       },
     },
     {
