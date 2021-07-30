@@ -19,8 +19,11 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
         foreignKey: 'updatedBy',
         as: 'updatedByUser',
       });
-      this.hasMany(JobApplicant, {
-        foreignKey: 'jobId',
+      this.belongsToMany(User, {
+        through: JobApplicant,
+        as: 'user',
+        otherKey: 'jobId',
+        foreignKey: 'userId',
       });
     }
   }

@@ -1,6 +1,9 @@
+import sequelize from 'sequelize';
 import models from '../../models';
+import { makeEqualityCondition, makeLikeCondition } from '../../utils/helper';
 
 const { Location, Department, User } = models;
+const { Op } = sequelize;
 
 export const getJobByIdQuery = (id) => {
   const query = {};
@@ -47,7 +50,16 @@ export const getJobByIdQuery = (id) => {
   return query;
 };
 
-export const listJobs = ({ sortOrder, sortColumn, pageNumber, pageSize }) => {
+export const listJobs = ({
+  sortOrder,
+  sortColumn,
+  pageNumber,
+  pageSize,
+  searchString,
+  title,
+  departmentId,
+  locationId,
+}) => {
   const query = { where: {} };
   query.include = [
     {
@@ -89,6 +101,26 @@ export const listJobs = ({ sortOrder, sortColumn, pageNumber, pageSize }) => {
 
   query.offset = (pageNumber - 1) * pageSize;
   query.limit = pageSize;
+
+  // for filtering
+  if (searchString) {
+    query.where[Op.or] = [];
+    const searchColumns = ['title', 'description'];
+    searchColumns.map((val) => query.where[Op.or].push(makeLikeCondition(val, searchString)));
+  } else {
+    if (title) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeLikeCondition('title', title));
+    }
+    if (departmentId) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeEqualityCondition('departmentId', departmentId));
+    }
+    if (locationId) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeEqualityCondition('locationId', locationId));
+    }
+  }
 
   // for sorting
   if (sortColumn === 'location.name') {
