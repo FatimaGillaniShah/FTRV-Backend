@@ -36,7 +36,7 @@ class JobApplicantController {
         },
       };
       const hasApplied = await JobApplicant.findAll(hasAppliedQuery);
-      if (hasApplied.length >= 0) {
+      if (hasApplied.length >= 1) {
         BadRequestError(`You have already applied to this job`, STATUS_CODES.INVALID_INPUT);
       }
       const jobExistQuery = {
