@@ -3073,6 +3073,53 @@
             "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
+      },
+      "get": {
+        "summary": "Retrieve list of all job applicants",
+        "tags": ["Job Applicant"],
+        "operationId": "getJobApplicantList",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Job Applicants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobApplicant"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
