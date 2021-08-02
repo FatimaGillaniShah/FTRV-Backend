@@ -1,10 +1,10 @@
 import express from 'express';
-import Joi from 'joi';
 import { STATUS_CODES } from '../../utils/constants';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import { BadRequestError, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { createJobApplicantSchema } from './validationSchema';
 import uploadFile from '../../middlewares/upload';
+import { Request, RequestBodyValidator } from '../../utils/decorators';
 
 const { JobApplicant, Job } = models;
 
@@ -18,14 +18,12 @@ class JobApplicantController {
     return this.router;
   }
 
+  @RequestBodyValidator(createJobApplicantSchema)
+  @Request
   static async createJobApplicant(req, res, next) {
     const { body: jobApplicantPayload, user, file = {} } = req;
     try {
       const { jobId } = jobApplicantPayload;
-      const result = Joi.validate(jobApplicantPayload, createJobApplicantSchema);
-      if (result.error) {
-        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
-      }
       if (!file.key) {
         BadRequestError(`Please attach resume`, STATUS_CODES.INVALID_INPUT);
       }
