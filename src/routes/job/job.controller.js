@@ -27,11 +27,7 @@ class JobController {
     return jobs.map((job) => {
       const jobData = job.toJSON();
       const jobExpired = moment(jobData.expiryDate) < moment();
-      if (jobExpired) {
-        jobData.expired = true;
-      } else {
-        jobData.expired = false;
-      }
+      jobData.expired = jobExpired;
       return jobData;
     });
   }
@@ -97,13 +93,7 @@ class JobController {
       const query = getJobByIdQuery(jobId);
       const job = await Job.findOne(query);
       if (job) {
-        const jobResponse = job.toJSON();
-        const jobExpired = moment(jobResponse.expiryDate) < moment();
-        if (jobExpired) {
-          jobResponse.expired = true;
-        } else {
-          jobResponse.expired = false;
-        }
+        const jobResponse = JobController.appendExpiredFlag([job]);
 
         return SuccessResponse(res, jobResponse);
       }
