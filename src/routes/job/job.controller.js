@@ -1,5 +1,6 @@
 import express from 'express';
 import Joi from 'joi';
+import moment from 'moment';
 import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
@@ -20,6 +21,19 @@ class JobController {
     this.router.delete('/', this.deleteJob);
 
     return this.router;
+  }
+
+  static appendExpiredFlag(jobs) {
+    return jobs.map((job) => {
+      const jobData = job.toJSON();
+      const jobExpired = moment(jobData.expiryDate) < moment();
+      if (jobExpired) {
+        jobData.expired = true;
+      } else {
+        jobData.expired = false;
+      }
+      return jobData;
+    });
   }
 
   static async list(req, res, next) {
@@ -47,7 +61,11 @@ class JobController {
         locationId,
       });
       const jobs = await Job.findAndCountAll(query);
-      return SuccessResponse(res, jobs);
+      const { rows, count } = jobs;
+      const updatedRows = JobController.appendExpiredFlag(rows);
+      const jobResponse = { count, rows: updatedRows };
+
+      return SuccessResponse(res, jobResponse);
     } catch (e) {
       next(e);
     }
@@ -78,7 +96,15 @@ class JobController {
       }
       const query = getJobByIdQuery(jobId);
       const job = await Job.findOne(query);
-      return SuccessResponse(res, job);
+      const jobResponse = job.toJSON();
+      const jobExpired = moment(jobResponse.expiryDate) < moment();
+      if (jobExpired) {
+        jobResponse.expired = true;
+      } else {
+        jobResponse.expired = false;
+      }
+
+      return SuccessResponse(res, jobResponse);
     } catch (e) {
       next(e);
     }
