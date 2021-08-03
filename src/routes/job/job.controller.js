@@ -96,15 +96,18 @@ class JobController {
       }
       const query = getJobByIdQuery(jobId);
       const job = await Job.findOne(query);
-      const jobResponse = job.toJSON();
-      const jobExpired = moment(jobResponse.expiryDate) < moment();
-      if (jobExpired) {
-        jobResponse.expired = true;
-      } else {
-        jobResponse.expired = false;
-      }
+      if (job) {
+        const jobResponse = job.toJSON();
+        const jobExpired = moment(jobResponse.expiryDate) < moment();
+        if (jobExpired) {
+          jobResponse.expired = true;
+        } else {
+          jobResponse.expired = false;
+        }
 
-      return SuccessResponse(res, jobResponse);
+        return SuccessResponse(res, jobResponse);
+      }
+      return BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
     }
