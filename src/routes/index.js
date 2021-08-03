@@ -15,6 +15,7 @@ import DepartmentController from './department/department.controller';
 import DocumentController from './document/document.controller';
 import RingGroupController from './ringGroup/ringGroup.controller';
 import JobController from './job/job.controller';
+import JobApplicantController from './jobApplicant/jobApplicant.controller';
 
 const router = express.Router();
 
@@ -44,5 +45,6 @@ router.use('/departments', DepartmentController.getRouter());
 router.use('/documents', DocumentController.getRouter());
 router.use('/ringGroups', RingGroupController.getRouter());
 router.use('/jobs', JobController.getRouter());
+router.use('/jobApplicant', JobApplicantController.getRouter());
 
 export default router;
