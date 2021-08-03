@@ -1,11 +1,11 @@
 import express from 'express';
-import Joi from 'joi';
 import moment from 'moment';
 import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import { BadRequestError, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { createJobSchema, updateJobSchema } from './validationSchema';
 import { getJobByIdQuery, listJobs } from './query';
+import { Request, RequestBodyValidator } from '../../utils/decorators';
 
 const { Job } = models;
 
@@ -32,7 +32,8 @@ class JobController {
     });
   }
 
-  static async list(req, res, next) {
+  @Request
+  static async list(req, res) {
     const {
       query: {
         sortOrder,
@@ -45,112 +46,90 @@ class JobController {
         locationId,
       },
     } = req;
-    try {
-      const query = listJobs({
-        sortOrder,
-        sortColumn,
-        pageNumber,
-        pageSize,
-        searchString,
-        title,
-        departmentId,
-        locationId,
-      });
-      const jobs = await Job.findAndCountAll(query);
-      const { rows, count } = jobs;
-      const updatedRows = JobController.appendExpiredFlag(rows);
-      const jobResponse = { count, rows: updatedRows };
+    const query = listJobs({
+      sortOrder,
+      sortColumn,
+      pageNumber,
+      pageSize,
+      searchString,
+      title,
+      departmentId,
+      locationId,
+    });
+    const jobs = await Job.findAndCountAll(query);
+    const { rows, count } = jobs;
+    const updatedRows = JobController.appendExpiredFlag(rows);
+    const jobResponse = { count, rows: updatedRows };
 
-      return SuccessResponse(res, jobResponse);
-    } catch (e) {
-      next(e);
-    }
+    return SuccessResponse(res, jobResponse);
   }
 
-  static async createJob(req, res, next) {
+  @Request
+  @RequestBodyValidator(createJobSchema)
+  static async createJob(req, res) {
     const { body: jobPayload, user } = req;
-    try {
-      const result = Joi.validate(jobPayload, createJobSchema);
-      if (result.error) {
-        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
-      }
-      jobPayload.createdBy = user.id;
-      const job = await Job.create(jobPayload);
-      return SuccessResponse(res, job);
-    } catch (e) {
-      next(e);
-    }
+    jobPayload.createdBy = user.id;
+    const job = await Job.create(jobPayload);
+    return SuccessResponse(res, job);
   }
 
-  static async getJobById(req, res, next) {
+  @Request
+  static async getJobById(req, res) {
     const {
       params: { id: jobId },
     } = req;
-    try {
-      if (!jobId) {
-        BadRequestError(`Job id is required`, STATUS_CODES.INVALID_INPUT);
-      }
-      const query = getJobByIdQuery(jobId);
-      const job = await Job.findOne(query);
-      if (job) {
-        const jobResponse = JobController.appendExpiredFlag([job]);
-
-        return SuccessResponse(res, jobResponse);
-      }
-      return BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
-    } catch (e) {
-      next(e);
+    if (!jobId) {
+      BadRequestError(`Job id is required`, STATUS_CODES.INVALID_INPUT);
     }
+    const query = getJobByIdQuery(jobId);
+    const job = await Job.findOne(query);
+    if (job) {
+      const jobResponse = JobController.appendExpiredFlag([job]);
+
+      return SuccessResponse(res, jobResponse);
+    }
+    return BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
   }
 
-  static async updateJob(req, res, next) {
+  @Request
+  @RequestBodyValidator(updateJobSchema)
+  static async updateJob(req, res) {
     const {
       body: jobPayload,
       params: { id: jobId },
       user,
     } = req;
-    try {
-      const result = Joi.validate(jobPayload, updateJobSchema);
-      if (result.error) {
-        BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
-      }
-      const updateQuery = {
-        where: {
-          id: jobId,
-        },
-      };
+    const updateQuery = {
+      where: {
+        id: jobId,
+      },
+    };
 
-      const jobExist = await Job.findOne(updateQuery);
-      if (jobExist) {
-        jobPayload.updatedBy = user.id;
-        const job = await Job.update(jobPayload, updateQuery);
-        return SuccessResponse(res, job);
-      }
-      BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
-    } catch (e) {
-      next(e);
+    const jobExist = await Job.findOne(updateQuery);
+    if (jobExist) {
+      jobPayload.updatedBy = user.id;
+      const job = await Job.update(jobPayload, updateQuery);
+      return SuccessResponse(res, job);
     }
+    BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
   }
 
-  static async deleteJob(req, res, next) {
+  @Request
+  static async deleteJob(req, res) {
     const {
       body: { ids: jobIds = [] },
     } = req;
 
-    try {
-      if (jobIds.length < 1) {
-        BadRequestError(`Job id is required`, STATUS_CODES.INVALID_INPUT);
-      }
-      const query = {
-        where: {
-          id: jobIds,
-        },
-      };
-      const jobCount = await Job.destroy(query);
-      return SuccessResponse(res, { count: jobCount });
-    } catch (e) {
-      next(e);
+    if (jobIds.length < 1) {
+      BadRequestError(`Job id is required`, STATUS_CODES.INVALID_INPUT);
     }
+    const query = {
+      where: {
+        id: jobIds,
+      },
+    };
+    const jobCount = await Job.destroy(query);
+    return SuccessResponse(res, { count: jobCount });
   }
 }
 export default JobController;
