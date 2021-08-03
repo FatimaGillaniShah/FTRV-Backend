@@ -12,6 +12,7 @@ export const AWS_CONFIG = {
   PROFILE_PICTURE: [process.env.FOLDER_ALIAS, 'profile-picture'].join('-'),
   BLOG_THUMBNAIL: [process.env.FOLDER_ALIAS, 'blog-thumbnail'].join('-'),
   DOCUMENT_FILE: [process.env.FOLDER_ALIAS, 'document-file'].join('-'),
+  APPLICANT_RESUME: [process.env.FOLDER_ALIAS, 'applicant-resume'].join('-'),
   CEO_PAGE: [process.env.FOLDER_ALIAS, 'ceo-page'].join('-'),
   BANNER_IMAGE: [process.env.FOLDER_ALIAS, 'banner-image'].join('-'),
 };

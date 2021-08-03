@@ -3039,6 +3039,41 @@
           }
         }
       }
+    },
+    "/jobApplicant": {
+      "post": {
+        "summary": "An endpoint to create a job applicant",
+        "tags": ["Job Applicant"],
+        "operationId": "createJobApplicant",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/JobApplicant"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of job applicant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobApplicant"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3408,6 +3443,26 @@
             "type": "number"
           }
         }
+      },
+      "JobApplicant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "resume": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "number"
+          },
+          "jobId": {
+            "type": "number"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -3744,6 +3799,29 @@
           }
         },
         "required": true
+      },
+      "JobApplicant": {
+        "description": "Information about the Job Applicant of FTRV",
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "format": "binary"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "jobId": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "required": true
       }
     },
     "responses": {
@@ -3797,6 +3875,17 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/Document"
+            }
+          }
+        },
+        "required": true
+      },
+      "jobApplicant": {
+        "description": "Information about the job applicant of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/JobApplicant"
             }
           }
         },

@@ -48,7 +48,14 @@ module.exports = {
             allowNull: false,
             type: DATE
           },
-        });
+        },{
+          uniqueKeys: {
+            Items_unique: {
+                fields: ['userId', 'jobId']
+            }
+        }
+        }
+      );
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('JobApplicants');
