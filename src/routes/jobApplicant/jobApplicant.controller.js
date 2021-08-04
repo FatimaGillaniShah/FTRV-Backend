@@ -1,6 +1,10 @@
 import express from 'express';
 import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
-import { BadRequestError, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  generatePreSignedUrlForGetObject,
+  SuccessResponse,
+} from '../../utils/helper';
 import models from '../../models';
 import { createJobApplicantSchema } from './validationSchema';
 import uploadFile from '../../middlewares/upload';
@@ -18,6 +22,15 @@ class JobApplicantController {
     this.router.get('/', this.list);
 
     return this.router;
+  }
+
+  static generatePreSignedUrl(applicants) {
+    applicants.forEach((applicant) => {
+      if (applicant.resume) {
+        // eslint-disable-next-line no-param-reassign
+        applicant.resume = generatePreSignedUrlForGetObject(applicant.resume);
+      }
+    });
   }
 
   @RequestBodyValidator(createJobApplicantSchema)
@@ -75,6 +88,7 @@ class JobApplicantController {
         pageSize,
       });
       const applicants = await JobApplicant.findAndCountAll(query);
+      JobApplicantController.generatePreSignedUrl(applicants.rows);
       return SuccessResponse(res, applicants);
     } catch (e) {
       next(e);
