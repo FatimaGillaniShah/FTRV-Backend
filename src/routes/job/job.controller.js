@@ -7,7 +7,7 @@ import { createJobSchema, updateJobSchema } from './validationSchema';
 import { getJobByIdQuery, listJobs } from './query';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
 
-const { Job } = models;
+const { Job, JobApplicant } = models;
 
 class JobController {
   static router;
@@ -77,15 +77,23 @@ class JobController {
   static async getJobById(req, res) {
     const {
       params: { id: jobId },
+      user,
     } = req;
     if (!jobId) {
       BadRequestError(`Job id is required`, STATUS_CODES.INVALID_INPUT);
     }
+    const appliedQuery = {
+      where: {
+        jobId,
+        userId: user.id,
+      },
+    };
     const query = getJobByIdQuery(jobId);
     const job = await Job.findOne(query);
     if (job) {
       const jobResponse = JobController.appendExpiredFlag([job]);
-
+      const hasApplied = await JobApplicant.findAll(appliedQuery);
+      jobResponse[0].applied = hasApplied.length > 0;
       return SuccessResponse(res, jobResponse);
     }
     return BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
