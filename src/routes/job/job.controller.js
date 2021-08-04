@@ -92,8 +92,8 @@ class JobController {
     const job = await Job.findOne(query);
     if (job) {
       const jobResponse = JobController.appendExpiredFlag([job]);
-      const hasApplied = await JobApplicant.findAll(appliedQuery);
-      jobResponse[0].applied = hasApplied.length > 0;
+      const hasApplied = await JobApplicant.findOne(appliedQuery);
+      jobResponse[0].applied = !!hasApplied;
       return SuccessResponse(res, jobResponse);
     }
     return BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
