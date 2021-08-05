@@ -111,6 +111,11 @@
         "resource": "/jobs/:id",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/jobApplicant",
+        "methods": ["POST"],
+        "action": "allow"
       }
     ]
   }

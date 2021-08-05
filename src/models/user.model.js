@@ -26,6 +26,11 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       this.hasMany(JobApplicant, {
         foreignKey: 'userId',
       });
+      this.belongsToMany(Job, {
+        through: JobApplicant,
+        otherKey: 'userId',
+        foreignKey: 'jobId',
+      });
     }
   }
 

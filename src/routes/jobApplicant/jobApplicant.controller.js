@@ -1,10 +1,15 @@
 import express from 'express';
-import { STATUS_CODES } from '../../utils/constants';
-import { BadRequestError, SuccessResponse } from '../../utils/helper';
+import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
+import {
+  BadRequestError,
+  generatePreSignedUrlForGetObject,
+  SuccessResponse,
+} from '../../utils/helper';
 import models from '../../models';
 import { createJobApplicantSchema } from './validationSchema';
 import uploadFile from '../../middlewares/upload';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
+import { listQuery } from './query';
 
 const { JobApplicant, Job } = models;
 
@@ -14,8 +19,18 @@ class JobApplicantController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', uploadFile('document').single('file'), this.createJobApplicant);
+    this.router.get('/', this.list);
 
     return this.router;
+  }
+
+  static generatePreSignedUrl(applicants) {
+    applicants.forEach((applicant) => {
+      if (applicant.resume) {
+        // eslint-disable-next-line no-param-reassign
+        applicant.resume = generatePreSignedUrlForGetObject(applicant.resume);
+      }
+    });
   }
 
   @RequestBodyValidator(createJobApplicantSchema)
@@ -51,6 +66,33 @@ class JobApplicantController {
     jobApplicantPayload.resume = file.key;
     const jobApplicant = await JobApplicant.create(jobApplicantPayload);
     return SuccessResponse(res, jobApplicant);
+  }
+
+  @Request
+  static async list(req, res, next) {
+    const {
+      query: { jobId, sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE },
+    } = req;
+    try {
+      if (pageNumber <= 0) {
+        BadRequestError('Invalid page number', STATUS_CODES.INVALID_INPUT);
+      }
+      if (!jobId) {
+        BadRequestError('Job Required', STATUS_CODES.INVALID_INPUT);
+      }
+      const query = listQuery({
+        jobId,
+        sortColumn,
+        sortOrder,
+        pageNumber,
+        pageSize,
+      });
+      const applicants = await JobApplicant.findAndCountAll(query);
+      JobApplicantController.generatePreSignedUrl(applicants.rows);
+      return SuccessResponse(res, applicants);
+    } catch (e) {
+      next(e);
+    }
   }
 }
 export default JobApplicantController;
