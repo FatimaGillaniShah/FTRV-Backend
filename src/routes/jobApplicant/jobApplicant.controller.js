@@ -1,4 +1,5 @@
 import express from 'express';
+import moment from 'moment';
 import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import {
   BadRequestError,
@@ -57,7 +58,8 @@ class JobApplicantController {
       },
     };
     const jobExist = await Job.findOne(jobExistQuery);
-    if (new Date(jobExist.expiryDate).getTime() < new Date().getTime()) {
+    const jobExpired = moment().isAfter(moment(jobExist.expiryDate), 'day');
+    if (jobExpired) {
       BadRequestError(`Job has been expired`, STATUS_CODES.INVALID_INPUT);
     }
 

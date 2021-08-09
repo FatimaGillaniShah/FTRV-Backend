@@ -1,7 +1,8 @@
 import express from 'express';
 import moment from 'moment';
+import { chain } from 'lodash';
 import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
-import { BadRequestError, SuccessResponse } from '../../utils/helper';
+import { BadRequestError, cleanUnusedFiles, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { createJobSchema, updateJobSchema } from './validationSchema';
 import { getJobByIdQuery, listJobs } from './query';
@@ -26,7 +27,7 @@ class JobController {
   static appendExpiredFlag(jobs) {
     return jobs.map((job) => {
       const jobData = job.toJSON();
-      const jobExpired = moment(jobData.expiryDate) < moment();
+      const jobExpired = moment().isAfter(moment(jobData.expiryDate), 'day');
       jobData.expired = jobExpired;
       return jobData;
     });
@@ -136,6 +137,19 @@ class JobController {
         id: jobIds,
       },
     };
+    const applicantQuery = {
+      where: {
+        jobId: jobIds,
+      },
+    };
+    const applicants = await JobApplicant.findAll(applicantQuery);
+    const applicantKeyObjects = chain(applicants)
+      .filter((applicant) => !!applicant.resume)
+      .map((applicant) => ({ Key: applicant.resume }))
+      .value();
+    if (applicantKeyObjects.length > 0) {
+      cleanUnusedFiles(applicantKeyObjects);
+    }
     const jobCount = await Job.destroy(query);
     return SuccessResponse(res, { count: jobCount });
   }
