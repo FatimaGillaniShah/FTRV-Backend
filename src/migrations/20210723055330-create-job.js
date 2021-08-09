@@ -1,6 +1,6 @@
 'use strict';
 module.exports = {
-  up: async (queryInterface, { INTEGER, STRING, DATE }) => {
+  up: async (queryInterface, { INTEGER, STRING, TEXT, DATE }) => {
     await queryInterface.createTable({
           tableName: 'Jobs',
           schema: process.env.SCHEMA_NAME,
@@ -17,7 +17,7 @@ module.exports = {
             allowNull: false,
           },
           description: {
-            type: STRING,
+            type: TEXT,
             allowNull: false,
           },
           locationId: {
