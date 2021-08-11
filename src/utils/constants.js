@@ -22,4 +22,4 @@ export const ROLES = {
   USER: 'user',
 };
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const MAX_FILE_SIZE = process.env.FILE_SIZE_LIMIT * 1024 * 1024; // 10MB
