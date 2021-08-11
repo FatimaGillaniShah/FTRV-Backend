@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 import multer from 'multer';
 import multerS3 from 'multer-s3';
 import path from 'path';
-import { AWS_CONFIG, UPLOAD_PATH } from '../utils/constants';
+import { AWS_CONFIG, MAX_FILE_SIZE, UPLOAD_PATH } from '../utils/constants';
 
 const s3 = new AWS.S3({
   accessKeyId: AWS_CONFIG.AWS_ACCESS_KEY,
@@ -98,5 +98,6 @@ export default (fileType) => {
   return multer({
     storage: fileType === 'excel' ? storageDisk : storageS3,
     fileFilter,
+    limits: { fileSize: MAX_FILE_SIZE },
   });
 };
