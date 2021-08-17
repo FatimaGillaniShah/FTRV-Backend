@@ -1,6 +1,6 @@
 'use strict';
 const tableName = 'Polls';
-const colNameCreatedBy = 'createBy'
+const colNameCreatedBy = 'createdBy'
 const colNameUpdatedBy = 'updatedBy'
 
 module.exports = {

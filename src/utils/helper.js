@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import AWS from 'aws-sdk';
 import sequelize from 'sequelize';
+import moment from 'moment';
 import { AWS_CONFIG } from './constants';
 import { BadRequest, NotFound } from '../error';
 
@@ -104,6 +105,9 @@ const makeEqualityCondition = (columnName, searchValue) => {
   return condition;
 };
 
+const isPreviousDate = (date, currentDate = new Date()) =>
+  moment(currentDate).isAfter(moment(date), 'day');
+
 export {
   stripHtmlTags,
   generateHash,
@@ -118,4 +122,5 @@ export {
   cleanUnusedFiles,
   makeLikeCondition,
   makeEqualityCondition,
+  isPreviousDate,
 };

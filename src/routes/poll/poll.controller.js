@@ -20,11 +20,23 @@ class PollController {
   @RequestBodyValidator(createPollSchema)
   static async createPoll(req, res) {
     const { body: pollPayload, user } = req;
-    const { pollOptions, ...pollInfo } = pollPayload;
-    pollPayload.createdBy = user.id;
+    const { options: pollOptions, ...pollInfo } = pollPayload;
+    pollInfo.createdBy = user.id;
     const poll = await Poll.create(pollInfo);
-    await PollOption.create(pollOptions);
-    return SuccessResponse(res, poll);
+    const pollResponse = poll.toJSON();
+    const pollOptionPromises = PollController.getPollOptionData(poll.id, pollOptions);
+    await Promise.all(pollOptionPromises);
+    return SuccessResponse(res, pollResponse);
+  }
+
+  static getPollOptionData(pollId, pollOptions) {
+    return pollOptions.map((polOption) => {
+      const eventLocationCreateParams = {
+        pollId,
+        name: polOption,
+      };
+      return PollOption.create(eventLocationCreateParams);
+    });
   }
 }
 export default PollController;
