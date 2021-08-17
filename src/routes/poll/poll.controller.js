@@ -24,12 +24,12 @@ class PollController {
     pollInfo.createdBy = user.id;
     const poll = await Poll.create(pollInfo);
     const pollResponse = poll.toJSON();
-    const pollOptionPromises = PollController.getPollOptionData(poll.id, pollOptions);
+    const pollOptionPromises = PollController.createPollOption(poll.id, pollOptions);
     await Promise.all(pollOptionPromises);
     return SuccessResponse(res, pollResponse);
   }
 
-  static getPollOptionData(pollId, pollOptions) {
+  static createPollOption(pollId, pollOptions) {
     return pollOptions.map((polOption) => {
       const eventLocationCreateParams = {
         pollId,
