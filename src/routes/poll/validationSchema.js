@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import moment from 'moment';
 
-export const createPollSchema = (body, query) => {
+export const createPollSchema = ({ body, query }) => {
   const schema = Joi.object()
     .keys({
       question: Joi.string().required(),
