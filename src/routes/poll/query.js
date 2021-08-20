@@ -1,12 +1,22 @@
 import models from '../../models';
 
-const { User } = models;
+const { User, PollOption, UserPollVote } = models;
 export const getPollByIdQuery = (id) => {
   const query = {};
   query.where = {
     id,
   };
   query.include = [
+    {
+      model: PollOption,
+      as: 'options',
+      attributes: { exclude: ['createdAt', 'updatedAt', 'pollId'] },
+      include: {
+        model: UserPollVote,
+        as: 'voted',
+        attributes: ['userId'],
+      },
+    },
     {
       model: User,
       as: 'createdByUser',
@@ -19,15 +29,7 @@ export const getPollByIdQuery = (id) => {
     },
   ];
   query.attributes = {
-    exclude: [
-      'createdAt',
-      'updatedAt',
-      'locationId',
-      'departmentId',
-      'userId',
-      'createdBy',
-      'updatedBy',
-    ],
+    exclude: ['createdAt', 'updatedAt', 'createdBy', 'updatedBy'],
   };
   return query;
 };

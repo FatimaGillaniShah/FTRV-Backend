@@ -15,16 +15,28 @@ class PollController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createPoll);
+    this.router.get('/:id', this.getPollById);
 
     return this.router;
   }
 
-  static appendExpiredFlag(jobs) {
-    return jobs.map((job) => {
-      const jobData = job.toJSON();
-      const jobExpired = moment().isAfter(moment(jobData.expiryDate), 'day');
-      jobData.expired = jobExpired;
-      return jobData;
+  static appendStateFlags(polls, date) {
+    return polls.map((poll) => {
+      const pollData = poll.toJSON();
+      const pollExpired = moment(date).isAfter(moment(pollData.endDate), 'day');
+      const pollPending = moment(date).isBefore(moment(pollData.startDate), 'day');
+      pollData.expired = pollExpired;
+      pollData.pending = pollPending;
+      PollController.appendVotedFlag(pollData.options);
+      return pollData;
+    });
+  }
+
+  static appendVotedFlag(options) {
+    return options.map((option) => {
+      const pollData = option;
+      pollData.voted = pollData.voted.length > 0;
+      return pollData;
     });
   }
 
@@ -44,24 +56,15 @@ class PollController {
   @Request
   static async getPollById(req, res) {
     const {
-      params: { id: pollId },
-      // user,
+      query: { id: pollId, date = new Date() },
     } = req;
     if (!pollId) {
       BadRequestError(`Poll id is required`, STATUS_CODES.INVALID_INPUT);
     }
-    // const appliedQuery = {
-    //   where: {
-    //     pollId,
-    //     userId: user.id,
-    //   },
-    // };
     const query = getPollByIdQuery(pollId);
     const poll = await Poll.findOne(query);
     if (poll) {
-      const pollResponse = PollController.appendExpiredFlag([poll]);
-      // const hasApplied = await JobApplicant.findOne(appliedQuery);
-      // pollResponse[0].applied = !!hasApplied;
+      const pollResponse = PollController.appendStateFlags([poll], date);
       return SuccessResponse(res, pollResponse);
     }
     return BadRequestError(`Poll does not exist`, STATUS_CODES.NOTFOUND);

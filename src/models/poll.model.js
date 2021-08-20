@@ -10,6 +10,7 @@ export default (sequelize, { INTEGER, STRING, DATE, ENUM }) => {
     static associate({ PollOption, UserPollVote, User }) {
       this.hasMany(PollOption, {
         foreignKey: 'pollId',
+        as: 'options',
       });
 
       this.hasMany(UserPollVote, {
