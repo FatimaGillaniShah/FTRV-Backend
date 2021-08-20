@@ -1,8 +1,11 @@
 import express from 'express';
-import { SuccessResponse } from '../../utils/helper';
+import moment from 'moment';
+import { BadRequestError, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
 import { createPollSchema } from './validationSchema';
+import { STATUS_CODES } from '../../utils/constants';
+import { getPollByIdQuery } from './query';
 
 const { Poll, PollOption } = models;
 
@@ -16,6 +19,15 @@ class PollController {
     return this.router;
   }
 
+  static appendExpiredFlag(jobs) {
+    return jobs.map((job) => {
+      const jobData = job.toJSON();
+      const jobExpired = moment().isAfter(moment(jobData.expiryDate), 'day');
+      jobData.expired = jobExpired;
+      return jobData;
+    });
+  }
+
   @Request
   @RequestBodyValidator(createPollSchema)
   static async createPoll(req, res) {
@@ -27,6 +39,32 @@ class PollController {
     const pollOptionPromises = PollController.createPollOption(poll.id, pollOptions);
     await Promise.all(pollOptionPromises);
     return SuccessResponse(res, pollResponse);
+  }
+
+  @Request
+  static async getPollById(req, res) {
+    const {
+      params: { id: pollId },
+      // user,
+    } = req;
+    if (!pollId) {
+      BadRequestError(`Poll id is required`, STATUS_CODES.INVALID_INPUT);
+    }
+    // const appliedQuery = {
+    //   where: {
+    //     pollId,
+    //     userId: user.id,
+    //   },
+    // };
+    const query = getPollByIdQuery(pollId);
+    const poll = await Poll.findOne(query);
+    if (poll) {
+      const pollResponse = PollController.appendExpiredFlag([poll]);
+      // const hasApplied = await JobApplicant.findOne(appliedQuery);
+      // pollResponse[0].applied = !!hasApplied;
+      return SuccessResponse(res, pollResponse);
+    }
+    return BadRequestError(`Poll does not exist`, STATUS_CODES.NOTFOUND);
   }
 
   static createPollOption(pollId, pollOptions) {
