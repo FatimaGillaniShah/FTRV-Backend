@@ -3164,50 +3164,49 @@
         }
       },
       "get": {
-        "summary": "Retrieve poll by id",
+        "summary": "Retrieve list of all poll",
         "tags": ["Poll"],
-        "operationId": "getPollById",
+        "operationId": "getPollList",
         "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "ID of Poll",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "date",
             "in": "query",
             "type": "date"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful retrieval of Poll",
+            "description": "Array of Poll",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Poll"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Poll"
+                  }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Invalid Input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
       },
@@ -3239,6 +3238,56 @@
         "responses": {
           "200": {
             "description": "Successful update of Poll",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Poll"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/polls/{id}": {
+      "get": {
+        "summary": "Retrieve poll by id",
+        "tags": ["Poll"],
+        "operationId": "getPollById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Poll",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "path",
+            "type": "date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of Poll",
             "content": {
               "application/json": {
                 "schema": {

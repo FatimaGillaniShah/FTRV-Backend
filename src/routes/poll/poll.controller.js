@@ -4,8 +4,8 @@ import { BadRequestError, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
 import { createPollSchema, updatePollSchema } from './validationSchema';
-import { STATUS_CODES } from '../../utils/constants';
-import { getPollByIdQuery, updateQuery } from './query';
+import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
+import { getPollByIdQuery, listPolls, updateQuery } from './query';
 
 const { Poll, PollOption } = models;
 
@@ -15,8 +15,9 @@ class PollController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createPoll);
-    this.router.get('/', this.getPollById);
+    this.router.get('/:id/:date?', this.getPollById);
     this.router.put('/', this.updatePoll);
+    this.router.get('/', this.list);
 
     return this.router;
   }
@@ -42,6 +43,25 @@ class PollController {
   }
 
   @Request
+  static async list(req, res) {
+    const {
+      query: { sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE, date = new Date() },
+    } = req;
+    const query = listPolls({
+      sortOrder,
+      sortColumn,
+      pageNumber,
+      pageSize,
+    });
+    const polls = await Poll.findAndCountAll(query);
+    const { rows, count } = polls;
+    const updatedRows = PollController.appendStateFlags(rows, date);
+    const pollResponse = { count, rows: updatedRows };
+
+    return SuccessResponse(res, pollResponse);
+  }
+
+  @Request
   @RequestBodyValidator(createPollSchema)
   static async createPoll(req, res) {
     const { body: pollPayload, user } = req;
@@ -57,7 +77,7 @@ class PollController {
   @Request
   static async getPollById(req, res) {
     const {
-      query: { id: pollId, date = new Date() },
+      params: { id: pollId, date = new Date() },
     } = req;
     if (!pollId) {
       BadRequestError(`Poll id is required`, STATUS_CODES.INVALID_INPUT);
