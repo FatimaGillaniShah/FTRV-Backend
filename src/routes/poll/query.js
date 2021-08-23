@@ -33,3 +33,9 @@ export const getPollByIdQuery = (id) => {
   };
   return query;
 };
+
+export const updateQuery = (id) => ({
+  where: {
+    id,
+  },
+});

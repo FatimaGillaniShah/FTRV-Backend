@@ -3127,6 +3127,13 @@
         "summary": "An endpoint to create a poll",
         "tags": ["Poll"],
         "operationId": "createPoll",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "type": "date"
+          }
+        ],
         "requestBody": {
           "$ref": "#/components/requestBodies/Poll"
         },
@@ -3155,9 +3162,7 @@
             "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
-      }
-    },
-    "/polls/{id}": {
+      },
       "get": {
         "summary": "Retrieve poll by id",
         "tags": ["Poll"],
@@ -3183,6 +3188,57 @@
         "responses": {
           "200": {
             "description": "Successful retrieval of Poll",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Poll"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Poll"],
+        "summary": "An endpoint to update a Poll",
+        "operationId": "updatePoll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of Poll",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Poll"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of Poll",
             "content": {
               "application/json": {
                 "schema": {

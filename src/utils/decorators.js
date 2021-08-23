@@ -20,7 +20,7 @@ const RequestBodyValidator = (validatePayloadFunc) => {
     // eslint-disable-next-line no-param-reassign
     descriptor.value = (...args) => {
       const [req] = args;
-      const result = validatePayloadFunc(req.body, req.query);
+      const result = validatePayloadFunc(req);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }

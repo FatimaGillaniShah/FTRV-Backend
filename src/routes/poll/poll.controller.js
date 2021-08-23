@@ -3,9 +3,9 @@ import moment from 'moment';
 import { BadRequestError, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
-import { createPollSchema } from './validationSchema';
+import { createPollSchema, updatePollSchema } from './validationSchema';
 import { STATUS_CODES } from '../../utils/constants';
-import { getPollByIdQuery } from './query';
+import { getPollByIdQuery, updateQuery } from './query';
 
 const { Poll, PollOption } = models;
 
@@ -15,7 +15,8 @@ class PollController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createPoll);
-    this.router.get('/:id', this.getPollById);
+    this.router.get('/', this.getPollById);
+    this.router.put('/', this.updatePoll);
 
     return this.router;
   }
@@ -70,13 +71,47 @@ class PollController {
     return BadRequestError(`Poll does not exist`, STATUS_CODES.NOTFOUND);
   }
 
+  @Request
+  @RequestBodyValidator(updatePollSchema)
+  static async updatePoll(req, res) {
+    const {
+      body: pollPayload,
+      query: { id: pollId },
+      user,
+    } = req;
+    const { options: pollOptions, ...pollInfo } = pollPayload;
+    const query = updateQuery(pollId);
+    const pollExist = await Poll.findOne(query);
+    if (pollExist) {
+      pollInfo.updatedBy = user.id;
+      const poll = await Poll.update(pollInfo, query);
+      const pollOptionPromises = PollController.updatePollOption(pollId, pollOptions);
+      await Promise.all(pollOptionPromises);
+      return SuccessResponse(res, poll);
+    }
+    BadRequestError(`Poll does not exist`, STATUS_CODES.NOTFOUND);
+  }
+
   static createPollOption(pollId, pollOptions) {
     return pollOptions.map((polOption) => {
-      const eventLocationCreateParams = {
+      const createPollParams = {
         pollId,
         name: polOption,
       };
-      return PollOption.create(eventLocationCreateParams);
+      return PollOption.create(createPollParams);
+    });
+  }
+
+  static updatePollOption(pollId, pollOptions) {
+    return pollOptions.map((pollOption) => {
+      if (typeof pollOption === 'string') {
+        return PollController.createPollOption(pollId, [pollOption]);
+      }
+      const query = updateQuery(pollOption.id);
+      const updatePollParams = {
+        name: pollOption.name,
+      };
+      return PollOption.update(updatePollParams, query);
     });
   }
 }
