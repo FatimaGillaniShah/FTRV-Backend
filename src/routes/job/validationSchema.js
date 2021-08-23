@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const createJobSchema = (body) => {
+export const createJobSchema = ({ body }) => {
   const schema = Joi.object().keys({
     title: Joi.string().required(),
     description: Joi.string().required(),
@@ -11,7 +11,7 @@ export const createJobSchema = (body) => {
   return Joi.validate(body, schema);
 };
 
-export const updateJobSchema = (body) => {
+export const updateJobSchema = ({ body }) => {
   const schema = Joi.object().keys({
     title: Joi.string().optional(),
     description: Joi.string().optional(),
