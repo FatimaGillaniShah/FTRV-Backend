@@ -3262,7 +3262,7 @@
         }
       }
     },
-    "/polls/{id}": {
+    "/polls/{id}/{date}": {
       "get": {
         "summary": "Retrieve poll by id",
         "tags": ["Poll"],
