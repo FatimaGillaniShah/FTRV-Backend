@@ -45,13 +45,25 @@ class PollController {
   @Request
   static async list(req, res) {
     const {
-      query: { sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE, date = new Date() },
+      query: {
+        sortOrder,
+        sortColumn,
+        pageNumber = 1,
+        pageSize = PAGE_SIZE,
+        date = new Date(),
+        searchString,
+        name,
+        status,
+      },
     } = req;
     const query = listPolls({
       sortOrder,
       sortColumn,
       pageNumber,
       pageSize,
+      searchString,
+      name,
+      status,
     });
     const polls = await Poll.findAndCountAll(query);
     const { rows, count } = polls;

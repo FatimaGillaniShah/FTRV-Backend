@@ -3123,6 +3123,68 @@
       }
     },
     "/polls": {
+      "get": {
+        "summary": "Retrieve list of all poll",
+        "tags": ["Poll"],
+        "operationId": "getPollList",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "type": "date"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Poll",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Poll"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "An endpoint to create a poll",
         "tags": ["Poll"],
@@ -3160,53 +3222,6 @@
           },
           "401": {
             "description": "Unauthorized. An Expert authenticated session needs to be created"
-          }
-        }
-      },
-      "get": {
-        "summary": "Retrieve list of all poll",
-        "tags": ["Poll"],
-        "operationId": "getPollList",
-        "parameters": [
-          {
-            "name": "date",
-            "in": "query",
-            "type": "date"
-          },
-          {
-            "name": "pageNumber",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "sortColumn",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "sortOrder",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Array of Poll",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Poll"
-                  }
-                }
-              }
-            }
           }
         }
       },

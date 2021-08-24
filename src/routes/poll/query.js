@@ -1,4 +1,8 @@
+import sequelize from 'sequelize';
 import models from '../../models';
+import { makeEqualityCondition, makeLikeCondition } from '../../utils/helper';
+
+const { Op } = sequelize;
 
 const { User, PollOption, UserPollVote } = models;
 export const getPollByIdQuery = (id) => {
@@ -40,8 +44,17 @@ export const updateQuery = (id) => ({
   },
 });
 
-export const listPolls = ({ sortOrder, sortColumn, pageNumber, pageSize }) => {
+export const listPolls = ({
+  sortOrder,
+  sortColumn,
+  pageNumber,
+  pageSize,
+  searchString,
+  name,
+  status,
+}) => {
   const query = { where: {} };
+  query.distinct = true;
   query.include = [
     {
       model: PollOption,
@@ -70,6 +83,22 @@ export const listPolls = ({ sortOrder, sortColumn, pageNumber, pageSize }) => {
 
   query.offset = (pageNumber - 1) * pageSize;
   query.limit = pageSize;
+
+  // for filtering
+  if (searchString) {
+    query.where[Op.or] = [];
+    const searchColumns = ['name'];
+    searchColumns.map((val) => query.where[Op.or].push(makeLikeCondition(val, searchString)));
+  } else {
+    if (name) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeLikeCondition('name', name));
+    }
+    if (status) {
+      query.where[Op.and] = query.where[Op.and] || [];
+      query.where[Op.and].push(makeEqualityCondition('status', status));
+    }
+  }
 
   // for sorting
   if (sortColumn && sortOrder) {
