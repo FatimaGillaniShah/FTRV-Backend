@@ -18,6 +18,7 @@ class PollController {
     this.router.get('/:id/:date?', this.getPollById);
     this.router.put('/', this.updatePoll);
     this.router.get('/', this.list);
+    this.router.delete('/', this.deletePoll);
 
     return this.router;
   }
@@ -122,6 +123,24 @@ class PollController {
       return SuccessResponse(res, poll);
     }
     BadRequestError(`Poll does not exist`, STATUS_CODES.NOTFOUND);
+  }
+
+  @Request
+  static async deletePoll(req, res) {
+    const {
+      body: { ids: pollIds = [] },
+    } = req;
+
+    if (pollIds.length < 1) {
+      BadRequestError(`Poll id is required`, STATUS_CODES.INVALID_INPUT);
+    }
+    const query = {
+      where: {
+        id: pollIds,
+      },
+    };
+    const pollCount = await Poll.destroy(query);
+    return SuccessResponse(res, { count: pollCount });
   }
 
   static createPollOption(pollId, pollOptions) {
