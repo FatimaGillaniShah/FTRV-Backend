@@ -82,8 +82,8 @@ class PollController {
     return SuccessResponse(res, pollResponse);
   }
 
-  @Request
   @RequestBodyValidator(createPollSchema)
+  @Request
   static async createPoll(req, res) {
     const { body: pollPayload, user } = req;
     const { options: pollOptions, ...pollInfo } = pollPayload;
@@ -112,17 +112,25 @@ class PollController {
     return BadRequestError(`Poll does not exist`, STATUS_CODES.NOTFOUND);
   }
 
-  @Request
   @RequestBodyValidator(updatePollSchema)
+  @Request
   static async updatePoll(req, res) {
     const {
       body: pollPayload,
-      query: { id: pollId },
+      query: { id: pollId, date = new Date() },
       user,
     } = req;
     const { options: pollOptions, ...pollInfo } = pollPayload;
-    const query = updateQuery(pollId);
+    const query = getPollByIdQuery(pollId);
     const pollExist = await Poll.findOne(query);
+    const pollResponse = PollController.appendStateFlags([pollExist], date);
+    const pollContainVotes = pollResponse[0].options.filter((option) => option.votes);
+    if (pollContainVotes.length > 0) {
+      BadRequestError(`You cannot update poll that contain votes`, STATUS_CODES.NOTFOUND);
+    }
+    if (pollResponse.expired) {
+      BadRequestError(`You cannot update expired poll`, STATUS_CODES.NOTFOUND);
+    }
     if (pollExist) {
       pollInfo.updatedBy = user.id;
       const poll = await Poll.update(pollInfo, query);
