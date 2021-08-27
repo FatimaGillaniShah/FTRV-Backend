@@ -77,13 +77,14 @@ class PollController {
       status,
     });
     const polls = await Poll.findAndCountAll(query);
-    let { rows, count } = polls;
-    const updatedRows = PollController.appendStateFlags(rows, date);
+    let { count } = polls;
+    let updatedRows = PollController.appendStateFlags(polls.rows, date);
     if (isPollState) {
-      rows = updatedRows.filter((poll) => poll[status]);
-      count = rows.length;
+      updatedRows = updatedRows.filter((poll) => poll[status]);
+      // eslint-disable-next-line no-const-assign
+      count = updatedRows.length;
     }
-    const pollResponse = { count, rows };
+    const pollResponse = { count, rows: updatedRows };
 
     return SuccessResponse(res, pollResponse);
   }
