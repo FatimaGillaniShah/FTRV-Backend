@@ -54,6 +54,8 @@ export const listPolls = ({
   status,
 }) => {
   const query = { where: {} };
+  const pollStates = ['pending', 'expired'];
+  const isPollState = pollStates.includes(status);
   query.distinct = true;
   query.include = [
     {
@@ -94,7 +96,7 @@ export const listPolls = ({
       query.where[Op.and] = query.where[Op.and] || [];
       query.where[Op.and].push(makeLikeCondition('name', name));
     }
-    if (status) {
+    if (status && !isPollState) {
       query.where[Op.and] = query.where[Op.and] || [];
       query.where[Op.and].push(makeEqualityCondition('status', status));
     }

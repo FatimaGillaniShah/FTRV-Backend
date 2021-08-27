@@ -4251,7 +4251,7 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["active", "inactive"]
+                  "enum": ["active", "inactive", "pending", "expired"]
                 },
                 "startDate": {
                   "type": "string",

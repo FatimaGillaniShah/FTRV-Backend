@@ -65,6 +65,8 @@ class PollController {
         status,
       },
     } = req;
+    const pollStates = ['pending', 'expired'];
+    const isPollState = pollStates.includes(status);
     const query = listPolls({
       sortOrder,
       sortColumn,
@@ -75,9 +77,13 @@ class PollController {
       status,
     });
     const polls = await Poll.findAndCountAll(query);
-    const { rows, count } = polls;
+    let { rows, count } = polls;
     const updatedRows = PollController.appendStateFlags(rows, date);
-    const pollResponse = { count, rows: updatedRows };
+    if (isPollState) {
+      rows = updatedRows.filter((poll) => poll[status]);
+      count = rows.length;
+    }
+    const pollResponse = { count, rows };
 
     return SuccessResponse(res, pollResponse);
   }
