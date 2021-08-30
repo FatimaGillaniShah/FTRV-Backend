@@ -133,10 +133,13 @@ class PollController {
     const pollResponse = PollController.appendStateFlags([pollExist], date);
     const pollContainVotes = pollResponse[0].options.filter((option) => option.votes);
     if (pollContainVotes.length > 0) {
-      BadRequestError(`You cannot update poll that contain votes`, STATUS_CODES.NOTFOUND);
+      BadRequestError(`You cannot edit poll that contain votes`, STATUS_CODES.NOTFOUND);
     }
     if (pollResponse.expired) {
-      BadRequestError(`You cannot update expired poll`, STATUS_CODES.NOTFOUND);
+      BadRequestError(`You cannot edit expired poll`, STATUS_CODES.NOTFOUND);
+    }
+    if (pollResponse.pending) {
+      BadRequestError(`You cannot edit pending poll`, STATUS_CODES.NOTFOUND);
     }
     if (pollExist) {
       pollInfo.updatedBy = user.id;

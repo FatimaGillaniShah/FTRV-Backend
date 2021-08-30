@@ -105,6 +105,8 @@ export const listPolls = ({
   // for sorting
   if (sortColumn && sortOrder) {
     query.order = [[sortColumn, sortOrder]];
+  } else {
+    query.order = [[{ model: PollOption, as: 'options' }, 'id', 'asc']];
   }
   return query;
 };
