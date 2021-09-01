@@ -1,5 +1,6 @@
 import express from 'express';
 import moment from 'moment';
+import _ from 'lodash';
 import { BadRequestError, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
@@ -51,6 +52,16 @@ class PollController {
     });
   }
 
+  static async appendUserVotedFlag(polls, userId) {
+    const pollId = _.map(polls, 'id');
+    const userPollVotes = await UserPollVote.findAll(votedQuery({ userId, pollId }));
+    return polls.map((poll) => {
+      // eslint-disable-next-line no-param-reassign
+      poll.voted = !!_.find(userPollVotes, { pollId: poll.id });
+      return poll;
+    });
+  }
+
   @Request
   static async list(req, res) {
     const {
@@ -64,6 +75,7 @@ class PollController {
         name,
         status,
       },
+      user: { id: userId },
     } = req;
     const pollStates = ['pending', 'expired'];
     const isPollState = pollStates.includes(status);
@@ -79,6 +91,7 @@ class PollController {
     const polls = await Poll.findAndCountAll(query);
     let { count } = polls;
     let updatedRows = PollController.appendStateFlags(polls.rows, date);
+    updatedRows = await PollController.appendUserVotedFlag(updatedRows, userId);
     if (isPollState) {
       updatedRows = updatedRows.filter((poll) => poll[status]);
       // eslint-disable-next-line no-const-assign
