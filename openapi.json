@@ -3123,6 +3123,68 @@
       }
     },
     "/polls": {
+      "get": {
+        "summary": "Retrieve list of all poll",
+        "tags": ["Poll"],
+        "operationId": "getPollList",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "type": "date"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Poll",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Poll"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "An endpoint to create a poll",
         "tags": ["Poll"],
@@ -3160,53 +3222,6 @@
           },
           "401": {
             "description": "Unauthorized. An Expert authenticated session needs to be created"
-          }
-        }
-      },
-      "get": {
-        "summary": "Retrieve list of all poll",
-        "tags": ["Poll"],
-        "operationId": "getPollList",
-        "parameters": [
-          {
-            "name": "date",
-            "in": "query",
-            "type": "date"
-          },
-          {
-            "name": "pageNumber",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "sortColumn",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "sortOrder",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Array of Poll",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Poll"
-                  }
-                }
-              }
-            }
           }
         }
       },
@@ -3260,6 +3275,60 @@
             "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
+      },
+      "delete": {
+        "tags": ["Poll"],
+        "summary": "An endpoint to delete poll",
+        "operationId": "deletePoll",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["ids"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful deletion of poll",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
       }
     },
     "/polls/{id}/{date}": {
@@ -3292,6 +3361,48 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Poll"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/polls/vote": {
+      "post": {
+        "summary": "An endpoint to vote on poll",
+        "tags": ["Poll"],
+        "operationId": "savePollResult",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "type": "date"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PollVote"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of Poll",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PollVote"
                 }
               }
             }
@@ -3748,6 +3859,23 @@
             "type": "number"
           }
         }
+      },
+      "PollVote": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "pollOptionId": {
+            "type": "number"
+          },
+          "pollId": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "number"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -4123,7 +4251,7 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["active", "inactive"]
+                  "enum": ["active", "inactive", "pending", "expired"]
                 },
                 "startDate": {
                   "type": "string",
@@ -4138,6 +4266,25 @@
                   "items": {
                     "type": "string"
                   }
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "PollVote": {
+        "description": "Information about the Poll Vote of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pollOptionId": {
+                  "type": "number"
+                },
+                "pollId": {
+                  "type": "number"
                 }
               }
             }

@@ -116,6 +116,16 @@
         "resource": "/jobApplicant",
         "methods": ["POST"],
         "action": "allow"
+      },
+      {
+        "resource": "/polls/vote",
+        "methods": ["POST"],
+        "action": "allow"
+      },
+      {
+        "resource": "/polls",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
