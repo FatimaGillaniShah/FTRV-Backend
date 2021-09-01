@@ -13,6 +13,7 @@ export default (sequelize, { INTEGER, STRING }) => {
       });
       this.hasMany(UserPollVote, {
         foreignKey: 'pollOptionId',
+        as: 'voted',
       });
     }
   }

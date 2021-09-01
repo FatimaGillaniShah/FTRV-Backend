@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const createJobApplicantSchema = (body) => {
+export const createJobApplicantSchema = ({ body }) => {
   const schema = Joi.object()
     .keys({
       note: Joi.string().optional(),
