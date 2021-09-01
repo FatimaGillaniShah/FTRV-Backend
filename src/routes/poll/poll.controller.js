@@ -65,6 +65,8 @@ class PollController {
         status,
       },
     } = req;
+    const pollStates = ['pending', 'expired'];
+    const isPollState = pollStates.includes(status);
     const query = listPolls({
       sortOrder,
       sortColumn,
@@ -75,15 +77,20 @@ class PollController {
       status,
     });
     const polls = await Poll.findAndCountAll(query);
-    const { rows, count } = polls;
-    const updatedRows = PollController.appendStateFlags(rows, date);
+    let { count } = polls;
+    let updatedRows = PollController.appendStateFlags(polls.rows, date);
+    if (isPollState) {
+      updatedRows = updatedRows.filter((poll) => poll[status]);
+      // eslint-disable-next-line no-const-assign
+      count = updatedRows.length;
+    }
     const pollResponse = { count, rows: updatedRows };
 
     return SuccessResponse(res, pollResponse);
   }
 
-  @Request
   @RequestBodyValidator(createPollSchema)
+  @Request
   static async createPoll(req, res) {
     const { body: pollPayload, user } = req;
     const { options: pollOptions, ...pollInfo } = pollPayload;
@@ -112,17 +119,28 @@ class PollController {
     return BadRequestError(`Poll does not exist`, STATUS_CODES.NOTFOUND);
   }
 
-  @Request
   @RequestBodyValidator(updatePollSchema)
+  @Request
   static async updatePoll(req, res) {
     const {
       body: pollPayload,
-      query: { id: pollId },
+      query: { id: pollId, date = new Date() },
       user,
     } = req;
     const { options: pollOptions, ...pollInfo } = pollPayload;
-    const query = updateQuery(pollId);
+    const query = getPollByIdQuery(pollId);
     const pollExist = await Poll.findOne(query);
+    const pollResponse = PollController.appendStateFlags([pollExist], date);
+    const pollContainVotes = pollResponse[0].options.filter((option) => option.votes);
+    if (pollContainVotes.length > 0) {
+      BadRequestError(`You cannot edit poll that contain votes`, STATUS_CODES.NOTFOUND);
+    }
+    if (pollResponse.expired) {
+      BadRequestError(`You cannot edit expired poll`, STATUS_CODES.NOTFOUND);
+    }
+    if (pollResponse.pending) {
+      BadRequestError(`You cannot edit pending poll`, STATUS_CODES.NOTFOUND);
+    }
     if (pollExist) {
       pollInfo.updatedBy = user.id;
       const poll = await Poll.update(pollInfo, query);
