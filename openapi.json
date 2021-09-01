@@ -3380,6 +3380,48 @@
           }
         }
       }
+    },
+    "/polls/vote": {
+      "post": {
+        "summary": "An endpoint to vote on poll",
+        "tags": ["Poll"],
+        "operationId": "savePollResult",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "type": "date"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PollVote"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of Poll",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PollVote"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3817,6 +3859,23 @@
             "type": "number"
           }
         }
+      },
+      "PollVote": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "pollOptionId": {
+            "type": "number"
+          },
+          "pollId": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "number"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -4192,7 +4251,7 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["active", "inactive"]
+                  "enum": ["active", "inactive", "pending", "expired"]
                 },
                 "startDate": {
                   "type": "string",
@@ -4207,6 +4266,25 @@
                   "items": {
                     "type": "string"
                   }
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "PollVote": {
+        "description": "Information about the Poll Vote of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pollOptionId": {
+                  "type": "number"
+                },
+                "pollId": {
+                  "type": "number"
                 }
               }
             }

@@ -3,11 +3,18 @@ import moment from 'moment';
 import { BadRequestError, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
-import { createPollSchema, updatePollSchema } from './validationSchema';
+import { createPollSchema, savePollResultSchema, updatePollSchema } from './validationSchema';
 import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
-import { getPollByIdQuery, listPolls, updateQuery } from './query';
+import {
+  getPollByIdQuery,
+  listPolls,
+  pollExistQuery,
+  pollOptionQuery,
+  updateQuery,
+  votedQuery,
+} from './query';
 
-const { Poll, PollOption } = models;
+const { Poll, PollOption, UserPollVote } = models;
 
 class PollController {
   static router;
@@ -19,6 +26,7 @@ class PollController {
     this.router.put('/', this.updatePoll);
     this.router.get('/', this.list);
     this.router.delete('/', this.deletePoll);
+    this.router.post('/vote', this.savePollResult);
 
     return this.router;
   }
@@ -57,6 +65,8 @@ class PollController {
         status,
       },
     } = req;
+    const pollStates = ['pending', 'expired'];
+    const isPollState = pollStates.includes(status);
     const query = listPolls({
       sortOrder,
       sortColumn,
@@ -67,15 +77,20 @@ class PollController {
       status,
     });
     const polls = await Poll.findAndCountAll(query);
-    const { rows, count } = polls;
-    const updatedRows = PollController.appendStateFlags(rows, date);
+    let { count } = polls;
+    let updatedRows = PollController.appendStateFlags(polls.rows, date);
+    if (isPollState) {
+      updatedRows = updatedRows.filter((poll) => poll[status]);
+      // eslint-disable-next-line no-const-assign
+      count = updatedRows.length;
+    }
     const pollResponse = { count, rows: updatedRows };
 
     return SuccessResponse(res, pollResponse);
   }
 
-  @Request
   @RequestBodyValidator(createPollSchema)
+  @Request
   static async createPoll(req, res) {
     const { body: pollPayload, user } = req;
     const { options: pollOptions, ...pollInfo } = pollPayload;
@@ -104,17 +119,28 @@ class PollController {
     return BadRequestError(`Poll does not exist`, STATUS_CODES.NOTFOUND);
   }
 
-  @Request
   @RequestBodyValidator(updatePollSchema)
+  @Request
   static async updatePoll(req, res) {
     const {
       body: pollPayload,
-      query: { id: pollId },
+      query: { id: pollId, date = new Date() },
       user,
     } = req;
     const { options: pollOptions, ...pollInfo } = pollPayload;
-    const query = updateQuery(pollId);
+    const query = getPollByIdQuery(pollId);
     const pollExist = await Poll.findOne(query);
+    const pollResponse = PollController.appendStateFlags([pollExist], date);
+    const pollContainVotes = pollResponse[0].options.filter((option) => option.votes);
+    if (pollContainVotes.length > 0) {
+      BadRequestError(`You cannot edit poll that contain votes`, STATUS_CODES.NOTFOUND);
+    }
+    if (pollResponse.expired) {
+      BadRequestError(`You cannot edit expired poll`, STATUS_CODES.NOTFOUND);
+    }
+    if (pollResponse.pending) {
+      BadRequestError(`You cannot edit pending poll`, STATUS_CODES.NOTFOUND);
+    }
     if (pollExist) {
       pollInfo.updatedBy = user.id;
       const poll = await Poll.update(pollInfo, query);
@@ -141,6 +167,42 @@ class PollController {
     };
     const pollCount = await Poll.destroy(query);
     return SuccessResponse(res, { count: pollCount });
+  }
+
+  @RequestBodyValidator(savePollResultSchema)
+  @Request
+  static async savePollResult(req, res) {
+    const {
+      body: userVotePayload,
+      body: { pollId, pollOptionId },
+      query: { date = new Date() },
+      user,
+    } = req;
+
+    const pollExist = await Poll.findOne(pollExistQuery(pollId));
+    if (!pollExist) {
+      BadRequestError(`Poll does not exist`, STATUS_CODES.INVALID_INPUT);
+    }
+    const expired = moment(date).isAfter(moment(pollExist.endDate), 'day');
+    const pending = moment(date).isBefore(moment(pollExist.startDate), 'day');
+    if (expired) {
+      BadRequestError(`You can't vote on expired poll`, STATUS_CODES.INVALID_INPUT);
+    }
+    if (pending) {
+      BadRequestError(`Voting is not started yet`, STATUS_CODES.INVALID_INPUT);
+    }
+    const userVoted = await UserPollVote.findOne(votedQuery({ userId: user.id, pollId }));
+    if (userVoted) {
+      BadRequestError(`You have already voted on this poll`, STATUS_CODES.INVALID_INPUT);
+    }
+    const votes = await PollOption.max('votes', pollOptionQuery(pollOptionId));
+    const updateParams = {
+      votes: votes ? votes + 1 : 1,
+    };
+    await PollOption.update(updateParams, pollOptionQuery(pollOptionId));
+    userVotePayload.userId = user.id;
+    const userPollVote = await UserPollVote.create(userVotePayload);
+    return SuccessResponse(res, userPollVote);
   }
 
   static createPollOption(pollId, pollOptions) {
