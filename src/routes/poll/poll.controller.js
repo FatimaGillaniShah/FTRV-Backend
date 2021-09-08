@@ -94,7 +94,9 @@ class PollController {
     updatedRows = await PollController.appendUserVotedFlag(updatedRows, userId);
     if (isPollState) {
       updatedRows = updatedRows.filter((poll) => poll[status]);
-      // eslint-disable-next-line no-const-assign
+      count = updatedRows.length;
+    } else if (!isPollState && status) {
+      updatedRows = updatedRows.filter((poll) => !poll.expired && !poll.pending);
       count = updatedRows.length;
     }
     const pollResponse = { count, rows: updatedRows };
