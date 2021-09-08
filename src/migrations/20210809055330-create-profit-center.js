@@ -18,13 +18,17 @@ module.exports = {
           },
           userId: {
             type: INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
               model: 'Users',
               key: 'id',
             },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
+          },
+          code: {
+            type: STRING,
+            allowNull: false,
           },
           faxNumber: {
             type: INTEGER,
@@ -37,16 +41,6 @@ module.exports = {
           centerNumber: {
             type: INTEGER,
             allowNull: false,
-          },
-          locationId: {
-            type: INTEGER,
-            allowNull: false,
-            references: {
-              model: 'Locations',
-              key: 'id',
-            },
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE',
           },
           createdBy: {
             type: INTEGER,

@@ -27,6 +27,10 @@ export default (sequelize, { INTEGER, STRING }) => {
       },
       userId: {
         type: INTEGER,
+        allowNull: true,
+      },
+      code: {
+        type: STRING,
         allowNull: false,
       },
       faxNumber: {
@@ -38,10 +42,6 @@ export default (sequelize, { INTEGER, STRING }) => {
         allowNull: false,
       },
       centerNumber: {
-        type: INTEGER,
-        allowNull: false,
-      },
-      locationId: {
         type: INTEGER,
         allowNull: false,
       },
