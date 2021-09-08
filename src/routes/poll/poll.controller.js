@@ -39,15 +39,6 @@ class PollController {
       const pollPending = moment(date).isBefore(moment(pollData.startDate), 'day');
       pollData.expired = pollExpired;
       pollData.pending = pollPending;
-      PollController.appendVotedFlag(pollData.options);
-      return pollData;
-    });
-  }
-
-  static appendVotedFlag(options) {
-    return options.map((option) => {
-      const pollData = option;
-      pollData.voted = pollData.voted.length > 0;
       return pollData;
     });
   }
@@ -58,6 +49,11 @@ class PollController {
     return polls.map((poll) => {
       // eslint-disable-next-line no-param-reassign
       poll.voted = !!_.find(userPollVotes, { pollId: poll.id });
+      poll.options.map((option) => {
+        // eslint-disable-next-line no-param-reassign
+        option.voted = !!_.find(userPollVotes, { pollOptionId: option.id });
+        return option;
+      });
       return poll;
     });
   }
