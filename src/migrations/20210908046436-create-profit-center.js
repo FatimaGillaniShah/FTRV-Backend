@@ -16,6 +16,10 @@ module.exports = {
             type: STRING,
             allowNull: false,
           },
+          address: {
+            type: STRING,
+            allowNull: false,
+          },
           userId: {
             type: INTEGER,
             allowNull: true,

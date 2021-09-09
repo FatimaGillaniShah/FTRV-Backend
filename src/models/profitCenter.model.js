@@ -29,6 +29,10 @@ export default (sequelize, { INTEGER, STRING }) => {
         type: INTEGER,
         allowNull: true,
       },
+      address: {
+        type: STRING,
+        allowNull: false,
+      },
       code: {
         type: STRING,
         allowNull: false,
