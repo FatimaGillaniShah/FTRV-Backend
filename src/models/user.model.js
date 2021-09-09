@@ -46,8 +46,14 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       this.hasMany(Poll, {
         foreignKey: 'updatedBy',
       });
-      this.belongsTo(ProfitCenter, {
+      this.hasMany(ProfitCenter, {
         foreignKey: 'userId',
+      });
+      this.hasMany(ProfitCenter, {
+        foreignKey: 'createdBy',
+      });
+      this.hasMany(ProfitCenter, {
+        foreignKey: 'updatedBy',
       });
     }
   }
