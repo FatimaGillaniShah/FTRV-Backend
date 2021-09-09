@@ -10,6 +10,7 @@ export default (sequelize, { INTEGER, STRING }) => {
     static associate({ User }) {
       this.belongsTo(User, {
         foreignKey: 'userId',
+        as: 'manager',
       });
     }
   }

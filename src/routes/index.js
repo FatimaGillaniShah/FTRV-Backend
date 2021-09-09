@@ -17,6 +17,7 @@ import RingGroupController from './ringGroup/ringGroup.controller';
 import JobController from './job/job.controller';
 import JobApplicantController from './jobApplicant/jobApplicant.controller';
 import PollController from './poll/poll.controller';
+import ProfitCenterController from './profitCenter/profitCenter.controller';
 
 const router = express.Router();
 
@@ -48,5 +49,6 @@ router.use('/ringGroups', RingGroupController.getRouter());
 router.use('/jobs', JobController.getRouter());
 router.use('/jobApplicant', JobApplicantController.getRouter());
 router.use('/polls', PollController.getRouter());
+router.use('/profitCenter', ProfitCenterController.getRouter());
 
 export default router;
