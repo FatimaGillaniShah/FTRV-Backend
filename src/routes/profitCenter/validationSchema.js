@@ -1,12 +1,11 @@
 import Joi from 'joi';
-import moment from 'moment';
 
 export const createProfitCenterSchema = ({ body }) => {
   const schema = Joi.object()
     .keys({
       name: Joi.string().required(),
       address: Joi.string().required(),
-      userId:Joi.number().required(),
+      userId: Joi.number().required(),
       code: Joi.string().required(),
       faxNumber: Joi.number(),
       contactNo: Joi.string().required(),
@@ -15,4 +14,3 @@ export const createProfitCenterSchema = ({ body }) => {
     .unknown(true);
   return Joi.validate(body, schema);
 };
-
