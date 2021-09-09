@@ -8,9 +8,17 @@ export default (sequelize, { INTEGER, STRING }) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({ User }) {
-      this.hasMany(User, {
+      this.belongsTo(User, {
         foreignKey: 'userId',
         as: 'manager',
+      });
+      this.belongsTo(User, {
+        foreignKey: 'createdBy',
+        as: 'createdByUser',
+      });
+      this.belongsTo(User, {
+        foreignKey: 'updatedBy',
+        as: 'updatedByUser',
       });
     }
   }
@@ -29,6 +37,10 @@ export default (sequelize, { INTEGER, STRING }) => {
       userId: {
         type: INTEGER,
         allowNull: true,
+      },
+      address: {
+        type: STRING,
+        allowNull: false,
       },
       code: {
         type: STRING,
