@@ -18,11 +18,21 @@ export const listProfitCentersQuery = ({
     {
       model: User,
       as: 'manager',
-      attributes: ['firstName', 'lastName'],
+      attributes: ['id', 'fullName', 'firstName', 'lastName'],
+    },
+    {
+      model: User,
+      as: 'createdByUser',
+      attributes: ['id', 'fullName', 'firstName', 'lastName'],
+    },
+    {
+      model: User,
+      as: 'updatedByUser',
+      attributes: ['id', 'fullName', 'firstName', 'lastName'],
     },
   ];
   query.attributes = {
-    exclude: ['createdAt', 'updatedAt', 'userId'],
+    exclude: ['createdAt', 'updatedAt', 'userId', 'createdBy', 'updatedBy'],
   };
 
   query.offset = (pageNumber - 1) * pageSize;
@@ -31,11 +41,13 @@ export const listProfitCentersQuery = ({
   // for filtering
   if (searchString) {
     query.where[Op.or] = [];
-    const searchColumns = ['centerName'];
+    const searchColumns = ['name', 'address'];
     searchColumns.map((val) => query.where[Op.or].push(makeLikeCondition(val, searchString)));
   }
   // for sorting
-  if (sortColumn && sortOrder) {
+  if (sortColumn === 'manager.firstName') {
+    query.order = [[{ model: User, as: 'manager' }, 'firstName', sortOrder]];
+  } else if (sortColumn && sortOrder) {
     query.order = [[sortColumn, sortOrder]];
   }
   return query;
