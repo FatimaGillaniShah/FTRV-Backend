@@ -12,6 +12,14 @@ export default (sequelize, { INTEGER, STRING }) => {
         foreignKey: 'userId',
         as: 'manager',
       });
+      this.belongsTo(User, {
+        foreignKey: 'createdBy',
+        as: 'createdByUser',
+      });
+      this.belongsTo(User, {
+        foreignKey: 'updatedBy',
+        as: 'updatedByUser',
+      });
     }
   }
   ProfitCenter.init(
