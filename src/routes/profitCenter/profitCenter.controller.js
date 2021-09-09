@@ -1,6 +1,8 @@
 import express from 'express';
-import { SuccessResponse } from '../../utils/helper';
+import { SuccessResponse, BadRequestError } from '../../utils/helper';
 import models from '../../models';
+import { getProfileCenterByIdQuery } from './query';
+import { STATUS_CODES } from '../../utils/constants';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
 import { createProfitCenterSchema } from './validationSchema';
 
@@ -12,6 +14,7 @@ class ProfitCenterController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createProfitCenter);
+    this.router.get('/:id', this.getProfileCenterById);
     return this.router;
   }
 
@@ -22,6 +25,22 @@ class ProfitCenterController {
     profitCenterPayload.createdBy = user.id;
     const profitCenter = await ProfitCenter.create(profitCenterPayload);
     return SuccessResponse(res, profitCenter);
+  }
+
+  @Request
+  static async getProfileCenterById(req, res) {
+    const {
+      params: { id: profileCenterId },
+    } = req;
+    if (!profileCenterId) {
+      BadRequestError(`Profile Center id is required`, STATUS_CODES.INVALID_INPUT);
+    }
+    const query = getProfileCenterByIdQuery(profileCenterId);
+    const profitCenterResponse = await ProfitCenter.findOne(query);
+    if (profitCenterResponse) {
+      return SuccessResponse(res, profitCenterResponse);
+    }
+    return BadRequestError(`Profile Center does not exist`, STATUS_CODES.NOTFOUND);
   }
 }
 export default ProfitCenterController;
