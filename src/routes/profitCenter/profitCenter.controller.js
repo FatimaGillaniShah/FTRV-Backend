@@ -4,7 +4,7 @@ import models from '../../models';
 import { getProfileCenterByIdQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
-import { createProfitCenterSchema } from './validationSchema';
+import { createProfitCenterSchema, updateProfitCenterSchema } from './validationSchema';
 
 const { ProfitCenter } = models;
 
@@ -15,6 +15,7 @@ class ProfitCenterController {
     this.router = express.Router();
     this.router.post('/', this.createProfitCenter);
     this.router.get('/:id', this.getProfileCenterById);
+    this.router.put('/:id', this.updateProfitCenter);
     return this.router;
   }
 
@@ -41,6 +42,29 @@ class ProfitCenterController {
       return SuccessResponse(res, profitCenterResponse);
     }
     return BadRequestError(`Profile Center does not exist`, STATUS_CODES.NOTFOUND);
+  }
+
+  @Request
+  @RequestBodyValidator(updateProfitCenterSchema)
+  static async updateProfitCenter(req, res) {
+    const {
+      body: profitCenterPayload,
+      params: { id: profitCenterId },
+      user,
+    } = req;
+    const updateQuery = {
+      where: {
+        id: profitCenterId,
+      },
+    };
+
+    const profitCenterExist = await ProfitCenter.findOne(updateQuery);
+    if (profitCenterExist) {
+      profitCenterPayload.updatedBy = user.id;
+      const profitCenter = await ProfitCenter.update(profitCenterPayload, updateQuery);
+      return SuccessResponse(res, profitCenter);
+    }
+    BadRequestError(`Profit Center does not exist`, STATUS_CODES.NOTFOUND);
   }
 }
 export default ProfitCenterController;
