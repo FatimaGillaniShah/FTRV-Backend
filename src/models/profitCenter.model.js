@@ -8,7 +8,7 @@ export default (sequelize, { INTEGER, STRING }) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({ User }) {
-      this.hasMany(User, {
+      this.belongsTo(User, {
         foreignKey: 'userId',
       });
     }
