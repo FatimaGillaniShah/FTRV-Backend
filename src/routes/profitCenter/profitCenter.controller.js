@@ -1,5 +1,5 @@
 import express from 'express';
-import { BadRequestError, SuccessResponse } from '../../utils/helper';
+import { SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
 import { createProfitCenterSchema } from './validationSchema';
@@ -23,7 +23,5 @@ class ProfitCenterController {
     const profitCenter = await ProfitCenter.create(profitCenterPayload);
     return SuccessResponse(res, profitCenter);
   }
-
-
 }
 export default ProfitCenterController;
