@@ -30,7 +30,9 @@
   "paths": {
     "/users": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "An endpoint to create a user",
         "operationId": "createUsers",
         "requestBody": {
@@ -64,7 +66,9 @@
       },
       "get": {
         "summary": "Retrieve list of all user for given criteria",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "getUserList",
         "parameters": [
           {
@@ -163,7 +167,9 @@
     "/users/{id}": {
       "get": {
         "summary": "Retrieve user by id",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "getUserById",
         "parameters": [
           {
@@ -205,7 +211,9 @@
         }
       },
       "put": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "An endpoint to update a user",
         "operationId": "updateUsers",
         "parameters": [
@@ -253,7 +261,9 @@
     },
     "/users/deleteUsers": {
       "delete": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "An endpoint to delete user(s)",
         "operationId": "deleteUsers",
         "requestBody": {
@@ -269,7 +279,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -309,7 +321,9 @@
     },
     "/users/login": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "An endpoint to login",
         "operationId": "createUserSession",
         "requestBody": {
@@ -325,7 +339,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["email", "password"]
+                "required": [
+                  "email",
+                  "password"
+                ]
               }
             }
           },
@@ -353,7 +370,9 @@
     },
     "/users/upload": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "An endpoint to upload employee sheet",
         "operationId": "uploadUserList",
         "requestBody": {
@@ -367,7 +386,9 @@
                     "format": "base64"
                   }
                 },
-                "required": ["file"]
+                "required": [
+                  "file"
+                ]
               }
             }
           },
@@ -410,7 +431,9 @@
     "/users/birthday": {
       "get": {
         "summary": "An endpoint to get user birthdays",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "getBirthday",
         "parameters": [
           {
@@ -452,7 +475,9 @@
     "/users/workAnniversary": {
       "get": {
         "summary": "An endpoint to get work anniversaries",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "operationId": "getAnniversary",
         "parameters": [
           {
@@ -485,7 +510,9 @@
     },
     "/blogs": {
       "post": {
-        "tags": ["Blogs"],
+        "tags": [
+          "Blogs"
+        ],
         "summary": "An endpoint to create a blog",
         "operationId": "createBlogs",
         "requestBody": {
@@ -519,7 +546,9 @@
       },
       "get": {
         "summary": "Retrieve list of all blogs",
-        "tags": ["Blogs"],
+        "tags": [
+          "Blogs"
+        ],
         "operationId": "getBlogList",
         "parameters": [
           {
@@ -572,7 +601,9 @@
         }
       },
       "delete": {
-        "tags": ["Blogs"],
+        "tags": [
+          "Blogs"
+        ],
         "summary": "An endpoint to delete blog",
         "operationId": "deleteBlogs",
         "requestBody": {
@@ -585,7 +616,9 @@
                     "type": "number"
                   }
                 },
-                "required": ["id"]
+                "required": [
+                  "id"
+                ]
               }
             }
           },
@@ -626,7 +659,9 @@
     "/blogs/{id}": {
       "get": {
         "summary": "Retrieve blog by id",
-        "tags": ["Blogs"],
+        "tags": [
+          "Blogs"
+        ],
         "operationId": "getBlogById",
         "parameters": [
           {
@@ -668,7 +703,9 @@
         }
       },
       "put": {
-        "tags": ["Blogs"],
+        "tags": [
+          "Blogs"
+        ],
         "summary": "An endpoint to update a blog",
         "operationId": "updateBlogs",
         "parameters": [
@@ -717,7 +754,9 @@
     "/events": {
       "get": {
         "summary": "Retrieve list of all events",
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "operationId": "getEventList",
         "parameters": [
           {
@@ -770,7 +809,9 @@
         }
       },
       "post": {
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "summary": "An endpoint to create an Event",
         "operationId": "createEvent",
         "requestBody": {
@@ -803,7 +844,9 @@
         }
       },
       "delete": {
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "summary": "An endpoint to delete event",
         "operationId": "deleteEvents",
         "requestBody": {
@@ -819,7 +862,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -860,7 +905,9 @@
     "/events/{id}": {
       "get": {
         "summary": "Retrieve event by id",
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "operationId": "getEventById",
         "parameters": [
           {
@@ -902,7 +949,9 @@
         }
       },
       "put": {
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "summary": "An endpoint to update an event",
         "operationId": "updateEvent",
         "parameters": [
@@ -950,7 +999,9 @@
     },
     "/announcements": {
       "post": {
-        "tags": ["Announcement"],
+        "tags": [
+          "Announcement"
+        ],
         "summary": "An endpoint to create an Announcement",
         "operationId": "createAnnouncement",
         "requestBody": {
@@ -984,7 +1035,9 @@
       },
       "get": {
         "summary": "Retrieve list of all Announcements for given criteria",
-        "tags": ["Announcement"],
+        "tags": [
+          "Announcement"
+        ],
         "operationId": "getAnnouncementsList",
         "parameters": [
           {
@@ -1047,7 +1100,9 @@
     "/announcements/{id}": {
       "get": {
         "summary": "Retrieve announcement by id",
-        "tags": ["Announcement"],
+        "tags": [
+          "Announcement"
+        ],
         "operationId": "getAnnouncementById",
         "parameters": [
           {
@@ -1089,7 +1144,9 @@
         }
       },
       "put": {
-        "tags": ["Announcement"],
+        "tags": [
+          "Announcement"
+        ],
         "summary": "An endpoint to update an announcement",
         "operationId": "updateAnnouncement",
         "parameters": [
@@ -1138,7 +1195,9 @@
     "/announcements/userAnnouncements": {
       "get": {
         "summary": "Retrieve list of all active announcement(s)",
-        "tags": ["Announcement"],
+        "tags": [
+          "Announcement"
+        ],
         "operationId": "getUserAnnouncementList",
         "responses": {
           "200": {
@@ -1177,7 +1236,9 @@
     },
     "/announcements/deleteAnnouncements": {
       "delete": {
-        "tags": ["Announcement"],
+        "tags": [
+          "Announcement"
+        ],
         "summary": "An endpoint to delete announcement(s)",
         "operationId": "deleteAnnouncements",
         "requestBody": {
@@ -1193,7 +1254,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -1234,7 +1297,9 @@
     "/linkCategories": {
       "get": {
         "summary": "Retrieve list of all useful link categories",
-        "tags": ["UsefulLink Categories"],
+        "tags": [
+          "UsefulLink Categories"
+        ],
         "operationId": "getLinksCategoryList",
         "responses": {
           "200": {
@@ -1254,7 +1319,9 @@
       },
       "post": {
         "summary": "An endpoint to create a useful link category",
-        "tags": ["UsefulLink Categories"],
+        "tags": [
+          "UsefulLink Categories"
+        ],
         "operationId": "createlinkCategory",
         "requestBody": {
           "$ref": "#/components/requestBodies/UsefulLinkCategory"
@@ -1289,7 +1356,9 @@
     "/linkCategories/{id}": {
       "get": {
         "summary": "Retrieve link category by id",
-        "tags": ["UsefulLink Categories"],
+        "tags": [
+          "UsefulLink Categories"
+        ],
         "operationId": "getLinkCategoryById",
         "parameters": [
           {
@@ -1331,7 +1400,9 @@
         }
       },
       "put": {
-        "tags": ["UsefulLink Categories"],
+        "tags": [
+          "UsefulLink Categories"
+        ],
         "summary": "An endpoint to update a link category",
         "operationId": "updateLinkCategory",
         "parameters": [
@@ -1377,7 +1448,9 @@
         }
       },
       "delete": {
-        "tags": ["UsefulLink Categories"],
+        "tags": [
+          "UsefulLink Categories"
+        ],
         "summary": "An endpoint to delete useful links category",
         "operationId": "deleteLinkCategory",
         "parameters": [
@@ -1427,7 +1500,9 @@
     },
     "/usefulLinks": {
       "post": {
-        "tags": ["UsefulLink"],
+        "tags": [
+          "UsefulLink"
+        ],
         "summary": "An endpoint to create a useful link",
         "operationId": "createUseFulLink",
         "requestBody": {
@@ -1461,7 +1536,9 @@
       },
       "get": {
         "summary": "Retrieve list of all useful link for given criteria",
-        "tags": ["UsefulLink"],
+        "tags": [
+          "UsefulLink"
+        ],
         "operationId": "getUsefulLinksList",
         "parameters": [
           {
@@ -1529,7 +1606,9 @@
     "/usefulLinks/{id}": {
       "get": {
         "summary": "Retrieve useful link by id",
-        "tags": ["UsefulLink"],
+        "tags": [
+          "UsefulLink"
+        ],
         "operationId": "getUsefulLinkById",
         "parameters": [
           {
@@ -1571,7 +1650,9 @@
         }
       },
       "put": {
-        "tags": ["UsefulLink"],
+        "tags": [
+          "UsefulLink"
+        ],
         "summary": "An endpoint to update a useful link",
         "operationId": "updateUsefulLink",
         "parameters": [
@@ -1619,7 +1700,9 @@
     },
     "/usefulLinks/deleteLinks": {
       "delete": {
-        "tags": ["UsefulLink"],
+        "tags": [
+          "UsefulLink"
+        ],
         "summary": "An endpoint to delete useful link(s)",
         "operationId": "deleteUsefulLinks",
         "requestBody": {
@@ -1635,7 +1718,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -1675,7 +1760,9 @@
     },
     "/quote": {
       "put": {
-        "tags": ["Quote"],
+        "tags": [
+          "Quote"
+        ],
         "summary": "An endpoint to update a motivational quote",
         "operationId": "updateQuote",
         "requestBody": {
@@ -1725,7 +1812,9 @@
       },
       "get": {
         "summary": "An endpoint to get a motivational quote",
-        "tags": ["Quote"],
+        "tags": [
+          "Quote"
+        ],
         "operationId": "getQuote",
         "responses": {
           "200": {
@@ -1745,7 +1834,9 @@
     "/ceo": {
       "get": {
         "summary": "An endpoint to get CEO page avatar and content",
-        "tags": ["Ceo"],
+        "tags": [
+          "Ceo"
+        ],
         "operationId": "getCeoPageContent",
         "responses": {
           "200": {
@@ -1761,7 +1852,9 @@
         }
       },
       "put": {
-        "tags": ["Ceo"],
+        "tags": [
+          "Ceo"
+        ],
         "summary": "An endpoint to update CEO page avatar and content",
         "operationId": "updateCeoPageContent",
         "requestBody": {
@@ -1797,7 +1890,9 @@
     "/bannerImage": {
       "get": {
         "summary": "An endpoint to get banner image",
-        "tags": ["Banner Image"],
+        "tags": [
+          "Banner Image"
+        ],
         "operationId": "getBannerImage",
         "responses": {
           "200": {
@@ -1813,7 +1908,9 @@
         }
       },
       "put": {
-        "tags": ["Banner Image"],
+        "tags": [
+          "Banner Image"
+        ],
         "summary": "An endpoint to update banner Image ",
         "operationId": "updateBannerImage",
         "requestBody": {
@@ -1849,7 +1946,9 @@
     "/locations": {
       "get": {
         "summary": "Retrieve list of all locations",
-        "tags": ["Locations"],
+        "tags": [
+          "Locations"
+        ],
         "operationId": "getLocationList",
         "parameters": [
           {
@@ -1902,7 +2001,9 @@
         }
       },
       "post": {
-        "tags": ["Locations"],
+        "tags": [
+          "Locations"
+        ],
         "summary": "An endpoint to create a location",
         "operationId": "createLocations",
         "requestBody": {
@@ -1935,7 +2036,9 @@
         }
       },
       "delete": {
-        "tags": ["Locations"],
+        "tags": [
+          "Locations"
+        ],
         "summary": "An endpoint to delete location",
         "operationId": "deleteLocations",
         "requestBody": {
@@ -1951,7 +2054,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -1992,7 +2097,9 @@
     "/locations/{id}": {
       "get": {
         "summary": "Retrieve location by id",
-        "tags": ["Locations"],
+        "tags": [
+          "Locations"
+        ],
         "operationId": "getLocationById",
         "parameters": [
           {
@@ -2034,7 +2141,9 @@
         }
       },
       "put": {
-        "tags": ["Locations"],
+        "tags": [
+          "Locations"
+        ],
         "summary": "An endpoint to update a location",
         "operationId": "updateLocations",
         "parameters": [
@@ -2083,7 +2192,9 @@
     "/departments": {
       "get": {
         "summary": "Retrieve list of all departments",
-        "tags": ["Departments"],
+        "tags": [
+          "Departments"
+        ],
         "operationId": "getDepartmentList",
         "responses": {
           "200": {
@@ -2103,7 +2214,9 @@
       },
       "post": {
         "summary": "An endpoint to create a department",
-        "tags": ["Departments"],
+        "tags": [
+          "Departments"
+        ],
         "operationId": "createDepartment",
         "requestBody": {
           "$ref": "#/components/requestBodies/Department"
@@ -2135,7 +2248,9 @@
         }
       },
       "delete": {
-        "tags": ["Departments"],
+        "tags": [
+          "Departments"
+        ],
         "summary": "An endpoint to delete department",
         "operationId": "deleteDepartment",
         "requestBody": {
@@ -2151,7 +2266,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -2192,7 +2309,9 @@
     "/departments/{id}": {
       "get": {
         "summary": "Retrieve department by id",
-        "tags": ["Departments"],
+        "tags": [
+          "Departments"
+        ],
         "operationId": "getDepartmentById",
         "parameters": [
           {
@@ -2234,7 +2353,9 @@
         }
       },
       "put": {
-        "tags": ["Departments"],
+        "tags": [
+          "Departments"
+        ],
         "summary": "An endpoint to update a department",
         "operationId": "updateDepartment",
         "parameters": [
@@ -2283,7 +2404,9 @@
     "/documents": {
       "post": {
         "summary": "An endpoint to create a document",
-        "tags": ["Document"],
+        "tags": [
+          "Document"
+        ],
         "operationId": "createDocument",
         "requestBody": {
           "$ref": "#/components/requestBodies/Document"
@@ -2316,7 +2439,9 @@
       },
       "get": {
         "summary": "Retrieve list of all documents",
-        "tags": ["Document"],
+        "tags": [
+          "Document"
+        ],
         "operationId": "getDocumentsList",
         "parameters": [
           {
@@ -2347,7 +2472,9 @@
         }
       },
       "delete": {
-        "tags": ["Document"],
+        "tags": [
+          "Document"
+        ],
         "summary": "An endpoint to delete document",
         "operationId": "deleteDocument",
         "requestBody": {
@@ -2363,7 +2490,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -2404,7 +2533,9 @@
     "/documents/{id}": {
       "get": {
         "summary": "Retrieve document by id",
-        "tags": ["Document"],
+        "tags": [
+          "Document"
+        ],
         "operationId": "getDocumentById",
         "parameters": [
           {
@@ -2446,7 +2577,9 @@
         }
       },
       "put": {
-        "tags": ["Document"],
+        "tags": [
+          "Document"
+        ],
         "summary": "An endpoint to update a document",
         "operationId": "updateDocument",
         "parameters": [
@@ -2494,7 +2627,9 @@
     },
     "/documents/updateSortOrder": {
       "put": {
-        "tags": ["Document"],
+        "tags": [
+          "Document"
+        ],
         "summary": "An endpoint to update sort order of documents",
         "operationId": "updateDocumentsSortOrder",
         "requestBody": {
@@ -2518,7 +2653,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -2554,7 +2691,9 @@
     "/ringGroups": {
       "post": {
         "summary": "An endpoint to create a ring group",
-        "tags": ["Ring Group"],
+        "tags": [
+          "Ring Group"
+        ],
         "operationId": "createRingGroup",
         "requestBody": {
           "$ref": "#/components/requestBodies/RingGroup"
@@ -2587,7 +2726,9 @@
       },
       "get": {
         "summary": "Retrieve list of all ring group",
-        "tags": ["Ring Group"],
+        "tags": [
+          "Ring Group"
+        ],
         "operationId": "getRingGroupList",
         "parameters": [
           {
@@ -2653,7 +2794,9 @@
         }
       },
       "delete": {
-        "tags": ["Ring Group"],
+        "tags": [
+          "Ring Group"
+        ],
         "summary": "An endpoint to delete ring group",
         "operationId": "deleteRingGroup",
         "requestBody": {
@@ -2669,7 +2812,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -2710,7 +2855,9 @@
     "/ringGroups/{id}": {
       "get": {
         "summary": "Retrieve ring group by id",
-        "tags": ["Ring Group"],
+        "tags": [
+          "Ring Group"
+        ],
         "operationId": "getRingGroupById",
         "parameters": [
           {
@@ -2752,7 +2899,9 @@
         }
       },
       "put": {
-        "tags": ["Ring Group"],
+        "tags": [
+          "Ring Group"
+        ],
         "summary": "An endpoint to update a Ring Group",
         "operationId": "updateRingGroup",
         "parameters": [
@@ -2801,7 +2950,9 @@
     "/jobs": {
       "get": {
         "summary": "Retrieve list of all job",
-        "tags": ["Job"],
+        "tags": [
+          "Job"
+        ],
         "operationId": "getJobList",
         "parameters": [
           {
@@ -2863,7 +3014,9 @@
       },
       "post": {
         "summary": "An endpoint to create a job",
-        "tags": ["Job"],
+        "tags": [
+          "Job"
+        ],
         "operationId": "createJob",
         "requestBody": {
           "$ref": "#/components/requestBodies/Job"
@@ -2895,7 +3048,9 @@
         }
       },
       "delete": {
-        "tags": ["Job"],
+        "tags": [
+          "Job"
+        ],
         "summary": "An endpoint to delete job",
         "operationId": "deleteJob",
         "requestBody": {
@@ -2911,7 +3066,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -2952,7 +3109,9 @@
     "/jobs/{id}": {
       "get": {
         "summary": "Retrieve job by id",
-        "tags": ["Job"],
+        "tags": [
+          "Job"
+        ],
         "operationId": "getJobById",
         "parameters": [
           {
@@ -2994,7 +3153,9 @@
         }
       },
       "put": {
-        "tags": ["Job"],
+        "tags": [
+          "Job"
+        ],
         "summary": "An endpoint to update a Job",
         "operationId": "updateJob",
         "parameters": [
@@ -3043,7 +3204,9 @@
     "/jobApplicant": {
       "post": {
         "summary": "An endpoint to create a job applicant",
-        "tags": ["Job Applicant"],
+        "tags": [
+          "Job Applicant"
+        ],
         "operationId": "createJobApplicant",
         "requestBody": {
           "$ref": "#/components/requestBodies/JobApplicant"
@@ -3076,7 +3239,9 @@
       },
       "get": {
         "summary": "Retrieve list of all job applicants",
-        "tags": ["Job Applicant"],
+        "tags": [
+          "Job Applicant"
+        ],
         "operationId": "getJobApplicantList",
         "parameters": [
           {
@@ -3125,7 +3290,9 @@
     "/polls": {
       "get": {
         "summary": "Retrieve list of all poll",
-        "tags": ["Poll"],
+        "tags": [
+          "Poll"
+        ],
         "operationId": "getPollList",
         "parameters": [
           {
@@ -3187,7 +3354,9 @@
       },
       "post": {
         "summary": "An endpoint to create a poll",
-        "tags": ["Poll"],
+        "tags": [
+          "Poll"
+        ],
         "operationId": "createPoll",
         "parameters": [
           {
@@ -3226,7 +3395,9 @@
         }
       },
       "put": {
-        "tags": ["Poll"],
+        "tags": [
+          "Poll"
+        ],
         "summary": "An endpoint to update a Poll",
         "operationId": "updatePoll",
         "parameters": [
@@ -3277,7 +3448,9 @@
         }
       },
       "delete": {
-        "tags": ["Poll"],
+        "tags": [
+          "Poll"
+        ],
         "summary": "An endpoint to delete poll",
         "operationId": "deletePoll",
         "requestBody": {
@@ -3293,7 +3466,9 @@
                     }
                   }
                 },
-                "required": ["ids"]
+                "required": [
+                  "ids"
+                ]
               }
             }
           },
@@ -3334,7 +3509,9 @@
     "/polls/{id}/{date}": {
       "get": {
         "summary": "Retrieve poll by id",
-        "tags": ["Poll"],
+        "tags": [
+          "Poll"
+        ],
         "operationId": "getPollById",
         "parameters": [
           {
@@ -3384,7 +3561,9 @@
     "/polls/vote": {
       "post": {
         "summary": "An endpoint to vote on poll",
-        "tags": ["Poll"],
+        "tags": [
+          "Poll"
+        ],
         "operationId": "savePollResult",
         "parameters": [
           {
@@ -3403,6 +3582,43 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PollVote"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/profitCenter": {
+      "post": {
+        "summary": "An endpoint to create a profit Center",
+        "tags": [
+          "Profit Center"
+        ],
+        "operationId": "createProfitCenter",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ProfitCenter"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of Profit Center",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfitCenter"
                 }
               }
             }
@@ -3876,6 +4092,41 @@
             "type": "number"
           }
         }
+      },
+      "ProfitCenter": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "address": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "number"
+          },
+          "code": {
+            "type": "string"
+          },
+          "centerName": {
+            "type": "string"
+          },
+          "centerNumber": {
+            "type": "number"
+          },
+          "faxNumber": {
+            "type": "number"
+          },
+          "contactNo": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "number"
+          },
+          "updatedBy": {
+            "type": "number"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -3900,7 +4151,10 @@
                 },
                 "role": {
                   "type": "string",
-                  "enum": ["user", "admin"]
+                  "enum": [
+                    "user",
+                    "admin"
+                  ]
                 },
                 "contactNo": {
                   "type": "string"
@@ -3996,11 +4250,18 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["active", "inactive"]
+                  "enum": [
+                    "active",
+                    "inactive"
+                  ]
                 },
                 "priority": {
                   "type": "string",
-                  "enum": ["high", "medium", "low"]
+                  "enum": [
+                    "high",
+                    "medium",
+                    "low"
+                  ]
                 }
               }
             }
@@ -4251,7 +4512,12 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["active", "inactive", "pending", "expired"]
+                  "enum": [
+                    "active",
+                    "inactive",
+                    "pending",
+                    "expired"
+                  ]
                 },
                 "startDate": {
                   "type": "string",
@@ -4284,6 +4550,40 @@
                   "type": "number"
                 },
                 "pollId": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "ProfitCenter": {
+        "description": "Information about the Profit Center of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "userId": {
+                  "type": "number"
+                },
+                "address": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "faxNumber": {
+                  "type": "number"
+                },
+                "contactNo": {
+                  "type": "string"
+                },
+                "centerNumber": {
                   "type": "number"
                 }
               }
