@@ -32,7 +32,7 @@ export const listProfitCentersQuery = ({
     },
   ];
   query.attributes = {
-    exclude: ['createdAt', 'updatedAt', 'userId', 'createdBy', 'updatedBy'],
+    exclude: ['createdAt', 'updatedAt', 'managerId', 'createdBy', 'updatedBy'],
   };
 
   query.offset = (pageNumber - 1) * pageSize;
