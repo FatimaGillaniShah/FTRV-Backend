@@ -1,4 +1,5 @@
 import express from 'express';
+import { get } from 'lodash';
 import { BadRequestError, SuccessResponse } from '../../utils/helper';
 import models from '../../models';
 import { Request } from '../../utils/decorators';
@@ -36,9 +37,7 @@ class ProfitCenterController {
 
   @Request
   static async deleteProfitCenter(req, res) {
-    const {
-      body: { ids: profitCenterIds = [] },
-    } = req;
+    const profitCenterIds = get(req, 'body.ids', []);
 
     if (profitCenterIds.length < 1) {
       BadRequestError(`Profit Center id is required`, STATUS_CODES.INVALID_INPUT);
