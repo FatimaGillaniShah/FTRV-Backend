@@ -3503,7 +3503,7 @@
         }
       },
       "put": {
-        "tags": ["ProfitCenter"],
+        "tags": ["Profit Center"],
         "summary": "An endpoint to update a Profit Center",
         "operationId": "updateProfitCenter",
         "parameters": [
