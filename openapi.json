@@ -4018,7 +4018,7 @@
           "code": {
             "type": "string"
           },
-          "centerName": {
+          "name": {
             "type": "string"
           },
           "centerNumber": {
