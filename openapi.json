@@ -3456,53 +3456,6 @@
             "description": "Unauthorized. An Expert authenticated session needs to be created"
           }
         }
-      },
-      "put": {
-        "tags": ["ProfitCenter"],
-        "summary": "An endpoint to update a Profit Center",
-        "operationId": "updateProfitCenter",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "ID of Profit Center",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-         
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/ProfitCenter"
-        },
-        "responses": {
-          "200": {
-            "description": "Successful update of Profit Center",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProfitCenter"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid Input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized. An Expert authenticated session needs to be created"
-          }
-        }
       }
     },
     "/profitCenter/{id}": {
@@ -3526,6 +3479,52 @@
         "responses": {
           "200": {
             "description": "Successful retrieval of Profit Center",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfitCenter"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["ProfitCenter"],
+        "summary": "An endpoint to update a Profit Center",
+        "operationId": "updateProfitCenter",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of Profit Center",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ProfitCenter"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of Profit Center",
             "content": {
               "application/json": {
                 "schema": {
