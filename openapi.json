@@ -4473,7 +4473,7 @@
                   "type": "string"
                 },
                 "faxNumber": {
-                  "type": "number"
+                  "type": "string"
                 },
                 "contactNo": {
                   "type": "string"
