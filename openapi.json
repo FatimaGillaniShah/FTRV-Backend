@@ -3921,7 +3921,7 @@
           "address": {
             "type": "string"
           },
-          "userId": {
+          "managerId": {
             "type": "number"
           },
           "code": {
