@@ -9,7 +9,8 @@ export default (sequelize, { INTEGER, STRING }) => {
      */
     static associate({ User }) {
       this.belongsTo(User, {
-        foreignKey: 'userId',
+        foreignKey: 'managerId',
+        as: 'manager',
       });
       this.belongsTo(User, {
         foreignKey: 'createdBy',
@@ -33,7 +34,7 @@ export default (sequelize, { INTEGER, STRING }) => {
         type: STRING,
         allowNull: false,
       },
-      userId: {
+      managerId: {
         type: INTEGER,
         allowNull: true,
       },
@@ -46,7 +47,7 @@ export default (sequelize, { INTEGER, STRING }) => {
         allowNull: false,
       },
       faxNumber: {
-        type: INTEGER,
+        type: STRING,
         allowNull: true,
       },
       contactNo: {

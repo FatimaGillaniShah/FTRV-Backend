@@ -47,7 +47,7 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
         foreignKey: 'updatedBy',
       });
       this.hasMany(ProfitCenter, {
-        foreignKey: 'userId',
+        foreignKey: 'managerId',
       });
       this.hasMany(ProfitCenter, {
         foreignKey: 'createdBy',
