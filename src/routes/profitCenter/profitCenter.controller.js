@@ -1,7 +1,7 @@
 import express from 'express';
 import { SuccessResponse, BadRequestError } from '../../utils/helper';
 import models from '../../models';
-import { getProfileCenterByIdQuery } from './query';
+import { getProfileCenterByIdQuery, updateProfitCenterQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
 import { createProfitCenterSchema, updateProfitCenterSchema } from './validationSchema';
@@ -14,7 +14,7 @@ class ProfitCenterController {
   static getRouter() {
     this.router = express.Router();
     this.router.post('/', this.createProfitCenter);
-    this.router.get('/:id', this.getProfileCenterById);
+    this.router.get('/:id', this.getProfitCenterById);
     this.router.put('/:id', this.updateProfitCenter);
     return this.router;
   }
@@ -29,19 +29,16 @@ class ProfitCenterController {
   }
 
   @Request
-  static async getProfileCenterById(req, res) {
+  static async getProfitCenterById(req, res) {
     const {
-      params: { id: profileCenterId },
+      params: { id: profitCenterId },
     } = req;
-    if (!profileCenterId) {
+    if (!profitCenterId) {
       BadRequestError(`Profile Center id is required`, STATUS_CODES.INVALID_INPUT);
     }
-    const query = getProfileCenterByIdQuery(profileCenterId);
+    const query = getProfileCenterByIdQuery(profitCenterId);
     const profitCenterResponse = await ProfitCenter.findOne(query);
-    if (profitCenterResponse) {
-      return SuccessResponse(res, profitCenterResponse);
-    }
-    return BadRequestError(`Profile Center does not exist`, STATUS_CODES.NOTFOUND);
+    return SuccessResponse(res, profitCenterResponse);
   }
 
   @Request
@@ -49,19 +46,13 @@ class ProfitCenterController {
   static async updateProfitCenter(req, res) {
     const {
       body: profitCenterPayload,
-      params: { id: profitCenterId },
+      params: { id },
       user,
     } = req;
-    const updateQuery = {
-      where: {
-        id: profitCenterId,
-      },
-    };
-
-    const profitCenterExist = await ProfitCenter.findOne(updateQuery);
+    const profitCenterExist = await ProfitCenter.findOne(updateProfitCenterQuery(id));
     if (profitCenterExist) {
       profitCenterPayload.updatedBy = user.id;
-      const profitCenter = await ProfitCenter.update(profitCenterPayload, updateQuery);
+      const profitCenter = await ProfitCenter.update(profitCenterPayload, updateProfitCenterQuery(id));
       return SuccessResponse(res, profitCenter);
     }
     BadRequestError(`Profit Center does not exist`, STATUS_CODES.NOTFOUND);

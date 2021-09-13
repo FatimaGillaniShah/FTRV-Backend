@@ -2,6 +2,12 @@ import models from '../../models';
 
 const { User } = models;
 
+
+export const updateProfitCenterQuery = (id) => ({
+  where: {
+    id,
+  },
+});
 export const getProfileCenterByIdQuery = (id) => {
   const query = {};
   query.where = {

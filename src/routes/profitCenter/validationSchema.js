@@ -17,13 +17,13 @@ export const createProfitCenterSchema = ({ body }) => {
 
 export const updateProfitCenterSchema = ({ body }) => {
   const schema = Joi.object().keys({
-    name: Joi.string().required(),
-    address: Joi.string().required(),
-    managerId: Joi.number().required(),
-    code: Joi.string().required(),
-    faxNumber: Joi.number(),
-    contactNo: Joi.string().required(),
-    centerNumber: Joi.number().required(),
+    name: Joi.string().optional(),
+    address: Joi.string().optional(),
+    managerId: Joi.number().optional(),
+    code: Joi.string().optional(),
+    faxNumber: Joi.string().optional(),
+    contactNo: Joi.string().optional(),
+    centerNumber: Joi.number().optional(),
   });
   return Joi.validate(body, schema);
 };
