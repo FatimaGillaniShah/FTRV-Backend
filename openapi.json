@@ -4372,7 +4372,7 @@
                 "name": {
                   "type": "string"
                 },
-                "userId": {
+                "managerId": {
                   "type": "number"
                 },
                 "address": {
