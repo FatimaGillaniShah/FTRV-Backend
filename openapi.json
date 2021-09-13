@@ -123,6 +123,11 @@
             "name": "locationId",
             "in": "query",
             "type": "number"
+          },
+          {
+            "name": "detail",
+            "in": "query",
+            "type": "bool"
           }
         ],
         "responses": {

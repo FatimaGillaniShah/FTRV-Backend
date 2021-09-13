@@ -73,13 +73,16 @@ export const listQuery = ({
   sortOrder,
   pageNumber = 1,
   pageSize,
+  detail,
 }) => {
   const query = { where: {} };
 
   query.offset = (pageNumber - 1) * pageSize;
   query.limit = pageSize;
-  query.attributes = { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] };
-  query.include = [
+  query.attributes = detail
+    ? ['id', 'firstName', 'lastName']
+    : { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] };
+  query.include = !detail && [
     {
       model: Location,
       as: 'location',
