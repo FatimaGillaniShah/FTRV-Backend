@@ -5,9 +5,9 @@ export const createProfitCenterSchema = ({ body }) => {
     .keys({
       name: Joi.string().required(),
       address: Joi.string().required(),
-      managerId: Joi.number().required(),
+      managerId: Joi.number(),
       code: Joi.string().required(),
-      faxNumber: Joi.number(),
+      faxNumber: Joi.string(),
       contactNo: Joi.string().required(),
       centerNumber: Joi.number().required(),
     })
