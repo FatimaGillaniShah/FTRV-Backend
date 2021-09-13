@@ -5,7 +5,7 @@ export const createProfitCenterSchema = ({ body }) => {
     .keys({
       name: Joi.string().required(),
       address: Joi.string().required(),
-      userId: Joi.number().required(),
+      managerId: Joi.number().required(),
       code: Joi.string().required(),
       faxNumber: Joi.number(),
       contactNo: Joi.string().required(),
@@ -19,7 +19,7 @@ export const updateProfitCenterSchema = ({ body }) => {
   const schema = Joi.object().keys({
     name: Joi.string().required(),
     address: Joi.string().required(),
-    userId: Joi.number().required(),
+    managerId: Joi.number().required(),
     code: Joi.string().required(),
     faxNumber: Joi.number(),
     contactNo: Joi.string().required(),

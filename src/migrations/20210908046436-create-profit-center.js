@@ -20,7 +20,7 @@ module.exports = {
             type: STRING,
             allowNull: false,
           },
-          userId: {
+          managerId: {
             type: INTEGER,
             allowNull: true,
             references: {
@@ -35,7 +35,7 @@ module.exports = {
             allowNull: false,
           },
           faxNumber: {
-            type: INTEGER,
+            type: STRING,
             allowNull: true,
           },
           contactNo: {
