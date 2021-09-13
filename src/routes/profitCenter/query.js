@@ -2,7 +2,6 @@ import models from '../../models';
 
 const { User } = models;
 
-
 export const updateProfitCenterQuery = (id) => ({
   where: {
     id,

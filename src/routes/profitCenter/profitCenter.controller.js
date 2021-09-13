@@ -52,7 +52,10 @@ class ProfitCenterController {
     const profitCenterExist = await ProfitCenter.findOne(updateProfitCenterQuery(id));
     if (profitCenterExist) {
       profitCenterPayload.updatedBy = user.id;
-      const profitCenter = await ProfitCenter.update(profitCenterPayload, updateProfitCenterQuery(id));
+      const profitCenter = await ProfitCenter.update(
+        profitCenterPayload,
+        updateProfitCenterQuery(id)
+      );
       return SuccessResponse(res, profitCenter);
     }
     BadRequestError(`Profit Center does not exist`, STATUS_CODES.NOTFOUND);
