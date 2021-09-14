@@ -2,12 +2,15 @@ import express from 'express';
 import { get } from 'lodash';
 import { SuccessResponse, BadRequestError } from '../../utils/helper';
 import models from '../../models';
-import { getProfileCenterByIdQuery, updateProfitCenterQuery } from './query';
-import { STATUS_CODES } from '../../utils/constants';
+import { STATUS_CODES, PAGE_SIZE } from '../../utils/constants';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
 import { createProfitCenterSchema, updateProfitCenterSchema } from './validationSchema';
-import { PAGE_SIZE } from '../../utils/constants';
-import { deleteProfitCenterQuery, listProfitCentersQuery } from './query';
+import {
+  getProfileCenterByIdQuery,
+  updateProfitCenterQuery,
+  deleteProfitCenterQuery,
+  listProfitCentersQuery,
+} from './query';
 
 const { ProfitCenter } = models;
 
