@@ -7,7 +7,7 @@ export const createProfitCenterSchema = ({ body }) => {
       address: Joi.string().required(),
       managerId: Joi.number().allow(null, ''),
       code: Joi.string().required(),
-      faxNo: Joi.string(),
+      faxNo: Joi.string().allow(null, ''),
       contactNo: Joi.string().required(),
       centerNo: Joi.number().required(),
     })
@@ -21,7 +21,7 @@ export const updateProfitCenterSchema = ({ body }) => {
     address: Joi.string().optional(),
     managerId: Joi.number().optional().allow(null, ''),
     code: Joi.string().optional(),
-    faxNo: Joi.string().optional(),
+    faxNo: Joi.string().optional().allow(null, ''),
     contactNo: Joi.string().optional(),
     centerNo: Joi.number().optional(),
   });
