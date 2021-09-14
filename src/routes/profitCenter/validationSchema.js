@@ -21,9 +21,9 @@ export const updateProfitCenterSchema = ({ body }) => {
     address: Joi.string().optional(),
     managerId: Joi.number().optional().allow(null, ''),
     code: Joi.string().optional(),
-    faxNumber: Joi.string().optional(),
+    faxNo: Joi.string().optional(),
     contactNo: Joi.string().optional(),
-    centerNumber: Joi.number().optional(),
+    centerNo: Joi.number().optional(),
   });
   return Joi.validate(body, schema);
 };
