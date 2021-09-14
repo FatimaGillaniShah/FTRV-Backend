@@ -53,6 +53,24 @@ export const listProfitCentersQuery = ({
   query.offset = (pageNumber - 1) * pageSize;
   query.limit = pageSize;
 
+  query.include = [
+    {
+      model: User,
+      as: 'manager',
+      attributes: ['id', 'fullName', 'firstName', 'lastName'],
+    },
+    {
+      model: User,
+      as: 'createdByUser',
+      attributes: ['id', 'fullName', 'firstName', 'lastName'],
+    },
+    {
+      model: User,
+      as: 'updatedByUser',
+      attributes: ['id', 'fullName', 'firstName', 'lastName'],
+    },
+  ];
+
   // for filtering
   if (searchString) {
     query.where[Op.or] = [];
