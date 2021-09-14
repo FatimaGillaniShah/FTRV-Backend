@@ -126,6 +126,11 @@
         "resource": "/polls",
         "methods": ["GET"],
         "action": "allow"
+      },
+      {
+        "resource": "/profitCenter",
+        "methods": ["GET"],
+        "action": "allow"
       }
     ]
   }
