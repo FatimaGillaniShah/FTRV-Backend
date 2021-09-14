@@ -3441,6 +3441,94 @@
                 }
               }
             }
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve list of all profit centers",
+        "tags": ["Profit Center"],
+        "operationId": "getProfitCenterList",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "searchString",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Profit Center",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProfitCenter"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Profit Center"],
+        "summary": "An endpoint to delete profit center",
+        "operationId": "deleteProfitCenter",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["ids"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful deletion of profit center",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid Input",
@@ -3918,20 +4006,17 @@
           "id": {
             "type": "number"
           },
-          "address": {
+          "name": {
             "type": "string"
           },
           "managerId": {
             "type": "number"
           },
+          "address": {
+            "type": "string"
+          },
           "code": {
             "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "centerNumber": {
-            "type": "number"
           },
           "faxNumber": {
             "type": "string"
@@ -3939,10 +4024,7 @@
           "contactNo": {
             "type": "string"
           },
-          "createdBy": {
-            "type": "number"
-          },
-          "updatedBy": {
+          "centerNumber": {
             "type": "number"
           }
         }
@@ -4459,6 +4541,17 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/JobApplicant"
+            }
+          }
+        },
+        "required": true
+      },
+      "profitCenter": {
+        "description": "Information about the profit center of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ProfitCenter"
             }
           }
         },
