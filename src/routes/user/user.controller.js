@@ -96,6 +96,7 @@ class UserController {
         locationId,
         sortColumn,
         sortOrder,
+        detail,
         pageNumber = 1,
         pageSize = PAGE_SIZE,
       },
@@ -117,6 +118,7 @@ class UserController {
         sortOrder,
         pageNumber,
         pageSize,
+        detail,
       });
       const users = await User.findAndCountAll(query);
       return SuccessResponse(res, users);

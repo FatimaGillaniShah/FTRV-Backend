@@ -4,16 +4,16 @@ import { makeLikeCondition } from '../../utils/helper';
 
 const { Op } = sequelize;
 const { User } = models;
-
-export const listProfitCentersQuery = ({
-  sortOrder,
-  sortColumn,
-  pageNumber,
-  pageSize,
-  searchString,
-}) => {
-  const query = { where: {} };
-  query.distinct = true;
+export const updateProfitCenterQuery = (id) => ({
+  where: {
+    id,
+  },
+});
+export const getProfileCenterByIdQuery = (id) => {
+  const query = {};
+  query.where = {
+    id,
+  };
   query.include = [
     {
       model: User,
@@ -31,6 +31,21 @@ export const listProfitCentersQuery = ({
       attributes: ['id', 'fullName', 'firstName', 'lastName'],
     },
   ];
+  query.attributes = {
+    exclude: ['createdAt', 'updatedAt', 'createdBy', 'updatedBy'],
+  };
+  return query;
+};
+
+export const listProfitCentersQuery = ({
+  sortOrder,
+  sortColumn,
+  pageNumber,
+  pageSize,
+  searchString,
+}) => {
+  const query = { where: {} };
+  query.distinct = true;
   query.attributes = {
     exclude: ['createdAt', 'updatedAt', 'managerId', 'createdBy', 'updatedBy'],
   };
