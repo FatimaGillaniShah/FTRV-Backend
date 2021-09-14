@@ -46,7 +46,7 @@ export default (sequelize, { INTEGER, STRING }) => {
         type: STRING,
         allowNull: false,
       },
-      faxNumber: {
+      faxNo: {
         type: STRING,
         allowNull: true,
       },
@@ -54,7 +54,7 @@ export default (sequelize, { INTEGER, STRING }) => {
         type: STRING,
         allowNull: false,
       },
-      centerNumber: {
+      centerNo: {
         type: INTEGER,
         allowNull: false,
       },
