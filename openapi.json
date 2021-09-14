@@ -3424,6 +3424,26 @@
       }
     },
     "/profitCenter": {
+      "post": {
+        "summary": "An endpoint to create a profit Center",
+        "tags": ["Profit Center"],
+        "operationId": "createProfitCenter",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ProfitCenter"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of Profit Center",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfitCenter"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
         "summary": "Retrieve list of all profit centers",
         "tags": ["Profit Center"],
@@ -3989,7 +4009,7 @@
           "name": {
             "type": "string"
           },
-          "userId": {
+          "managerId": {
             "type": "number"
           },
           "address": {
@@ -3999,7 +4019,7 @@
             "type": "string"
           },
           "faxNumber": {
-            "type": "number"
+            "type": "string"
           },
           "contactNo": {
             "type": "string"
@@ -4434,7 +4454,7 @@
                 "name": {
                   "type": "string"
                 },
-                "userId": {
+                "managerId": {
                   "type": "number"
                 },
                 "address": {
@@ -4444,7 +4464,7 @@
                   "type": "string"
                 },
                 "faxNumber": {
-                  "type": "number"
+                  "type": "string"
                 },
                 "contactNo": {
                   "type": "string"
