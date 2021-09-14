@@ -7,9 +7,9 @@ export const createProfitCenterSchema = ({ body }) => {
       address: Joi.string().required(),
       managerId: Joi.number(),
       code: Joi.string().required(),
-      faxNumber: Joi.string(),
+      faxNo: Joi.string(),
       contactNo: Joi.string().required(),
-      centerNumber: Joi.number().required(),
+      centerNo: Joi.number().required(),
     })
     .unknown(true);
   return Joi.validate(body, schema);

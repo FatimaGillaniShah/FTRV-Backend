@@ -4018,13 +4018,13 @@
           "code": {
             "type": "string"
           },
-          "faxNumber": {
+          "faxNo": {
             "type": "string"
           },
           "contactNo": {
             "type": "string"
           },
-          "centerNumber": {
+          "centerNo": {
             "type": "number"
           }
         }
@@ -4463,13 +4463,13 @@
                 "code": {
                   "type": "string"
                 },
-                "faxNumber": {
+                "faxNo": {
                   "type": "string"
                 },
                 "contactNo": {
                   "type": "string"
                 },
-                "centerNumber": {
+                "centerNo": {
                   "type": "number"
                 }
               }

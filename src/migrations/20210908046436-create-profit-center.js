@@ -34,7 +34,7 @@ module.exports = {
             type: STRING,
             allowNull: false,
           },
-          faxNumber: {
+          faxNo: {
             type: STRING,
             allowNull: true,
           },
@@ -42,7 +42,7 @@ module.exports = {
             type: STRING,
             allowNull: false,
           },
-          centerNumber: {
+          centerNo: {
             type: INTEGER,
             allowNull: false,
           },
