@@ -79,10 +79,10 @@ export const listQuery = ({
 
   query.offset = (pageNumber - 1) * pageSize;
   query.limit = pageSize;
-  query.attributes = detail
+  query.attributes = JSON.parse(detail)
     ? { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] }
-    : ['id', 'firstName', 'lastName'];
-  query.include = detail && [
+    : ['id', 'firstName', 'lastName', 'fullName'];
+  query.include = JSON.parse(detail) && [
     {
       model: Location,
       as: 'location',

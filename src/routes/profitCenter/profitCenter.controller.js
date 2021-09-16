@@ -71,9 +71,19 @@ class ProfitCenterController {
 
   static async list(req, res) {
     const {
-      query: { sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE, searchString },
+      query: {
+        name,
+        address,
+        sortOrder,
+        sortColumn,
+        pageNumber = 1,
+        pageSize = PAGE_SIZE,
+        searchString,
+      },
     } = req;
     const query = listProfitCentersQuery({
+      name,
+      address,
       sortOrder,
       sortColumn,
       pageNumber,
