@@ -85,6 +85,7 @@ export const listProfitCentersQuery = ({
   }
   return query;
 };
+
 export const deleteProfitCenterQuery = (id) => ({
   where: {
     id,
