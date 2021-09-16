@@ -1,8 +1,8 @@
 import sequelize from 'sequelize';
 import models from '../../models';
-import { makeEqualityCondition } from '../../utils/helper';
+import { makeLikeCondition } from '../../utils/helper';
 
-const { Op, col, fn } = sequelize;
+const { Op } = sequelize;
 const { User } = models;
 export const updateProfitCenterQuery = (id) => ({
   where: {
@@ -38,15 +38,12 @@ export const getProfileCenterByIdQuery = (id) => {
 };
 
 export const listProfitCentersQuery = ({
-  name,
-  address,
   sortOrder,
   sortColumn,
   pageNumber,
   pageSize,
   searchString,
 }) => {
-  console.log('here', name, address);
   const query = { where: {} };
   query.distinct = true;
   query.attributes = {
@@ -76,31 +73,10 @@ export const listProfitCentersQuery = ({
 
   // for filtering
   if (searchString) {
-    const likeClause = { [Op.iLike]: `%${searchString}%` };
-    query.where[Op.or] = [
-      sequelize.where(fn('concat', col('firstName'), ' ', col('lastName')), likeClause),
-      {
-        email: likeClause,
-      },
-    ];
-    const integerValue = parseInt(searchString, 10);
-    if (integerValue > 0) {
-      query.where[Op.or].push({
-        id: integerValue,
-      });
-    }
-  } else {
-    if (name) {
-      query.where[Op.and] = [
-        sequelize.where(fn('concat', col('firstName'), ' ', col('lastName')), {
-          [Op.iLike]: `%${name}%`,
-        }),
-      ];
-    }
-    if (address) {
-      query.where[Op.and] = query.where[Op.and] || [];
-      query.where[Op.and].push(makeEqualityCondition('address', address));
-    }
+    query.where[Op.or] = [];
+    const searchColumns = ['name', 'address'];
+    searchColumns.map((val) => query.where[Op.or].push(makeLikeCondition(val, searchString)));
+
     // for sorting
     if (sortColumn === 'manager.firstName') {
       query.order = [[{ model: User, as: 'manager' }, 'firstName', sortOrder]];
