@@ -76,15 +76,14 @@ export const listProfitCentersQuery = ({
     query.where[Op.or] = [];
     const searchColumns = ['name', 'address'];
     searchColumns.map((val) => query.where[Op.or].push(makeLikeCondition(val, searchString)));
-
-    // for sorting
-    if (sortColumn === 'manager.firstName') {
-      query.order = [[{ model: User, as: 'manager' }, 'firstName', sortOrder]];
-    } else if (sortColumn && sortOrder) {
-      query.order = [[sortColumn, sortOrder]];
-    }
-    return query;
   }
+  // for sorting
+  if (sortColumn === 'manager.firstName') {
+    query.order = [[{ model: User, as: 'manager' }, 'firstName', sortOrder]];
+  } else if (sortColumn && sortOrder) {
+    query.order = [[sortColumn, sortOrder]];
+  }
+  return query;
 };
 export const deleteProfitCenterQuery = (id) => ({
   where: {
