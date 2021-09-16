@@ -76,12 +76,13 @@ export const listQuery = ({
   detail,
 }) => {
   const query = { where: {} };
-
+  // eslint-disable-next-line no-param-reassign
+  detail = JSON.parse(detail);
   query.offset = (pageNumber - 1) * pageSize;
   query.limit = pageSize;
   query.attributes = detail
     ? { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] }
-    : ['id', 'firstName', 'lastName'];
+    : ['id', 'firstName', 'lastName', 'fullName'];
   query.include = detail && [
     {
       model: Location,
