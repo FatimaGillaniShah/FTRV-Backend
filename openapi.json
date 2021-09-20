@@ -127,7 +127,11 @@
           {
             "name": "detail",
             "in": "query",
-            "type": "bool"
+            "description": "True will return all user details false will return only name and id of users",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
