@@ -46,6 +46,7 @@ class UserController {
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.get('/birthday', this.birthdays);
     this.router.get('/workAnniversary', this.workAnniversaries);
+    this.router.get('/title', this.listTitles);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.get('/:id', this.getUserById);
     this.router.post('/login', this.login);
@@ -53,7 +54,6 @@ class UserController {
 
     this.router.delete('/deleteUsers', this.deleteUsers);
     this.router.post('/upload', uploadFile('excel').single('file'), this.upload);
-    this.router.get('/title', this.listTitles);
     return this.router;
   }
 
