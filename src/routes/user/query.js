@@ -194,5 +194,6 @@ export const getUserByIdQuery = ({ id }) => {
 
 export const listTitleQuery = () => ({
   where: { title: { [Op.ne]: null } },
-  attributes: ['title'],
+  attributes: ['id', 'title'],
+  order: [['title', 'asc']],
 });
