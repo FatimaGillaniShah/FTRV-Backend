@@ -488,6 +488,28 @@
         }
       }
     },
+    "/users/title": {
+      "get": {
+        "summary": "Retrieve list of all user titles for given criteria",
+        "tags": ["User"],
+        "operationId": "getUserTitles",
+        "responses": {
+          "200": {
+            "description": "Array of User Titles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/blogs": {
       "post": {
         "tags": ["Blogs"],
