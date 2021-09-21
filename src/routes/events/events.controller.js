@@ -4,7 +4,7 @@ import { omit, pick } from 'lodash';
 import models from '../../models';
 import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
-import { listQuery } from './query';
+import { listAllEventsQuery, listUserEventsQuery } from './query';
 import { ROLES, STATUS_CODES } from '../../utils/constants';
 
 const { Event, EventLocation, Location, User } = models;
@@ -25,21 +25,22 @@ class EventsController {
   static async list(req, res, next) {
     const {
       user,
-      query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize, date = new Date() },
     } = req;
     const { id, role } = user;
     try {
       let events;
-      const query = listQuery({
+      const query = listUserEventsQuery({
         sortColumn,
         sortOrder,
         pageNumber,
         pageSize,
         role,
         id,
+        date,
       });
       if (role === ROLES.ADMIN) {
-        events = await Event.findAndCountAll();
+        events = await Event.findAndCountAll(listAllEventsQuery({ date }));
       } else if (role === ROLES.USER) {
         const userObj = await User.findOne(query);
         const data = pick(userObj.location, ['eventIds']);
