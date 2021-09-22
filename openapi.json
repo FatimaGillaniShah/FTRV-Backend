@@ -494,7 +494,7 @@
     },
     "/users/title": {
       "get": {
-        "summary": "Retrieve list of all user titles for given criteria",
+        "summary": "Retrieve list of user titles",
         "tags": ["User"],
         "operationId": "getUserTitles",
         "responses": {
