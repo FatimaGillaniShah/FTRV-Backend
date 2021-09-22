@@ -12,16 +12,14 @@ const threeMonthsQuery = (date) => {
   return {
     [Op.or]: [
       {
-        [Op.and]: [
-          where(fn('date', col('startDate')), '<=', endOfNextMonth),
-          where(fn('date', col('startDate')), '>=', startOfPrevMonth),
-        ],
+        startDate: {
+          [Op.between]: [startOfPrevMonth, endOfNextMonth],
+        },
       },
       {
-        [Op.and]: [
-          where(fn('date', col('endDate')), '<=', endOfNextMonth),
-          where(fn('date', col('endDate')), '>=', startOfPrevMonth),
-        ],
+        endDate: {
+          [Op.between]: [startOfPrevMonth, endOfNextMonth],
+        },
       },
       {
         [Op.and]: [
