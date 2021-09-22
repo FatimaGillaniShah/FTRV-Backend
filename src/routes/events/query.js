@@ -6,6 +6,33 @@ const { Op, where, fn, col } = sequelize;
 
 const { Event, Location } = models;
 
+const threeMonthsQuery = (date) => {
+  const endOfNextMonth = moment(date).endOf('month').add(1, 'M').format('YYYY/MM/DD');
+  const startOfPrevMonth = moment(date).startOf('month').subtract(1, 'M').format('YYYY/MM/DD');
+  return {
+    [Op.or]: [
+      {
+        [Op.and]: [
+          where(fn('date', col('startDate')), '<=', endOfNextMonth),
+          where(fn('date', col('startDate')), '>=', startOfPrevMonth),
+        ],
+      },
+      {
+        [Op.and]: [
+          where(fn('date', col('endDate')), '<=', endOfNextMonth),
+          where(fn('date', col('endDate')), '>=', startOfPrevMonth),
+        ],
+      },
+      {
+        [Op.and]: [
+          where(fn('date', col('endDate')), '>=', endOfNextMonth),
+          where(fn('date', col('startDate')), '<=', startOfPrevMonth),
+        ],
+      },
+    ],
+  };
+};
+
 export const listUserEventsQuery = ({
   sortColumn,
   sortOrder,
@@ -14,8 +41,6 @@ export const listUserEventsQuery = ({
   id,
   date,
 }) => {
-  const nextMonth = moment(date).endOf('month').add(1, 'M').format('YYYY/MM/DD');
-  const prevMonth = moment(date).startOf('month').subtract(1, 'M').format('YYYY/MM/DD');
   const query = {
     where: { id },
     include: {
@@ -30,28 +55,7 @@ export const listUserEventsQuery = ({
     },
   };
   // fetching records of three months e.g previous, current and next month records
-  query.include.include.where = {
-    [Op.or]: [
-      {
-        [Op.and]: [
-          where(fn('date', col('startDate')), '<=', nextMonth),
-          where(fn('date', col('startDate')), '>=', prevMonth),
-        ],
-      },
-      {
-        [Op.and]: [
-          where(fn('date', col('endDate')), '<=', nextMonth),
-          where(fn('date', col('endDate')), '>=', prevMonth),
-        ],
-      },
-      {
-        [Op.and]: [
-          where(fn('date', col('endDate')), '>=', nextMonth),
-          where(fn('date', col('startDate')), '<=', prevMonth),
-        ],
-      },
-    ],
-  };
+  query.include.include.where = threeMonthsQuery(date);
 
   if (pageSize) {
     query.offset = (pageNumber - 1) * pageSize;
@@ -67,31 +71,8 @@ export const listUserEventsQuery = ({
 };
 
 export const listAllEventsQuery = ({ date }) => {
-  const nextMonth = moment(date).endOf('month').add(1, 'M').format('YYYY/MM/DD');
-  const prevMonth = moment(date).startOf('month').subtract(1, 'M').format('YYYY/MM/DD');
   const query = {};
   // fetching records of three months e.g previous, current and next month records
-  query.where = {
-    [Op.or]: [
-      {
-        [Op.and]: [
-          where(fn('date', col('startDate')), '<=', nextMonth),
-          where(fn('date', col('startDate')), '>=', prevMonth),
-        ],
-      },
-      {
-        [Op.and]: [
-          where(fn('date', col('endDate')), '<=', nextMonth),
-          where(fn('date', col('endDate')), '>=', prevMonth),
-        ],
-      },
-      {
-        [Op.and]: [
-          where(fn('date', col('endDate')), '>=', nextMonth),
-          where(fn('date', col('startDate')), '<=', prevMonth),
-        ],
-      },
-    ],
-  };
+  query.where = threeMonthsQuery(date);
   return query;
 };
