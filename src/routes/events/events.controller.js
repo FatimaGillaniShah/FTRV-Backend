@@ -43,7 +43,7 @@ class EventsController {
         events = await Event.findAndCountAll(listAllEventsQuery({ date }));
       } else if (role === ROLES.USER) {
         const userObj = await User.findOne(query);
-        const data = pick(userObj.location, ['eventIds']);
+        const data = pick(userObj?.location, ['eventIds']);
         events = {
           rows: data.eventIds,
         };
