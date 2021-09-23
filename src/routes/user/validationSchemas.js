@@ -11,7 +11,9 @@ export const userSignUpSchema = Joi.object()
     password: Joi.string().min(6).required(),
     firstName: Joi.string().min(2).max(100).required(),
     lastName: Joi.string().min(2).max(100).required(),
-    contactNo: Joi.string().regex(/(\d{3})-(\d{3})-(\d{4})/),
+    contactNo: Joi.string()
+      .regex(/(\d{3})-(\d{3})-(\d{4})/)
+      .allow(null, ''),
     extension: Joi.string().allow(null, ''),
     locationId: Joi.number().required(),
     title: Joi.string().required(),
