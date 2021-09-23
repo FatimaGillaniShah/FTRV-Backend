@@ -26,7 +26,9 @@ export const userUpdateSchema = Joi.object()
     password: Joi.string(),
     firstName: Joi.string().min(2).max(100),
     lastName: Joi.string().min(2).max(100),
-    contactNo: Joi.string().regex(/(\d{3})-(\d{3})-(\d{4})/),
+    contactNo: Joi.string()
+      .regex(/(\d{3})-(\d{3})-(\d{4})/)
+      .allow(null, ''),
     extension: Joi.string().allow(null, ''),
     locationId: Joi.number(),
     title: Joi.string(),
