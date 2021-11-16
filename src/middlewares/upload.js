@@ -98,6 +98,6 @@ export default (fileType) => {
   return multer({
     storage: fileType === 'excel' ? storageDisk : storageS3,
     fileFilter,
-    limits: { fileSize: MAX_FILE_SIZE },
+    limits: { fileSize: MAX_FILE_SIZE, fieldSize: process.env.FIELD_SIZE_LIMIT * 1024 * 1024 },
   });
 };
