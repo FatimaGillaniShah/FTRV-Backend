@@ -120,7 +120,7 @@ class BlogController {
 
       const blogExists = await Blog.findOne(query);
       if (blogExists) {
-        blogPayload.thumbnail = file.key;
+        blogPayload.thumbnail = file.key || blogExists.thumbnail;
         blogPayload.shortText = stripHtmlTags(blogPayload.content).substring(0, 200);
         const blog = await Blog.update(blogPayload, query);
         if (file.key && blogExists.thumbnail) {
