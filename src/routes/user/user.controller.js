@@ -13,7 +13,13 @@ import models from '../../models';
 import uploadFile from '../../middlewares/upload';
 import { PAGE_SIZE, STATUS_CODES, UPLOAD_PATH } from '../../utils/constants';
 import { BadRequest } from '../../error';
-import { birthdayQuery, anniversaryQuery, getUserByIdQuery, listQuery } from './query';
+import {
+  birthdayQuery,
+  anniversaryQuery,
+  getUserByIdQuery,
+  listQuery,
+  listTitleQuery,
+} from './query';
 
 import {
   BadRequestError,
@@ -26,6 +32,7 @@ import {
   SuccessResponse,
 } from '../../utils/helper';
 import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validationSchemas';
+import { Request } from '../../utils/decorators';
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
@@ -39,6 +46,7 @@ class UserController {
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.get('/birthday', this.birthdays);
     this.router.get('/workAnniversary', this.workAnniversaries);
+    this.router.get('/title', this.listTitles);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.get('/:id', this.getUserById);
     this.router.post('/login', this.login);
@@ -82,6 +90,12 @@ class UserController {
     } catch (e) {
       next(e);
     }
+  }
+
+  @Request
+  static async listTitles(req, res) {
+    const titles = await User.findAll(listTitleQuery());
+    return SuccessResponse(res, titles);
   }
 
   static async list(req, res, next) {

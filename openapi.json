@@ -127,7 +127,11 @@
           {
             "name": "detail",
             "in": "query",
-            "type": "bool"
+            "description": "True will return all user details false will return only name and id of users",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -480,6 +484,28 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/WorkAnniversary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/title": {
+      "get": {
+        "summary": "Retrieve list of user titles",
+        "tags": ["User"],
+        "operationId": "getUserTitles",
+        "responses": {
+          "200": {
+            "description": "Array of User Titles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
                   }
                 }
               }
