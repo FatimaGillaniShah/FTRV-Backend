@@ -120,10 +120,17 @@ class BlogController {
 
       const blogExists = await Blog.findOne(query);
       if (blogExists) {
-        blogPayload.thumbnail = file.key || blogExists.thumbnail;
+        if (blogPayload.file === '') {
+          blogPayload.thumbnail = '';
+        } else {
+          blogPayload.thumbnail = file.key;
+        }
         blogPayload.shortText = stripHtmlTags(blogPayload.content).substring(0, 200);
         const blog = await Blog.update(blogPayload, query);
-        if (file.key && blogExists.thumbnail) {
+        if (
+          (file.key && blogExists.thumbnail) ||
+          (blogExists.thumbnail && blogPayload.file === '')
+        ) {
           const avatarKeyObj = [{ Key: blogExists.thumbnail }];
           cleanUnusedFiles(avatarKeyObj);
         }

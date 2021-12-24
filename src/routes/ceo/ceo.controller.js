@@ -39,6 +39,7 @@ class CeoController {
   static async updateCeoPage(req, res, next) {
     const ceoPageContentSchema = Joi.object().keys({
       content: Joi.string().allow(''),
+      file: Joi.string().allow(null, ''),
     });
     const { body: ceoPagePayload, file = {} } = req;
     try {
@@ -59,9 +60,15 @@ class CeoController {
         content: ceoPagePayload.content,
         avatar: file.key ? file.key : existingContent.avatar,
       };
+      if (ceoPagePayload.file === '') {
+        data.avatar = '';
+      }
 
       await Content.update({ data }, query);
-      if (file.key && existingContent.avatar) {
+      if (
+        (file.key && existingContent.avatar) ||
+        (existingContent.avatar && ceoPagePayload.file === '')
+      ) {
         const avatarKeyObj = [{ Key: existingContent.avatar }];
         cleanUnusedFiles(avatarKeyObj);
       }

@@ -295,14 +295,18 @@ class UserController {
         if (userPayload.password) {
           userPayload.password = generateHash(userPayload.password);
         }
-        userPayload.avatar = file.key || userExists.avatar;
+        if (userPayload.file === '') {
+          userPayload.avatar = '';
+        } else {
+          userPayload.avatar = file.key || userExists.avatar;
+        }
         await User.update(userPayload, query);
         delete userPayload.password;
         if (id === parseInt(userId, 10)) {
           UserController.generatePreSignedUrl([userPayload]);
         }
 
-        if (file.key && userExists.avatar) {
+        if ((file.key && userExists.avatar) || (userExists.avatar && userPayload.file === '')) {
           const avatarKeyObj = [{ Key: userExists.avatar }];
           cleanUnusedFiles(avatarKeyObj);
         }
