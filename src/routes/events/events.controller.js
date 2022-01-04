@@ -2,10 +2,15 @@ import Joi from 'joi';
 import express from 'express';
 import { omit, pick } from 'lodash';
 import models from '../../models';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  convertType,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import { eventCreateSchema, eventUpdateSchema } from './validationSchemas';
 import { listAllEventsQuery, listUserEventsQuery } from './query';
-import { ROLES, STATUS_CODES } from '../../utils/constants';
+import { STATUS_CODES } from '../../utils/constants';
 
 const { Event, EventLocation, Location, User } = models;
 class EventsController {
@@ -25,9 +30,9 @@ class EventsController {
   static async list(req, res, next) {
     const {
       user,
-      query: { sortColumn, sortOrder, pageNumber = 1, pageSize, date = new Date() },
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize, date = new Date(), isPagination },
     } = req;
-    const { id, role } = user;
+    const { id, isAdmin } = user;
     try {
       let events;
       const query = listUserEventsQuery({
@@ -35,13 +40,13 @@ class EventsController {
         sortOrder,
         pageNumber,
         pageSize,
-        role,
         id,
         date,
+        isPagination,
       });
-      if (role === ROLES.ADMIN) {
+      if (isAdmin) {
         events = await Event.findAndCountAll(listAllEventsQuery({ date }));
-      } else if (role === ROLES.USER) {
+      } else if (!isAdmin) {
         const userObj = await User.findOne(query);
         const data = pick(userObj?.location, ['eventIds']);
         events = {
@@ -112,6 +117,9 @@ class EventsController {
           through: { attributes: [] },
         },
       });
+      if (!event) {
+        BadRequestError(`Event does not exist`, STATUS_CODES.NOTFOUND);
+      }
       return SuccessResponse(res, event);
     } catch (e) {
       next(e);
@@ -121,9 +129,13 @@ class EventsController {
   static async updateEvent(req, res, next) {
     const {
       body: eventPayload,
-      params: { id: eventId },
+      params: { id },
     } = req;
     try {
+      const eventId = convertType(id);
+      if (!eventId) {
+        BadRequestError(`Event does not exist`, STATUS_CODES.INVALID_INPUT);
+      }
       const result = Joi.validate(eventPayload, eventUpdateSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);

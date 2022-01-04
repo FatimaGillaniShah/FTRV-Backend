@@ -52,6 +52,7 @@ export const listPolls = ({
   searchString,
   name,
   status,
+  isPagination = false,
 }) => {
   const query = { where: {} };
   const pollStates = ['pending', 'expired'];
@@ -83,8 +84,10 @@ export const listPolls = ({
     exclude: ['createdAt', 'updatedAt', 'createdBy', 'updatedBy'],
   };
 
-  query.offset = (pageNumber - 1) * pageSize;
-  query.limit = pageSize;
+  if (Number(isPagination)) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
 
   // for filtering
   if (searchString) {
@@ -111,16 +114,6 @@ export const listPolls = ({
   return query;
 };
 
-export const pollOptionQuery = (id) => ({
-  where: {
-    id,
-  },
-});
-export const pollExistQuery = (id) => ({
-  where: {
-    id,
-  },
-});
 export const votedQuery = ({ userId, pollId }) => ({
   where: {
     userId,

@@ -1,6 +1,6 @@
 import express from 'express';
 import { get } from 'lodash';
-import { SuccessResponse, BadRequestError } from '../../utils/helper';
+import { SuccessResponse, BadRequestError, convertType } from '../../utils/helper';
 import models from '../../models';
 import { STATUS_CODES, PAGE_SIZE } from '../../utils/constants';
 import { Request, RequestBodyValidator } from '../../utils/decorators';
@@ -46,17 +46,24 @@ class ProfitCenterController {
     }
     const query = getProfileCenterByIdQuery(profitCenterId);
     const profitCenterResponse = await ProfitCenter.findOne(query);
+    if (!profitCenterResponse) {
+      BadRequestError(`Profit Center does not exist`, STATUS_CODES.NOTFOUND);
+    }
     return SuccessResponse(res, profitCenterResponse);
   }
 
-  @Request
   @RequestBodyValidator(updateProfitCenterSchema)
+  @Request
   static async updateProfitCenter(req, res) {
     const {
       body: profitCenterPayload,
       params: { id },
       user,
     } = req;
+    const profitCenterId = convertType(id);
+    if (!profitCenterId) {
+      BadRequestError(`Profit Center does not exist`, STATUS_CODES.INVALID_INPUT);
+    }
     const profitCenterExist = await ProfitCenter.findOne(updateProfitCenterQuery(id));
     if (profitCenterExist) {
       profitCenterPayload.updatedBy = user.id;
@@ -71,7 +78,14 @@ class ProfitCenterController {
 
   static async list(req, res) {
     const {
-      query: { sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE, searchString },
+      query: {
+        sortOrder,
+        sortColumn,
+        pageNumber = 1,
+        pageSize = PAGE_SIZE,
+        searchString,
+        isPagination,
+      },
     } = req;
     const query = listProfitCentersQuery({
       sortOrder,
@@ -79,6 +93,7 @@ class ProfitCenterController {
       pageNumber,
       pageSize,
       searchString,
+      isPagination,
     });
     const profitCenters = await ProfitCenter.findAndCountAll(query);
     return SuccessResponse(res, profitCenters);

@@ -6,8 +6,10 @@
 * Move to directory from terminal
 * Rename .envtemplate to .env and add values to variables accordingly
 * Create postgres database and schema. provide credential details in .env
+* Run migrations ` npx sequlize-cli db:migrate`
 * Run seed data ` npx sequlize-cli db:seed:all`
 * Run `npm install`
+* The command `npm run migration:scripts` is for running feature related scripts, to run acl feature script you must pass parameter e.g `npm run migration:scripts acl-feature`
 * Run `npm run dev` to start with `nodemon`. This will launch application at http://localhost:3000. You can change port in env variable PORT
 * Create folder `/public/uploads`
 ## Authentication

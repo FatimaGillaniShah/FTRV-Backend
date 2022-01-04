@@ -43,6 +43,7 @@ export const listProfitCentersQuery = ({
   pageNumber,
   pageSize,
   searchString,
+  isPagination = false,
 }) => {
   const query = { where: {} };
   query.distinct = true;
@@ -50,9 +51,10 @@ export const listProfitCentersQuery = ({
     exclude: ['createdAt', 'updatedAt', 'managerId', 'createdBy', 'updatedBy'],
   };
 
-  query.offset = (pageNumber - 1) * pageSize;
-  query.limit = pageSize;
-
+  if (Number(isPagination)) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
   query.include = [
     {
       model: User,

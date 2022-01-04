@@ -3,13 +3,21 @@ import moment from 'moment';
 
 const { Op } = sequelize;
 
-export const listQuery = ({ sortColumn, sortOrder, pageNumber, pageSize }) => {
+export const listQuery = ({
+  sortColumn,
+  sortOrder,
+  pageNumber,
+  pageSize,
+  isPagination = false,
+}) => {
   const query = { where: {} };
   query.attributes = { exclude: ['createdAt', 'updatedAt', 'deletedAt'] };
 
   // for pagination
-  query.offset = (pageNumber - 1) * pageSize;
-  query.limit = pageSize;
+  if (Number(isPagination)) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
 
   // for sorting
   if (sortColumn && sortOrder) {

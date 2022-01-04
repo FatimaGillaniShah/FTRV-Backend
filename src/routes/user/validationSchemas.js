@@ -18,8 +18,9 @@ export const userSignUpSchema = Joi.object()
     locationId: Joi.number().required(),
     title: Joi.string().required(),
     departmentId: Joi.number().required(),
-    joiningDate: Joi.date(),
-    dob: Joi.date(),
+    joiningDate: Joi.date().allow(''),
+    dob: Joi.date().allow(''),
+    groupIds: Joi.array().items().min(1).required(),
   })
   .unknown(true);
 
@@ -35,7 +36,21 @@ export const userUpdateSchema = Joi.object()
     locationId: Joi.number(),
     title: Joi.string(),
     departmentId: Joi.number(),
-    joiningDate: Joi.date(),
-    dob: Joi.date(),
+    joiningDate: Joi.date().allow(''),
+    dob: Joi.date().allow(''),
+    groupIds: Joi.array().items().min(1),
   })
   .unknown(true);
+
+export const userBulkUpdateSchema = ({ body }) => {
+  const schema = Joi.object()
+    .keys({
+      userIds: Joi.array().required(),
+      locationId: Joi.number(),
+      departmentId: Joi.number(),
+      groupId: Joi.array(),
+    })
+    .min(1)
+    .unknown(true);
+  return Joi.validate(body, schema);
+};

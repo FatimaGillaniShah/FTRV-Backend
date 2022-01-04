@@ -17,7 +17,8 @@
     "test": "jest --detectOpenHandles",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watchAll",
-    "test:clean": "rimraf ./coverage"
+    "test:clean": "rimraf ./coverage",
+    "migration:scripts": "env DEBUG=scripts:* babel-node ./src/scripts/index.js"
   },
   "author": "Datics",
   "license": "ISC",
@@ -39,6 +40,7 @@
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.14.5",
     "@babel/register": "^7.12.10",
+    "accesscontrol": "^2.2.1",
     "aws-sdk": "^2.922.0",
     "cors": "^2.8.5",
     "debug": "^4.3.1",
@@ -65,7 +67,8 @@
     "supertest": "^4.0.2",
     "swagger-ui": "^3.40.0",
     "swagger-ui-express": "^4.1.6",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "ws": "^8.2.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",

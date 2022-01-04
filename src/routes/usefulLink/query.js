@@ -1,10 +1,19 @@
-export const listQuery = ({ categoryId, sortColumn, sortOrder, pageNumber = 1, pageSize }) => {
+export const listQuery = ({
+  categoryId,
+  sortColumn,
+  sortOrder,
+  pageNumber = 1,
+  pageSize,
+  isPagination = false,
+}) => {
   const query = { where: { categoryId } };
   query.attributes = { exclude: ['createdAt', 'updatedAt', 'deletedAt'] };
 
   // for pagination
-  query.offset = (pageNumber - 1) * pageSize;
-  query.limit = pageSize;
+  if (Number(isPagination)) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
 
   // for sorting
   if (sortColumn && sortOrder) {

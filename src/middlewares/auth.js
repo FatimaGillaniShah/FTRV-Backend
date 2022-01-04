@@ -1,6 +1,6 @@
 import jwt from 'express-jwt';
 
-const getTokenFromHeaders = (req) => {
+export const getTokenFromHeaders = (req) => {
   const {
     headers: { authorization },
   } = req;
@@ -8,6 +8,15 @@ const getTokenFromHeaders = (req) => {
     return authorization.split(' ')[1];
   }
   return null;
+};
+export const getTokenFromSocketHeaders = (req) => {
+  const { headers } = req;
+  const token = headers['sec-websocket-protocol'];
+  if (token && token.split(' ')[0] === 'Bearer') {
+    return token.split(' ')[1];
+  }
+
+  return token;
 };
 
 const auth = {

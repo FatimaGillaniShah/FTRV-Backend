@@ -1,6 +1,12 @@
-export const listQuery = ({ sortColumn, sortOrder, pageNumber = 1, pageSize }) => {
+export const listQuery = ({
+  sortColumn,
+  sortOrder,
+  pageNumber = 1,
+  pageSize,
+  isPagination = false,
+}) => {
   const query = {};
-  if (pageSize) {
+  if (Number(isPagination)) {
     query.offset = (pageNumber - 1) * pageSize;
     query.limit = pageSize;
   }

@@ -12,7 +12,7 @@ module.exports = {
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     schema: process.env.SCHEMA_NAME || 'funtown',
-    logging: true,
+    logging: false,
   },
   test: {
     dialect: 'sqlite',

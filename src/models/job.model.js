@@ -1,6 +1,6 @@
 import { Model } from 'sequelize';
 
-export default (sequelize, { STRING, INTEGER, DATE }) => {
+export default (sequelize, { STRING, INTEGER, DATE, TEXT }) => {
   class Job extends Model {
     static associate({ Department, Location, User, JobApplicant }) {
       this.belongsTo(Location, {
@@ -41,7 +41,7 @@ export default (sequelize, { STRING, INTEGER, DATE }) => {
         allowNull: false,
       },
       description: {
-        type: STRING,
+        type: TEXT,
         allowNull: false,
       },
       locationId: {

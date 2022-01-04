@@ -59,6 +59,7 @@ export const listJobs = ({
   title,
   departmentId,
   locationId,
+  isPagination = false,
 }) => {
   const query = { where: {} };
   query.include = [
@@ -99,8 +100,10 @@ export const listJobs = ({
     ],
   };
 
-  query.offset = (pageNumber - 1) * pageSize;
-  query.limit = pageSize;
+  if (Number(isPagination)) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
 
   // for filtering
   if (searchString) {

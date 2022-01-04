@@ -42,6 +42,7 @@ export const listQuery = ({
   departmentId,
   extension,
   locationId,
+  isPagination = false,
 }) => {
   const query = { where: {} };
   query.include = [
@@ -64,8 +65,10 @@ export const listQuery = ({
     exclude: ['createdAt', 'updatedAt', 'locationId', 'departmentId'],
   };
 
-  query.offset = (pageNumber - 1) * pageSize;
-  query.limit = pageSize;
+  if (Number(isPagination)) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
 
   // for filtering
   if (searchString) {

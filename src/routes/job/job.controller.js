@@ -45,6 +45,7 @@ class JobController {
         title,
         departmentId,
         locationId,
+        isPagination,
       },
     } = req;
     const query = listJobs({
@@ -56,6 +57,7 @@ class JobController {
       title,
       departmentId,
       locationId,
+      isPagination,
     });
     const jobs = await Job.findAndCountAll(query);
     const { rows, count } = jobs;
@@ -65,8 +67,8 @@ class JobController {
     return SuccessResponse(res, jobResponse);
   }
 
-  @Request
   @RequestBodyValidator(createJobSchema)
+  @Request
   static async createJob(req, res) {
     const { body: jobPayload, user } = req;
     jobPayload.createdBy = user.id;
@@ -100,8 +102,8 @@ class JobController {
     return BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
   }
 
-  @Request
   @RequestBodyValidator(updateJobSchema)
+  @Request
   static async updateJob(req, res) {
     const {
       body: jobPayload,
@@ -113,14 +115,16 @@ class JobController {
         id: jobId,
       },
     };
-
     const jobExist = await Job.findOne(updateQuery);
+    if (!jobExist) {
+      return BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
+    }
+
     if (jobExist) {
       jobPayload.updatedBy = user.id;
       const job = await Job.update(jobPayload, updateQuery);
       return SuccessResponse(res, job);
     }
-    BadRequestError(`Job does not exist`, STATUS_CODES.NOTFOUND);
   }
 
   @Request

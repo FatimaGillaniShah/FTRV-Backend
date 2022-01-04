@@ -5,6 +5,7 @@ import models from '../../models';
 import {
   BadRequestError,
   cleanUnusedFiles,
+  convertType,
   generatePreSignedUrlForGetObject,
   getErrorMessages,
   SuccessResponse,
@@ -61,14 +62,17 @@ class DocumentController {
   }
 
   static async createDocument(req, res, next) {
-    const { body: documentPayload, file = {} } = req;
+    const {
+      body: documentPayload,
+      body: { departmentId },
+      file = {},
+    } = req;
     try {
       const result = Joi.validate(documentPayload, documentCreateSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       if (file.key) {
-        const { departmentId } = documentPayload;
         const sortOrder = await Document.max('sortOrder', { where: { departmentId } });
         documentPayload.url = file.key;
         documentPayload.sortOrder = sortOrder ? sortOrder + 1 : 1;
@@ -85,19 +89,26 @@ class DocumentController {
     const {
       body: documentPayload,
       file = {},
-      params: { id: documentId },
+      params: { id },
     } = req;
     try {
+      const documentId = convertType(id);
+      if (!documentId) {
+        BadRequestError(`Document does not exist`, STATUS_CODES.INVALID_INPUT);
+      }
       const result = Joi.validate(documentPayload, documentUpdateSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
+
       const updateQuery = {
         where: {
-          id: documentId,
+          id,
         },
       };
+
       const documentExist = await Document.findOne(updateQuery);
+
       if (documentExist) {
         documentPayload.url = file.key || documentExist.url;
         const document = await Document.update(documentPayload, updateQuery);
@@ -105,8 +116,10 @@ class DocumentController {
           const urlKeyObj = [{ Key: documentExist.url }];
           cleanUnusedFiles(urlKeyObj);
         }
+
         return SuccessResponse(res, document);
       }
+
       BadRequestError(`Document does not exists`, STATUS_CODES.NOTFOUND);
     } catch (e) {
       next(e);
@@ -124,6 +137,9 @@ class DocumentController {
       }
       const query = getDocumentByIdQuery(documentId);
       const document = await Document.findOne(query);
+      if (!document) {
+        BadRequestError(`Document does not exist`, STATUS_CODES.NOTFOUND);
+      }
       DocumentController.generatePreSignedUrl([document]);
       return SuccessResponse(res, document);
     } catch (e) {

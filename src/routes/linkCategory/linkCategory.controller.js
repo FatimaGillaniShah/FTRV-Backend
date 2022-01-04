@@ -2,7 +2,12 @@ import express from 'express';
 import Joi from 'joi';
 import models from '../../models';
 import { listQuery } from './query';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  convertType,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import { linkCategoryCreateSchema, linkCategoryUpdateSchema } from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
 
@@ -50,9 +55,13 @@ class LinkCategoryController {
   static async updateLinkCategory(req, res, next) {
     const {
       body: linkCategoryPayload,
-      params: { id: linkCategoryId },
+      params: { id },
     } = req;
     try {
+      const linkCategoryId = convertType(id);
+      if (!linkCategoryId) {
+        BadRequestError(`Category does not exist`, STATUS_CODES.INVALID_INPUT);
+      }
       const result = Joi.validate(linkCategoryPayload, linkCategoryUpdateSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), 422);
@@ -87,6 +96,9 @@ class LinkCategoryController {
           exclude: ['createdAt', 'updatedAt'],
         },
       });
+      if (!linkCategory) {
+        BadRequestError(`Category does not exist`, STATUS_CODES.NOTFOUND);
+      }
       return SuccessResponse(res, linkCategory);
     } catch (e) {
       next(e);

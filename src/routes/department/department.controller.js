@@ -1,7 +1,12 @@
 import Joi from 'joi';
 import express from 'express';
 import models from '../../models';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  convertType,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import { listQuery } from './query';
 import { departmentSchema } from './validationSchemas';
 import { STATUS_CODES } from '../../utils/constants';
@@ -23,7 +28,7 @@ class DepartmentController {
 
   static async list(req, res, next) {
     const {
-      query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize, isPagination },
     } = req;
     try {
       const query = listQuery({
@@ -31,6 +36,7 @@ class DepartmentController {
         sortOrder,
         pageNumber,
         pageSize,
+        isPagination,
       });
       const departments = await Department.findAndCountAll(query);
       return SuccessResponse(res, departments);
@@ -100,6 +106,9 @@ class DepartmentController {
           exclude: ['createdAt', 'updatedAt'],
         },
       });
+      if (!department) {
+        BadRequestError(`Department does not exist`, STATUS_CODES.NOTFOUND);
+      }
       return SuccessResponse(res, department);
     } catch (e) {
       next(e);
@@ -109,16 +118,20 @@ class DepartmentController {
   static async updateDepartment(req, res, next) {
     const {
       body: departmentPayload,
-      params: { id: departmentId },
+      params: { id },
     } = req;
     try {
+      const departmentId = convertType(id);
+      if (!departmentId) {
+        BadRequestError(`Department does not exist`, STATUS_CODES.INVALID_INPUT);
+      }
       const result = Joi.validate(departmentPayload, departmentSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
       const query = {
         where: {
-          id: departmentId,
+          id,
         },
       };
 

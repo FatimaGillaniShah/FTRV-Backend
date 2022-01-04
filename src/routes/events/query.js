@@ -38,6 +38,7 @@ export const listUserEventsQuery = ({
   pageSize,
   id,
   date,
+  isPagination = false,
 }) => {
   const query = {
     where: { id },
@@ -55,7 +56,7 @@ export const listUserEventsQuery = ({
   // fetching records of three months e.g previous, current and next month records
   query.include.include.where = threeMonthsQuery(date);
 
-  if (pageSize) {
+  if (Number(isPagination)) {
     query.offset = (pageNumber - 1) * pageSize;
     query.limit = pageSize;
   }

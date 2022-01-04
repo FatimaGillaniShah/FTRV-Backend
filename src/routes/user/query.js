@@ -3,7 +3,7 @@ import models from '../../models';
 import { makeEqualityCondition, makeLikeCondition } from '../../utils/helper';
 
 const { Op, fn, cast, col } = sequelize;
-const { Location, Department } = models;
+const { Location, Department, Group, Resource } = models;
 
 export const birthdayQuery = (date) => {
   const query = {
@@ -74,12 +74,16 @@ export const listQuery = ({
   pageNumber = 1,
   pageSize,
   detail,
+  isPagination = false,
 }) => {
   const query = { where: {} };
   // eslint-disable-next-line no-param-reassign
   detail = JSON.parse(detail);
-  query.offset = (pageNumber - 1) * pageSize;
-  query.limit = pageSize;
+  if (Number(isPagination)) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
+  query.distinct = true;
   query.attributes = detail
     ? { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] }
     : ['id', 'firstName', 'lastName', 'fullName'];
@@ -97,6 +101,14 @@ export const listQuery = ({
       attributes: {
         exclude: ['createdAt', 'updatedAt', 'id'],
       },
+    },
+    {
+      model: Group,
+      as: 'groups',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+      through: { attributes: [] },
     },
   ];
   if (status) {
@@ -188,10 +200,124 @@ export const getUserByIdQuery = ({ id }) => {
         exclude: ['createdAt', 'updatedAt'],
       },
     },
+    {
+      model: Group,
+      as: 'groups',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+      through: { attributes: [] },
+      include: [
+        {
+          model: Resource,
+          as: 'resources',
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          through: { as: 'resourcePermission', attributes: ['permission'] },
+        },
+      ],
+    },
   ];
   return query;
 };
 
+export const getLoggedUserQuery = (id) => ({
+  where: {
+    id,
+  },
+  attributes: ['id'],
+  include: [
+    {
+      model: Group,
+      as: 'groups',
+      attributes: ['id', 'name'],
+      through: { attributes: [] },
+      include: [
+        {
+          model: Resource,
+          as: 'resources',
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          through: { as: 'resourcePermission', attributes: ['permission'] },
+        },
+      ],
+    },
+  ],
+});
+
+export const findOrCreateGoogleUserQuery = ({ email, avatar, firstName, lastName }) => ({
+  where: {
+    email,
+  },
+  defaults: {
+    status: 'active',
+    avatar,
+    firstName,
+    lastName,
+    password: '',
+  },
+  include: [
+    {
+      model: Group,
+      as: 'groups',
+      attributes: ['id', 'name'],
+      through: { attributes: [] },
+      include: [
+        {
+          model: Resource,
+          as: 'resources',
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          through: { as: 'resourcePermission', attributes: ['permission'] },
+        },
+      ],
+    },
+  ],
+});
+
+export const deleteUserGroupQuery = (userId) => ({
+  where: {
+    userId,
+  },
+});
+
+export const listGroups = (name) => ({
+  where: {
+    name,
+  },
+});
+
+export const updateUserQuery = (id) => ({
+  where: {
+    id,
+  },
+});
+export const userExistQuery = (id) => ({
+  where: {
+    id,
+  },
+});
+
+export const getUserByIdWithGroups = ({ id }) => ({
+  where: {
+    id,
+  },
+  include: [
+    {
+      model: Group,
+      as: 'groups',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+      through: { attributes: [] },
+      include: [
+        {
+          model: Resource,
+          as: 'resources',
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          through: { as: 'resourcePermission', attributes: ['permission'] },
+        },
+      ],
+    },
+  ],
+});
 export const listTitleQuery = () => ({
   where: { title: { [Op.ne]: null } },
   attributes: [[fn('DISTINCT', col('title')), 'title']],

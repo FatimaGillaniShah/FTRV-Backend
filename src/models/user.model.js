@@ -1,6 +1,6 @@
 import { Model } from 'sequelize';
 
-export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
+export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY, BOOLEAN }) => {
   class User extends Model {
     static associate({
       Department,
@@ -11,6 +11,8 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       JobApplicant,
       Poll,
       ProfitCenter,
+      Group,
+      UserGroup,
     }) {
       this.belongsTo(Location, {
         foreignKey: 'locationId',
@@ -55,6 +57,18 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       this.hasMany(ProfitCenter, {
         foreignKey: 'updatedBy',
       });
+      this.hasMany(Group, {
+        foreignKey: 'createdBy',
+      });
+      this.hasMany(Group, {
+        foreignKey: 'updatedBy',
+      });
+      this.belongsToMany(Group, {
+        through: UserGroup,
+        foreignKey: 'userId',
+        otherKey: 'groupId',
+        as: 'groups',
+      });
     }
   }
 
@@ -86,6 +100,11 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
         type: STRING,
         allowNull: false,
       },
+      isAdmin: {
+        type: BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       contactNo: {
         type: STRING,
         allowNull: true,
@@ -108,6 +127,7 @@ export default (sequelize, { STRING, INTEGER, ENUM, VIRTUAL, DATEONLY }) => {
       },
       role: {
         type: ENUM('admin', 'user'),
+        allowNull: true,
       },
       status: {
         type: ENUM('active', 'inactive'),

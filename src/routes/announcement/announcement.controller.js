@@ -3,7 +3,12 @@ import express from 'express';
 import models from '../../models';
 import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import { listQuery, dashboardListQuery } from './query';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  convertType,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import { announcementCreateSchema, announcementUpdateSchema } from './validationSchemas';
 
 const { Announcement } = models;
@@ -24,7 +29,7 @@ class AnnouncementController {
 
   static async list(req, res, next) {
     const {
-      query: { sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE, isPagination },
     } = req;
     try {
       if (pageNumber <= 0) {
@@ -36,6 +41,7 @@ class AnnouncementController {
         sortOrder,
         pageNumber,
         pageSize,
+        isPagination,
       });
       const announcements = await Announcement.findAndCountAll(query);
       return SuccessResponse(res, announcements);
@@ -73,6 +79,9 @@ class AnnouncementController {
           exclude: ['createdAt', 'updatedAt', 'deletedAt'],
         },
       });
+      if (!announcement) {
+        BadRequestError(`Announcement does not exist`, STATUS_CODES.NOTFOUND);
+      }
       return SuccessResponse(res, announcement);
     } catch (e) {
       next(e);
@@ -97,9 +106,14 @@ class AnnouncementController {
   static async updateAnnouncement(req, res, next) {
     const {
       body: announcementPayload,
-      params: { id: announcementId },
+      params: { id },
     } = req;
+
     try {
+      const announcementId = convertType(id);
+      if (!announcementId) {
+        BadRequestError(`Announcement does not exist`, STATUS_CODES.INVALID_INPUT);
+      }
       const result = Joi.validate(announcementPayload, announcementUpdateSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
@@ -111,6 +125,7 @@ class AnnouncementController {
       };
 
       const announcementExists = await Announcement.findOne(query);
+
       if (announcementExists) {
         const announcement = await Announcement.update(announcementPayload, query);
         return SuccessResponse(res, announcement);

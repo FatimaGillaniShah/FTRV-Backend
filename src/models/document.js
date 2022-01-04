@@ -1,6 +1,6 @@
 const { Model } = require('sequelize');
 
-export default (sequelize, { INTEGER, STRING }) => {
+export default (sequelize, { INTEGER, STRING, TEXT }) => {
   class Document extends Model {
     /**
      * Helper method for defining associations.
@@ -23,7 +23,7 @@ export default (sequelize, { INTEGER, STRING }) => {
         autoIncrement: true,
       },
       name: STRING,
-      description: STRING,
+      description: TEXT,
       url: STRING,
       departmentId: {
         type: INTEGER,

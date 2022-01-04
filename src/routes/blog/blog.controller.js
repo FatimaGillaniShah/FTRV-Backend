@@ -10,6 +10,7 @@ import {
   SuccessResponse,
   generatePreSignedUrlForGetObject,
   cleanUnusedFiles,
+  convertType,
 } from '../../utils/helper';
 import { blogCreateSchema, blogUpdateSchema } from './validationSchemas';
 import { listQuery } from './query';
@@ -43,7 +44,7 @@ class BlogController {
 
   static async list(req, res, next) {
     const {
-      query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize, isPagination },
     } = req;
     try {
       const query = listQuery({
@@ -51,6 +52,7 @@ class BlogController {
         sortOrder,
         pageNumber,
         pageSize,
+        isPagination,
       });
       const blogs = await Blog.findAndCountAll(query);
       BlogController.generatePreSignedUrl(blogs.rows);
@@ -94,6 +96,9 @@ class BlogController {
         },
         include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName'] }],
       });
+      if (!blog) {
+        BadRequestError(`Blog does not exist`, STATUS_CODES.NOTFOUND);
+      }
       BlogController.generatePreSignedUrl([blog]);
       return SuccessResponse(res, blog);
     } catch (e) {
@@ -105,9 +110,13 @@ class BlogController {
     const {
       body: blogPayload,
       file = {},
-      params: { id: blogId },
+      params: { id },
     } = req;
     try {
+      const blogId = convertType(id);
+      if (!blogId) {
+        BadRequestError(`Blog does not exist`, STATUS_CODES.INVALID_INPUT);
+      }
       const result = Joi.validate(blogPayload, blogUpdateSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
@@ -134,7 +143,6 @@ class BlogController {
           const avatarKeyObj = [{ Key: blogExists.thumbnail }];
           cleanUnusedFiles(avatarKeyObj);
         }
-
         return SuccessResponse(res, blog);
       }
       BadRequestError(`Blog does not exists`, STATUS_CODES.NOTFOUND);

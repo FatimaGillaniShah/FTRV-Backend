@@ -1,6 +1,6 @@
 const { Model } = require('sequelize');
 
-export default (sequelize, { INTEGER, STRING, DATEONLY, ENUM }) => {
+export default (sequelize, { INTEGER, STRING, DATEONLY, ENUM, TEXT }) => {
   class Announcement extends Model {
     /**
      * Helper method for defining associations.
@@ -22,7 +22,7 @@ export default (sequelize, { INTEGER, STRING, DATEONLY, ENUM }) => {
         allowNull: false,
       },
       description: {
-        type: STRING,
+        type: TEXT,
         allowNull: false,
       },
       startTime: {

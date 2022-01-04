@@ -3,7 +3,12 @@ import express from 'express';
 import models from '../../models';
 import { PAGE_SIZE, STATUS_CODES } from '../../utils/constants';
 import { listQuery } from './query';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  convertType,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import { linkCreateSchema, linkUpdateSchema } from './validationSchemas';
 
 const { UsefulLink } = models;
@@ -22,7 +27,14 @@ class UsefulLinkController {
 
   static async list(req, res, next) {
     const {
-      query: { categoryId, sortColumn, sortOrder, pageNumber = 1, pageSize = PAGE_SIZE },
+      query: {
+        categoryId,
+        sortColumn,
+        sortOrder,
+        pageNumber = 1,
+        pageSize = PAGE_SIZE,
+        isPagination,
+      },
     } = req;
     try {
       if (pageNumber <= 0) {
@@ -38,6 +50,7 @@ class UsefulLinkController {
         pageNumber,
         pageSize,
         categoryId,
+        isPagination,
       });
       const usefulLinks = await UsefulLink.findAndCountAll(query);
       return SuccessResponse(res, usefulLinks);
@@ -63,6 +76,9 @@ class UsefulLinkController {
           exclude: ['createdAt', 'updatedAt', 'deletedAt'],
         },
       });
+      if (!link) {
+        BadRequestError(`Link does not exist`, STATUS_CODES.NOTFOUND);
+      }
       return SuccessResponse(res, link);
     } catch (e) {
       next(e);
@@ -97,9 +113,13 @@ class UsefulLinkController {
   static async updateLink(req, res, next) {
     const {
       body: linkPayload,
-      params: { id: linkId },
+      params: { id },
     } = req;
     try {
+      const linkId = convertType(id);
+      if (!linkId) {
+        BadRequestError(`Link does not exist`, STATUS_CODES.INVALID_INPUT);
+      }
       const result = Joi.validate(linkPayload, linkUpdateSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);

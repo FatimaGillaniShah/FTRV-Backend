@@ -4,7 +4,7 @@ import path from 'path';
 import xlsx from 'node-xlsx';
 import debugObj from 'debug';
 import moment from 'moment';
-import _ from 'lodash';
+import { chain, isEqual } from 'lodash';
 import fs from 'fs';
 import { promisify } from 'util';
 import express from 'express';
@@ -18,12 +18,20 @@ import {
   anniversaryQuery,
   getUserByIdQuery,
   listQuery,
+  getLoggedUserQuery,
+  findOrCreateGoogleUserQuery,
+  deleteUserGroupQuery,
+  listGroups,
+  updateUserQuery,
+  userExistQuery,
   listTitleQuery,
+  getUserByIdWithGroups,
 } from './query';
 
 import {
   BadRequestError,
   cleanUnusedFiles,
+  flattenPermission,
   generateHash,
   generateJWT,
   generatePreSignedUrlForGetObject,
@@ -31,12 +39,18 @@ import {
   getPassportErrorMessage,
   SuccessResponse,
 } from '../../utils/helper';
-import { userLoginSchema, userSignUpSchema, userUpdateSchema } from './validationSchemas';
-import { Request } from '../../utils/decorators';
+import {
+  userBulkUpdateSchema,
+  userLoginSchema,
+  userSignUpSchema,
+  userUpdateSchema,
+} from './validationSchemas';
+import { Request, RequestBodyValidator } from '../../utils/decorators';
+import GroupController from '../group/group.controller';
 
 const debug = debugObj('api:server');
 const deleteFileAsync = promisify(fs.unlink);
-const { User, Location, Department } = models;
+const { User, Location, Department, UserGroup, Group } = models;
 class UserController {
   static router;
 
@@ -46,6 +60,7 @@ class UserController {
     this.router.post('/', uploadFile('image').single('file'), this.createUser);
     this.router.get('/birthday', this.birthdays);
     this.router.get('/workAnniversary', this.workAnniversaries);
+    this.router.put('/userBulkUpdate', this.updateBulkUsers);
     this.router.get('/title', this.listTitles);
     this.router.put('/:id', uploadFile('image').single('file'), this.updateUser);
     this.router.get('/:id', this.getUserById);
@@ -113,6 +128,7 @@ class UserController {
         detail,
         pageNumber = 1,
         pageSize = PAGE_SIZE,
+        isPagination,
       },
     } = req;
     try {
@@ -133,6 +149,7 @@ class UserController {
         pageNumber,
         pageSize,
         detail,
+        isPagination,
       });
       const users = await User.findAndCountAll(query);
       return SuccessResponse(res, users);
@@ -152,8 +169,16 @@ class UserController {
       }
       const query = getUserByIdQuery({ id });
       const user = await User.findOne(query);
-      UserController.generatePreSignedUrl([user]);
-      return SuccessResponse(res, user);
+      if (!user) {
+        BadRequestError(`User does not exist`, STATUS_CODES.NOTFOUND);
+      }
+      const groups = flattenPermission(user?.groups);
+      const userResponse = {
+        ...user.toJSON(),
+        groups,
+      };
+      UserController.generatePreSignedUrl([userResponse]);
+      return SuccessResponse(res, userResponse);
     } catch (e) {
       next(e);
     }
@@ -167,19 +192,22 @@ class UserController {
       return next(new BadRequest(getErrorMessages(result), STATUS_CODES.INVALID_INPUT));
     }
 
-    return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
+    return passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
       if (err) {
         return next(err);
       }
 
       if (passportUser) {
+        const userInfo = await User.findOne(getLoggedUserQuery(passportUser.id));
+        const groups = flattenPermission(userInfo?.groups);
         const userObj = {
           id: passportUser.id,
           email: passportUser.email,
-          role: passportUser.role,
           name: passportUser.fullName,
           avatar: passportUser.avatar,
+          isAdmin: passportUser.isAdmin,
           token: generateJWT(passportUser),
+          groups,
         };
         UserController.generatePreSignedUrl([userObj]);
         return SuccessResponse(res, userObj);
@@ -205,7 +233,6 @@ class UserController {
       const {
         email,
         picture: avatar,
-        role = 'user',
         given_name: firstName,
         family_name: lastName,
         exp,
@@ -214,26 +241,19 @@ class UserController {
       if (Math.floor(Date.now() / 1000) > exp) {
         BadRequestError('Token expired. Try again', 400);
       }
-
-      const [user] = await User.findOrCreate({
-        where: { email },
-        defaults: {
-          role,
-          status: 'active',
-          avatar,
-          firstName,
-          lastName,
-          password: '',
-        },
-      });
-
+      const [user] = await User.findOrCreate(
+        findOrCreateGoogleUserQuery({ email, avatar, firstName, lastName })
+      );
+      const userInfo = await User.findOne(getLoggedUserQuery(user.id));
+      const groups = flattenPermission(userInfo?.groups);
       const userObj = {
         id: user.id,
         email,
-        role: user.role,
         name: user.fullName,
         avatar: user.avatar,
+        isAdmin: user.isAdmin,
         token: generateJWT(user),
+        groups,
       };
 
       return SuccessResponse(res, userObj);
@@ -249,6 +269,12 @@ class UserController {
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
+      if (!userPayload?.dob) {
+        userPayload.dob = null;
+      }
+      if (!userPayload?.joiningDate) {
+        userPayload.joiningDate = null;
+      }
       const query = {
         where: {
           email: userPayload.email,
@@ -258,11 +284,12 @@ class UserController {
       const userExists = await User.findOne(query);
       if (!userExists) {
         userPayload.password = generateHash(userPayload.password);
-        userPayload.role = userPayload.role || 'user';
         userPayload.status = 'active';
         userPayload.avatar = file.key;
         const user = await User.create(userPayload);
         const userResponse = user.toJSON();
+        const userGroups = UserController.createUserGroup(userResponse.id, userPayload.groupIds);
+        await Promise.all(userGroups || []);
         delete userResponse.password;
         return SuccessResponse(res, userResponse);
       }
@@ -280,17 +307,19 @@ class UserController {
       user: { id },
     } = req;
     try {
+      const payloadGroupIds = userPayload?.groupIds.map(Number);
       const result = Joi.validate(userPayload, userUpdateSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);
       }
-      const query = {
-        where: {
-          id: userId,
-        },
-      };
+      if (!userPayload?.dob) {
+        userPayload.dob = null;
+      }
+      if (!userPayload?.joiningDate) {
+        userPayload.joiningDate = null;
+      }
 
-      const userExists = await User.findOne(query);
+      const userExists = await User.findOne(getUserByIdWithGroups({ id: userId }));
       if (userExists) {
         if (userPayload.password) {
           userPayload.password = generateHash(userPayload.password);
@@ -300,12 +329,18 @@ class UserController {
         } else {
           userPayload.avatar = file.key || userExists.avatar;
         }
-        await User.update(userPayload, query);
+        await User.update(userPayload, updateUserQuery(userId));
+        await UserGroup.destroy(deleteUserGroupQuery(userId));
+        const userGroups = UserController.createUserGroup(userId, payloadGroupIds);
+        await Promise.all(userGroups || []);
         delete userPayload.password;
         if (id === parseInt(userId, 10)) {
           UserController.generatePreSignedUrl([userPayload]);
         }
-
+        const existingGroupIds = userExists.groups.map(({ id: groupId }) => groupId);
+        if (payloadGroupIds?.length > 0 && !isEqual(existingGroupIds, payloadGroupIds)) {
+          await GroupController.sendMessageToRelatedUsers(payloadGroupIds);
+        }
         if ((file.key && userExists.avatar) || (userExists.avatar && userPayload.file === '')) {
           const avatarKeyObj = [{ Key: userExists.avatar }];
           cleanUnusedFiles(avatarKeyObj);
@@ -316,6 +351,34 @@ class UserController {
     } catch (e) {
       next(e);
     }
+  }
+
+  @RequestBodyValidator(userBulkUpdateSchema)
+  @Request
+  static async updateBulkUsers(req, res) {
+    const { body: bulkUpdatePayload } = req;
+    const { userIds, groupId, ...updateUserPayload } = bulkUpdatePayload;
+    const userExists = await User.findAll(userExistQuery(userIds));
+    if (userExists.length <= 0) {
+      BadRequestError(`User(s) does not exist`, STATUS_CODES.NOTFOUND);
+    }
+    if (userExists.length !== userIds.length) {
+      BadRequestError(`One or more user does not exist`, STATUS_CODES.NOTFOUND);
+    }
+    const users = UserController.bulkUserUpdate(userIds, updateUserPayload);
+    await Promise.all(users);
+    if (groupId?.length > 0) {
+      await UserGroup.destroy(deleteUserGroupQuery(userIds));
+      let userGroups;
+      // eslint-disable-next-line array-callback-return
+      userIds.map((userId) => {
+        userGroups = UserController.createUserGroup(userId, groupId);
+      });
+      await Promise.all(userGroups || []);
+      await GroupController.sendMessageToRelatedUsers(groupId);
+    }
+
+    return SuccessResponse(res, bulkUpdatePayload);
   }
 
   static async deleteUsers(req, res, next) {
@@ -339,7 +402,7 @@ class UserController {
         },
         force: true,
       });
-      const userKeyobjects = _.chain(users)
+      const userKeyobjects = chain(users)
         .filter((userInfo) => !!userInfo.avatar)
         .map((userInfo) => ({ Key: userInfo.avatar }))
         .value();
@@ -393,7 +456,8 @@ class UserController {
               // eslint-disable-next-line no-continue
               continue;
             }
-            const userData = UserController.getFormattedUserData(row, indexes);
+            // eslint-disable-next-line no-await-in-loop
+            const userData = await UserController.getFormattedUserData(row, indexes);
             if (userData.email) {
               promiseArr.push(UserController.createUserBatch(userData));
             } else {
@@ -433,10 +497,11 @@ class UserController {
       emailIndex: headerRow.indexOf('Email'),
       dobIndex: headerRow.indexOf('DOB'),
       joiningDateIndex: headerRow.indexOf('JoiningDate'),
+      groupIndex: headerRow.indexOf('Group'),
     };
   }
 
-  static getFormattedUserData(row, attributeIndexes) {
+  static async getFormattedUserData(row, attributeIndexes) {
     const fullName = row[attributeIndexes.nameIndex];
     let firstName = '';
     let lastName = '';
@@ -445,6 +510,12 @@ class UserController {
       firstName = fullNameArr.slice(0, 1).join('');
       lastName = fullNameArr.slice(1, fullNameArr.length).join(' ');
     }
+    const groupName = row[attributeIndexes.groupIndex] || '';
+    let groupNames = groupName.trim().split('|');
+    groupNames = groupNames?.map((name) => name.trim());
+
+    const groups = await Group.findAll(listGroups(groupNames));
+    const groupIds = groups?.map((group) => group.id);
     return {
       firstName,
       lastName,
@@ -460,6 +531,7 @@ class UserController {
       joiningDate: row[attributeIndexes.joiningDateIndex]
         ? moment(row[attributeIndexes.joiningDateIndex], 'MM-DD-YYYY')
         : null,
+      groupIds,
     };
   }
 
@@ -490,13 +562,22 @@ class UserController {
           departmentId: department[0].id,
           locationId: location[0].id,
           password: generateHash('ftrv@123'),
-          role: 'user',
           status: 'active',
         };
         delete userInfo.location;
         delete userInfo.department;
         const user = await User.create(userInfo);
         debug(`User with ${user.email} created successfully`);
+        const userGroup = UserController.createUserGroup(user.id, userInfo.groupIds);
+        await Promise.all(userGroup);
+        debug(
+          `User Group with groupIds ${
+            userInfo?.groupIds.length > 0
+              ? `${userInfo?.groupIds} created successfully`
+              : 'failed because groupIds is undefined'
+          } `
+        );
+
         return { status: 'success' };
       }
       debug(`User ${userInfo.email} already exists`);
@@ -505,6 +586,26 @@ class UserController {
       debug(e);
       return { status: 'failed' };
     }
+  }
+
+  static createUserGroup(userId, groupIds) {
+    return groupIds?.map((groupId) => {
+      const userGroupCreateParams = {
+        userId,
+        groupId,
+      };
+      return UserGroup.create(userGroupCreateParams);
+    });
+  }
+
+  static bulkUserUpdate(userIds, { locationId, departmentId }) {
+    return userIds?.map((userId) => {
+      const userUpdateParams = {
+        locationId,
+        departmentId,
+      };
+      return User.update(userUpdateParams, updateUserQuery(userId));
+    });
   }
 }
 

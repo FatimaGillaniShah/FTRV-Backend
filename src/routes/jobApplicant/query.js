@@ -2,7 +2,14 @@ import models from '../../models';
 
 const { Location, Department, User } = models;
 
-export const listQuery = ({ jobId, sortOrder, sortColumn, pageNumber, pageSize }) => {
+export const listQuery = ({
+  jobId,
+  sortOrder,
+  sortColumn,
+  pageNumber,
+  pageSize,
+  isPagination = false,
+}) => {
   const query = { where: { jobId } };
   query.include = [
     {
@@ -31,8 +38,10 @@ export const listQuery = ({ jobId, sortOrder, sortColumn, pageNumber, pageSize }
     exclude: ['createdAt', 'updatedAt', 'userId', 'jobId'],
   };
 
-  query.offset = (pageNumber - 1) * pageSize;
-  query.limit = pageSize;
+  if (Number(isPagination)) {
+    query.offset = (pageNumber - 1) * pageSize;
+    query.limit = pageSize;
+  }
 
   // for sorting
   if (sortColumn === 'location.name') {

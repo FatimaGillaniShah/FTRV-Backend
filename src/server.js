@@ -1,11 +1,15 @@
 import debugObj from 'debug';
 import http from 'http';
+import WebSocket from 'ws';
 import app from './app';
+
+import { handleVerifyWsClient, handleWsConnection } from './utils/helper';
 
 const debug = debugObj('api:server');
 const port = normalizePort(process.env.PORT || '3000');
 const address = process.env.SERVER_ADDRESS || '0.0.0.0';
 const server = http.createServer(app);
+
 init();
 
 async function init() {
@@ -30,6 +34,12 @@ function normalizePort(val) {
 
   return false;
 }
+const wss = new WebSocket.Server({
+  server,
+  verifyClient: handleVerifyWsClient,
+});
+
+wss.on('connection', handleWsConnection);
 
 function onError(error) {
   if (error.syscall !== 'listen') {

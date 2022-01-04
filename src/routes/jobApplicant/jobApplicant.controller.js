@@ -73,7 +73,7 @@ class JobApplicantController {
   @Request
   static async list(req, res, next) {
     const {
-      query: { jobId, sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE },
+      query: { jobId, sortOrder, sortColumn, pageNumber = 1, pageSize = PAGE_SIZE, isPagination },
     } = req;
     try {
       if (pageNumber <= 0) {
@@ -88,6 +88,7 @@ class JobApplicantController {
         sortOrder,
         pageNumber,
         pageSize,
+        isPagination,
       });
       const applicants = await JobApplicant.findAndCountAll(query);
       JobApplicantController.generatePreSignedUrl(applicants.rows);

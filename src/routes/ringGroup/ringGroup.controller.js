@@ -91,6 +91,7 @@ class RingGroupController {
         departmentId,
         extension,
         locationId,
+        isPagination,
       },
     } = req;
     try {
@@ -107,6 +108,7 @@ class RingGroupController {
         departmentId,
         extension,
         locationId,
+        isPagination,
       });
       const ringGroups = await RingGroup.findAndCountAll(query);
       return SuccessResponse(res, ringGroups);

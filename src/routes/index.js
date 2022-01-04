@@ -1,5 +1,4 @@
 import express from 'express';
-import acl from 'express-acl';
 import auth from '../middlewares/auth';
 import UserController from './user/user.controller';
 import AnnouncementController from './announcement/announcement.controller';
@@ -18,20 +17,27 @@ import JobController from './job/job.controller';
 import JobApplicantController from './jobApplicant/jobApplicant.controller';
 import PollController from './poll/poll.controller';
 import ProfitCenterController from './profitCenter/profitCenter.controller';
+import GroupController from './group/group.controller';
+import ResourceController from './resource/resource.controller';
+import { handlePermissions } from '../middlewares/permission';
+import { extentUser } from '../middlewares/extendUser';
+import VoteController from './vote/vote.controller';
+import WebSocketController from './webSocket/webSocket.controller';
 
 const router = express.Router();
 
 // list of routes to be excluded from authentication and authorization
-const aclExcludedRoutes = ['/api/users/googleLogin', '/api/users/login', /^\/api-docs\/.*/];
+export const aclExcludedRoutes = [
+  '/api/users/googleLogin',
+  '/api/users/login',
+  '/api/webSocket',
+  /^\/api-docs\/.*/,
+];
 
-acl.config({
-  baseUrl: 'api',
-  filename: 'acl.json',
-  path: 'src/config',
-  decodedObjectName: 'user',
-});
 router.use(auth.required.unless({ path: aclExcludedRoutes }));
-router.use(acl.authorize.unless({ path: aclExcludedRoutes }));
+router.use(extentUser);
+
+router.use(handlePermissions);
 
 router.use('/users', UserController.getRouter());
 router.use('/announcements', AnnouncementController.getRouter());
@@ -50,5 +56,9 @@ router.use('/jobs', JobController.getRouter());
 router.use('/jobApplicant', JobApplicantController.getRouter());
 router.use('/polls', PollController.getRouter());
 router.use('/profitCenter', ProfitCenterController.getRouter());
+router.use('/groups', GroupController.getRouter());
+router.use('/resources', ResourceController.getRouter());
+router.use('/vote', VoteController.getRouter());
+router.use('/webSocket', WebSocketController.getRouter());
 
 export default router;

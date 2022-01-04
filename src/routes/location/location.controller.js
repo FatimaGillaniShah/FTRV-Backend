@@ -1,7 +1,12 @@
 import Joi from 'joi';
 import express from 'express';
 import models from '../../models';
-import { BadRequestError, getErrorMessages, SuccessResponse } from '../../utils/helper';
+import {
+  BadRequestError,
+  convertType,
+  getErrorMessages,
+  SuccessResponse,
+} from '../../utils/helper';
 import { listQuery } from './query';
 import { STATUS_CODES } from '../../utils/constants';
 import { locationSchema } from './validationSchemas';
@@ -23,7 +28,7 @@ class LocationController {
 
   static async list(req, res, next) {
     const {
-      query: { sortColumn, sortOrder, pageNumber = 1, pageSize },
+      query: { sortColumn, sortOrder, pageNumber = 1, pageSize, isPagination },
     } = req;
     try {
       const query = listQuery({
@@ -31,6 +36,7 @@ class LocationController {
         sortOrder,
         pageNumber,
         pageSize,
+        isPagination,
       });
       const locations = await Location.findAndCountAll(query);
       return SuccessResponse(res, locations);
@@ -56,6 +62,9 @@ class LocationController {
           exclude: ['createdAt', 'updatedAt'],
         },
       });
+      if (!location) {
+        BadRequestError(`Location does not exist`, STATUS_CODES.NOTFOUND);
+      }
       return SuccessResponse(res, location);
     } catch (e) {
       next(e);
@@ -81,9 +90,13 @@ class LocationController {
   static async updateLocation(req, res, next) {
     const {
       body: locationPayload,
-      params: { id: locationId },
+      params: { id },
     } = req;
     try {
+      const locationId = convertType(id);
+      if (!locationId) {
+        BadRequestError(`Location does not exist`, STATUS_CODES.INVALID_INPUT);
+      }
       const result = Joi.validate(locationPayload, locationSchema);
       if (result.error) {
         BadRequestError(getErrorMessages(result), STATUS_CODES.INVALID_INPUT);

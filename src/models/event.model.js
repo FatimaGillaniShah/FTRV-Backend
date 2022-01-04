@@ -1,6 +1,6 @@
 const { Model } = require('sequelize');
 
-export default (sequelize, { INTEGER, STRING, DATE }) => {
+export default (sequelize, { INTEGER, STRING, DATE, TEXT }) => {
   class Event extends Model {
     static associate({ EventLocation, Location }) {
       this.belongsToMany(Location, {
@@ -20,7 +20,7 @@ export default (sequelize, { INTEGER, STRING, DATE }) => {
         autoIncrement: true,
       },
       title: STRING,
-      description: STRING,
+      description: TEXT,
       startDate: {
         type: DATE,
         allowNull: false,

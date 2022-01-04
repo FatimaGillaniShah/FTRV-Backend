@@ -260,6 +260,41 @@
         }
       }
     },
+    "/users/userBulkUpdate": {
+      "put": {
+        "tags": ["User"],
+        "summary": "An endpoint to update bulk users",
+        "operationId": "userBulkUpdate",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/BulkUser"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
     "/users/deleteUsers": {
       "delete": {
         "tags": ["User"],
@@ -3412,10 +3447,10 @@
         }
       }
     },
-    "/polls/vote": {
+    "/vote": {
       "post": {
         "summary": "An endpoint to vote on poll",
-        "tags": ["Poll"],
+        "tags": ["Vote"],
         "operationId": "savePollResult",
         "parameters": [
           {
@@ -3667,6 +3702,265 @@
           }
         }
       }
+    },
+    "/groups": {
+      "post": {
+        "summary": "An endpoint to create a group",
+        "tags": ["Group"],
+        "operationId": "createGroup",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Group"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful creation of Group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve list of all groups",
+        "tags": ["Group"],
+        "operationId": "getGroupList",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object containing groups",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Group"],
+        "summary": "An endpoint to delete group",
+        "operationId": "deleteGroup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["ids"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful deletion of group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/resources": {
+      "get": {
+        "summary": "Retrieve list of all resources",
+        "tags": ["Group"],
+        "operationId": "getResourceList",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object containing resources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groups/{id}": {
+      "get": {
+        "summary": "Retrieve group by id",
+        "tags": ["Group"],
+        "operationId": "getGroupById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Group",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of Group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Group"],
+        "summary": "An endpoint to update a Group",
+        "operationId": "updateGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Group",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Group"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update of Group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. An Expert authenticated session needs to be created"
+          }
+        }
+      }
+    },
+    "/groups/{id}/users": {
+      "get": {
+        "summary": "Retrieve list of all group users",
+        "tags": ["Group"],
+        "operationId": "getUserList",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of Group",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3799,6 +4093,29 @@
                 "format": "date-time"
               }
             }
+          }
+        }
+      },
+      "BulkUser": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "groupId": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "locationId": {
+            "type": "integer"
+          },
+          "departmentId": {
+            "type": "integer"
           }
         }
       },
@@ -4150,6 +4467,51 @@
             "type": "number"
           }
         }
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -4202,6 +4564,40 @@
                 "dob": {
                   "type": "string",
                   "format": "date"
+                },
+                "groupIds[]": {
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "BulkUser": {
+        "description": "Information about the Users of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "groupId": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "locationId": {
+                  "type": "integer"
+                },
+                "departmentId": {
+                  "type": "integer"
                 }
               }
             }
@@ -4593,6 +4989,42 @@
                 },
                 "centerNo": {
                   "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "required": true
+      },
+      "Group": {
+        "description": "Information about the Group of FTRV",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "permissions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
