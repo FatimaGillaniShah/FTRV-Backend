@@ -17,6 +17,14 @@ jobs:
       uses: ajinabraham/njsscan-action@master
       with:
         args: '.'
+    - name: Mattermost Notification
+      uses: tferreira/matterfy@releases/v1
+      if: always()
+      with:
+        type: ${{ job.status }}
+        job_name: '*security composition analysis*'
+        channel: 'cicd-pipeline'
+        url: ${{ secrets.SLACK_WEBHOOK }}
   ci:
     runs-on: ubuntu-latest
     strategy:
