@@ -1,5 +1,5 @@
 import debugObj from 'debug';
-import { aclExcludedRoutes } from '../routes';
+import { aclExcludedRoutes, permissionExcludedRoutes } from '../routes';
 import { ACTIONS, OWN_ACTIONS, STATUS_CODES } from '../utils/constants';
 import { BadRequestError } from '../utils/helper';
 import { checkPermission } from './funtions';
@@ -7,7 +7,8 @@ import { checkPermission } from './funtions';
 const debug = debugObj('api:permissions');
 
 export const handlePermissions = async (req, res, next) => {
-  if (aclExcludedRoutes.includes(req.originalUrl)) {
+  const excludedArray = [...permissionExcludedRoutes, ...aclExcludedRoutes];
+  if (excludedArray.includes(req.originalUrl)) {
     next();
     return;
   }

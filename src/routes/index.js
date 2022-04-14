@@ -33,6 +33,7 @@ export const aclExcludedRoutes = [
   '/api/webSocket',
   /^\/api-docs\/.*/,
 ];
+export const permissionExcludedRoutes = ['/api/jobApplicant'];
 
 router.use(auth.required.unless({ path: aclExcludedRoutes }));
 router.use(extentUser);
