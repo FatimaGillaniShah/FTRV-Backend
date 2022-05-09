@@ -2,8 +2,10 @@ import debugObj from 'debug';
 import app from '../app';
 import {
   ACTIONS,
+  APPLICANT,
   defaultGroup,
   defaultPermissions,
+  APPLICANT_ACTIONS,
   OWN_ACTIONS,
   STATUS_CODES,
 } from '../utils/constants';
@@ -53,6 +55,8 @@ export const checkPermission = ({ reqUrl, method, groups, isUserProfile }) => {
       resourceSlug = slug;
       if (isUserProfile) {
         permission = acl.can(groupName)[OWN_ACTIONS[method]](resourceSlug);
+      } else if (resourceSlug === APPLICANT.slug) {
+        permission = acl.can(groupName)[APPLICANT_ACTIONS[method]](resourceSlug);
       } else {
         permission = acl.can(groupName)[ACTIONS[method]](resourceSlug);
       }

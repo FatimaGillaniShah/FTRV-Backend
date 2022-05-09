@@ -29,7 +29,10 @@ export const PERMISSIONS = {
   READ: ['read'],
   WRITE: ['read', 'write'],
 };
-
+export const APPLICANT_ACTIONS = {
+  GET: 'createAny',
+  PUT: 'readAny',
+};
 export const ACTIONS = {
   GET: 'readAny',
   POST: 'createAny',
@@ -43,7 +46,14 @@ export const OWN_ACTIONS = {
   PATCH: 'updateOwn',
   DELETE: 'deleteOwn',
 };
-export const features = [
+export const APPLICANT = {
+  name: 'Applicant',
+  slug: 'APPLICANT',
+  description: 'Users have access to makes a formal application for job vacancy.',
+  url: '/jobApplicant',
+};
+
+export const FEATURES = [
   {
     name: 'Directory',
     slug: 'DIRECTORY',
@@ -79,12 +89,7 @@ export const features = [
       'Employees can apply for open positions in the company and fulfill their ambitions.This feature helps company to simply finding the qualified person for the job internally instead of hiring new staff externally.',
     url: '/jobs',
   },
-  {
-    name: 'Applicant',
-    slug: 'APPLICANT',
-    description: 'Users have access to makes a formal application for job vacancy.',
-    url: '/jobApplicant',
-  },
+  APPLICANT,
   {
     name: 'File storage',
     slug: 'FILE_STORAGE',

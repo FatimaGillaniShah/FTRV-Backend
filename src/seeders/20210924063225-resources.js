@@ -1,8 +1,8 @@
-const { features } = require('../utils/constants');
+const { FEATURES } = require('../utils/constants');
 
 module.exports = {
   up: async (queryInterface) => {
-    const resources = features.map((resource) => {
+    const resources = FEATURES.map((resource) => {
       const resourceObj = {
         ...resource,
         createdAt: new Date(),
