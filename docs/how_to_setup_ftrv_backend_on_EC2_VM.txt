@@ -1,0 +1,173 @@
+
+
+How to setup FTRV backend on EC2 (AMI Ubuntu 20.04) or Ubuntu VM
+
+1 ) Take a clone of repository.
+
+2 ) create or prepare the .env file accouding to your setup , there is file template called .envtemplate.
+
+
+3) Install PostgreSQL 12 on EC2 or Ubuntu VM
+
+	i)  Update the system
+	    sudo apt update
+	    
+	ii) Add PostgreSQL 12 repository. We need to import GPG key and add PostgreSQL 12 repository into our Ubuntu machine. Run the following commands.
+	    
+	    import GPG key
+	    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+	    
+	    
+	    add repo
+	    echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+	    
+	    update repo
+	    sudo apt update
+	
+	iii) Insall postgres 12 and client
+	
+		sudo apt -y install postgresql-12 postgresql-client-12
+	
+	iv) Check PostgreSQL service is started and enabled it
+		
+		sudo systemctl status postgresql.service
+		
+		sudo systemctl enable postgresql.service
+		
+4 ) Configure postgreSQL for user postgres to change authentication from peer to md5
+
+	i) login with user 'postgres' (created at the time of installation)
+	    
+	    sudo -u postgres psql
+	    
+	    After login you will get the following prompt
+	    
+	    psql (12.11 (Ubuntu 12.11-1.pgdg20.04+1))
+	    Type "help" for help.
+
+	    postgres=# 
+	    
+	ii) set password for user postgres  
+	
+		ALTER USER postgres WITH PASSWORD 'youpassword'; 
+		
+	iii) Modify pg_hba.conf to change the authentication method from peer to md5 for postgres
+	
+		Open the file in editor
+		
+		sudo nano /etc/postgresql/12/main/pg_hba.conf
+		
+		Search and change the following line from peer to md5
+		
+		# Database administrative login by Unix domain socket
+		local   all             postgres                                peer
+               
+               To
+               
+               # Database administrative login by Unix domain socket
+		local   all             postgres                                md5
+		
+		
+               
+        iv) restart the posgresql servie to take effect
+        
+               sudo systemctl restart postgresql.service
+               
+               
+        v) Verify the login by the following command, it should prompt for the password
+        
+		sudo psql -U postgres
+		Password for user postgres:
+		
+
+	
+               
+5 ) After login to posgresql and create the schema 'funtown' or any required schema.
+
+		 CREATE SCHEMA funtown;
+		  
+		 For verification list the schemas by
+		 
+		 postgres=# \dn
+		 
+		  List of schemas
+		  Name   |  Owner   
+		---------+----------
+		 funtown | postgres
+		 public  | postgres
+		(2 rows)
+
+		  
+
+
+ 6 ) by default databse "postgres" already exists. if you need anyother please create it.
+ 
+ 	 For verification list the databases by
+ 	 postgres=# \l
+		                      List of databases
+	   Name    |  Owner   | Encoding | Collate |  Ctype  |   Access privileges   
+	-----------+----------+----------+---------+---------+-----------------------
+	 postgres  | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+	 template0 | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+		   |          |          |         |         | postgres=CTc/postgres
+	 template1 | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+		   |          |          |         |         | postgres=CTc/postgres
+	(3 rows)
+	
+
+7 ) Modify your .env file with db user, db password , db name etc. 
+ 	 
+ 
+      
+      
+8)  Go to the repo folder you cloned at 1 step. like: ftrv-intranet-backend and install the depenencies and run migratins
+
+    install the npm if not installed on system.
+    sudo apt install npm
+    
+    i) Install the node js app dependencies by (it uses package.json)
+    	npm install 
+    	
+    	
+    ii) Run the migration script by 
+    	npx sequelize-cli db:migrate
+    	
+    iii) Run seed data
+    	npx sequelize-cli db:seed:all
+    	
+  
+9) Build and run the app (you can run dev by 'npm run dev')
+
+   npm run build
+   
+   npm start
+   
+   Output of start command look likes this or differ in case of production (public ip or url)
+   
+   > ftrv-intranet-backend@1.0.0 start /home/ubuntu/ftrv/ftrv-intranet-backend
+   > babel-node ./src/server
+   Server running on http://0.0.0.0:3000
+
+
+10 ) Verify the setup by accessing the /api-docs 
+
+  i ) In case of EC2 you have to provsion the 3000 port or anyother port (http or https) you are binding for app as in-bound rule in attached Security Group.
+  
+  ii ) In case of EC2 here is the following example of how to access backend api via browser
+  
+  	http://ec2-52-90-93-184.compute-1.amazonaws.com:3000/api-docs/
+  	
+  	webpage shows FTRV Intranet Portal with its APIs
+  	
+  	in case of vm you can use public ip instead of url, to hit this api page.
+
+
+               
+	
+	
+	
+	
+
+
+
+
