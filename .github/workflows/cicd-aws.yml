@@ -65,7 +65,6 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
     
-    - run: cat package-lock.json
     
     - name: Install Dependencies
       id:  cleaninstall
@@ -75,6 +74,7 @@ jobs:
       if: steps.cleaninstall.outcome  == 'failure'
     - name: After npm ci failure regen lock file 
       run: npm install --package-lock-only
+      continue-on-error: true
       
       if: steps.cleaninstall.outcome  == 'failure' 
     - name: Install Dependencies 
