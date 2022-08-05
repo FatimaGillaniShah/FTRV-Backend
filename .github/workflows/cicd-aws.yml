@@ -67,11 +67,22 @@ jobs:
     
     - run: cat package-lock.json
     
-    - name: continues integration 
+    - name: Install Dependencies
+      id:  cleaninstall
       run: npm ci
-    - name: testing the code
+      continue-on-error: true
+      
+      if: steps.cleaninstall.outcome  == 'failure'
+    - name: After npm ci failure regen lock file 
+      run: npm install --package-lock-only
+      
+      if: steps.cleaninstall.outcome  == 'failure' 
+    - name: Install Dependencies 
+      run: npm ci
+      
+    - name: Test code
       run: npm test
-    - name: building the code
+    - name: Build code
       run: npm run build --if-present
 
 #  cd:
