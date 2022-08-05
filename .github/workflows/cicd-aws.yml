@@ -61,23 +61,24 @@ jobs:
     steps:
     
     - name: Checkout the code
-      uses: actions/checkout@v2      
+      uses: actions/checkout@v2    
+      
+      
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
     
     
     - name: Install Dependencies
-      id:  cleaninstall
+      id:  idci
       run: npm ci
       continue-on-error: true
       
-      if: steps.cleaninstall.outcome  == 'failure'
-    - name: After npm ci failure regen lock file 
+    - name: Check npm ci status if fail 
+      if: steps.idci.outcome == 'failure'
       run: npm install --package-lock-only
-      continue-on-error: true
-      
-      if: steps.cleaninstall.outcome  == 'failure' 
-    - name: Install Dependencies 
+     
+    - name: Check npm ci status if fail Install Dependencies 
+      if: steps.idci.outcome  == 'failure' 
       run: npm ci
       
     - name: Test code
