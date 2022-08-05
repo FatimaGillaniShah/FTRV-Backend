@@ -32,17 +32,17 @@ permissions:
   contents: read
 
 jobs:
-  njsscan:
-    name: njsscan check
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout the code
-      uses: actions/checkout@v2
-    - name: nodejsscan scan
-      id: njsscan
-      uses: ajinabraham/njsscan-action@master
-      with:
-        args: '.'
+  #njsscan:
+  #  name: njsscan check
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #  - name: Checkout the code
+  #    uses: actions/checkout@v2
+  #  - name: nodejsscan scan
+  #    id: njsscan
+  #    uses: ajinabraham/njsscan-action@master
+  #    with:
+  #      args: '.'
     #- name: Mattermost Notification
     #  uses: tferreira/matterfy@releases/v1
     #  if: always()
@@ -57,13 +57,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x, 15.x]
+        node-version: [10.x, 12.x]
     steps:
     
     - name: Checkout the code
       uses: actions/checkout@v2      
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
+    
+    - run: cat package-lock.json
+    
     - name: continues integration 
       run: npm ci
     - name: testing the code
