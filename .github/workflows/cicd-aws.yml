@@ -57,30 +57,28 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [10.x, 12.x, 14.x, 15.x]
     steps:
     
     - name: Checkout the code
       uses: actions/checkout@v2    
       
-      
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
-    
     
     - name: Install Dependencies
       id:  idci
       run: npm ci
       continue-on-error: true
       
-    - name: Check npm ci status if fail 
+    # if package.json and package-lock.json files are unsync. then npm ci fails, we need to generate lock file again with package.json.
+    
+    - name: Check npm ci status. if fails regen lock file and install dependencies
       if: steps.idci.outcome == 'failure'
-      run: npm install --package-lock-only
-     
-    - name: Check npm ci status if fail Install Dependencies 
-      if: steps.idci.outcome  == 'failure' 
-      run: npm ci
-      
+      run: |
+        npm install --package-lock-only
+        npm ci
+        
     - name: Test code
       run: npm test
     - name: Build code
