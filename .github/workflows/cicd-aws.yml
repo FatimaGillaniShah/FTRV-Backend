@@ -152,6 +152,7 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=IMAGEURL::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         echo "IMAGEURL::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "image url is ${{ steps.build-image.outputs.IMAGEURL }}"
         #docker image ls
         
   
@@ -177,7 +178,7 @@ jobs:
         description: 'GitHub Action Deploy'
 
     - name: print app url
-      run:  echo ${{needs.cd.outputs.app_img_url}} 
+      run:  echo "this is image url ${{needs.cd.outputs.app_img_url}}" 
     
     
     - name: Checkout the code
