@@ -208,7 +208,7 @@ jobs:
           
       run: |
          touch abc.sql
-         echo CREATE SCHEMA IF NOT EXISTS funtown; >> abc.txt
+         echo "CREATE SCHEMA IF NOT EXISTS funtown;" >> abc.sql
          scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose-aws.yml ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/
          scp  -o StrictHostKeyChecking=no ./abc.sql ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/
          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }} << 'ENDSSH'
