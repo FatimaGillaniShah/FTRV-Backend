@@ -99,7 +99,7 @@ jobs:
   name: cd push image
   runs-on: ubuntu-latest
   outputs:
-      output1: ${{ steps.buildimg.outputs.dockerImageUrl }}
+      output1: ${{ steps.buildimg.outputs.dockerImageUrl2 }}
   #needs: ci
     
   steps:
@@ -148,6 +148,7 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=dockerImageUrl::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "::set-output name=dockerImageUrl2::'$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG' | base64 "
         echo "IMAGEURL::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
         
