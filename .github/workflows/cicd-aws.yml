@@ -99,9 +99,9 @@ jobs:
   name: cd push image
   runs-on: ubuntu-latest
   outputs:
-      output1: ${{ steps.buildimg.outputs.dockImgECR_REG }}
-      output2: ${{ steps.buildimg.outputs.dockImgECR_REPO }}
-      output3: ${{ steps.buildimg.outputs.dockImgECR_IMG_TAG }}
+      output1: ${{ steps.buildimg.outputs.myregistry }}
+      output2: ${{ steps.buildimg.outputs.myrepo }}
+      output3: ${{ steps.buildimg.outputs.mytag }}
       
       
   #needs: ci
@@ -151,14 +151,17 @@ jobs:
         # Build a docker image and push it to ECR
         #docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         #docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=dockImgECR_REG::$ECR_REGISTRY"
-        echo "::set-output name=dockImgECR_REPO::$ECR_REPOSITORY"
-        echo "::set-output name=dockImgECR_IMG_TAG::$IMAGE_TAG"
+        echo '::set-output name=myregistry::$ECR_REGISTRY'
+        echo "::set-output name=myrepo::$ECR_REPOSITORY"
+        echo "::set-output name=mytag::$IMAGE_TAG"
         echo "IMAGEURL::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
         
     - name: print img url
-      run: echo "Docker image url ${{ steps.buildimg.outputs.dockerImageUrltwo }}"
+      run: |
+       echo "Docker image url ${{ steps.buildimg.outputs.myregistry }}"
+       echo "Docker image url ${{ steps.buildimg.outputs.myrepo }}"
+       echo "Docker image url ${{ steps.buildimg.outputs.mytag }}"
       
  
   #------------------------------------------
