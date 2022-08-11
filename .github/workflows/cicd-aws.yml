@@ -207,7 +207,9 @@ jobs:
           APP_IMAGE_URL: 537935548467.dkr.ecr.us-east-1.amazonaws.com/ftrv_backend:latest
           
       run: |
-         scp  -o StrictHostKeyChecking=no -r "schema.sql" ./.env ./docker-compose-aws.yml ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/
+         cat schema.sql
+         scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose-aws.yml ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/
+         scp  -o StrictHostKeyChecking=no ./schema.sql ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/
          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }} << 'ENDSSH'
           source .env
           aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 537935548467.dkr.ecr.us-east-1.amazonaws.com
