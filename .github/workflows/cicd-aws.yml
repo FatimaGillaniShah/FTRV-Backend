@@ -98,6 +98,8 @@ jobs:
  cd:
   name: cd push image
   runs-on: ubuntu-latest
+  outputs:
+      docker_image_url: "${{ steps.buildimg.outputs.IMAGE_URL }}"
   #needs: ci
     
   steps:
@@ -152,8 +154,7 @@ jobs:
     - name: print img url
       run: echo "Docker image url ${{ steps.buildimg.outputs.IMAGE_URL }}"
       
-  outputs:
-      app_img_url: ${{ steps.buildimg.outputs.IMAGE_URL }}
+ 
          
   
   
@@ -165,6 +166,14 @@ jobs:
    runs-on: ubuntu-latest
    needs: cd
    steps:
+
+    - name: print app url
+      run:  echo "this is image url ${{needs.cd.outputs.docker_image_url}}" 
+    # Checkout the code
+    - name: Checkout the code
+      uses: actions/checkout@v2 
+      
+    # Add IP of github runner in EC2 security group
     - name: Add public IP to AWS security group
       uses: sohelamin/aws-security-group-add-ip-action@master
       with:
@@ -176,21 +185,16 @@ jobs:
         to-port: '22'
         protocol: 'tcp'
         description: 'GitHub Action Deploy'
-
-    - name: print app url
-      run:  echo "this is image url ${{needs.cd.outputs.app_img_url}}" 
-    
-    
-    - name: Checkout the code
-      uses: actions/checkout@v2 
-      
+        
+    # Create .env file 
     - name: Add environment variables to .env
       run: |
           echo DB_NAME=${{ secrets.POSTGRES_DB }} >> .env
           echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
           echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env 
           echo APP_IMAGE_URL=537935548467.dkr.ecr.us-east-1.amazonaws.com/ftrv_backend:latest >> .env 
-          
+    
+    # Add SSH key 
     - name: Add the private SSH key to the ssh-agent
       env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
@@ -201,6 +205,8 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
           ssh-keyscan -H 'gitlab.com' >> ~/.ssh/known_hosts    
+          
+    # Deploy docker container via SSH  
     - name: Deploy app image on EC2
       env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
