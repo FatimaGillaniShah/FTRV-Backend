@@ -210,10 +210,11 @@ jobs:
          scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose-aws.yml ./initdbschema.sql ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/
          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }} << 'ENDSSH'
          source .env
-         aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 537935548467.dkr.ecr.us-east-1.amazonaws.com
-         sudo docker pull 537935548467.dkr.ecr.us-east-1.amazonaws.com/ftrv_backend:latest
+         aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin 537935548467.dkr.ecr.us-east-1.amazonaws.com
+         sudo docker pull $APP_IMAGE_URL
          sudo docker-compose -f docker-compose-aws.yml down 
          sudo docker-compose -f docker-compose-aws.yml up -d
+         env
          ENDSSH
 
   
