@@ -99,7 +99,11 @@ jobs:
   name: cd push image
   runs-on: ubuntu-latest
   outputs:
-      output1: ${{ steps.buildimg.outputs.dockerImageUrl2 }}
+      output1: ${{ steps.buildimg.outputs.dockImgECR_REG }}
+      output2: ${{ steps.buildimg.outputs.dockImgECR_REPO }}
+      output3: ${{ steps.buildimg.outputs.dockImgECR_IMG_TAG }}
+      
+      
   #needs: ci
     
   steps:
@@ -145,15 +149,16 @@ jobs:
         IMAGE_TAG: latest       # ${{ github.sha }}
       run: |
         # Build a docker image and push it to ECR
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=dockerImageUrl::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        echo "::set-output name=dockerImageUrl2::'$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG' | base64 "
+        #docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        #docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=dockImgECR_REG::$ECR_REGISTRY"
+        echo "::set-output name=dockImgECR_REPO::$ECR_REPOSITORY"
+        echo "::set-output name=dockImgECR_IMG_TAG::$IMAGE_TAG"
         echo "IMAGEURL::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
         
     - name: print img url
-      run: echo "Docker image url ${{ steps.buildimg.outputs.dockerImageUrl }}"
+      run: echo "Docker image url ${{ steps.buildimg.outputs.dockerImageUrltwo }}"
       
  
   #------------------------------------------
@@ -166,64 +171,7 @@ jobs:
    steps:
 
     - name: print app url
-      run:  echo "this is image url ${{needs.cd.outputs.output1}}" 
-      
-    # Checkout the code
-    - name: Checkout the code
-      uses: actions/checkout@v2 
-      
-    # Add IP of github runner in EC2 security group
-    - name: Add public IP to AWS security group
-      uses: sohelamin/aws-security-group-add-ip-action@master
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-        aws-security-group-id: ${{ secrets.AWS_HOST_SECURITY_GROUP_ID }}
-        port: '22'
-        to-port: '22'
-        protocol: 'tcp'
-        description: 'GitHub Action Deploy'
-        
-    # Create .env file 
-    - name: Add environment variables to .env
-      run: |
-          echo DB_NAME=${{ secrets.POSTGRES_DB }} >> .env
-          echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
-          echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env 
-          echo APP_IMAGE_URL=537935548467.dkr.ecr.us-east-1.amazonaws.com/ftrv_backend:latest >> .env 
-    
-    # Add SSH key 
-    - name: Add the private SSH key to the ssh-agent
-      env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-      run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_HOST_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-          chmod 700 ~/.ssh/id_rsa
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
-          ssh-keyscan -H 'gitlab.com' >> ~/.ssh/known_hosts    
-          
-    # Deploy docker container via SSH  
-    - name: Deploy app image on EC2
-      env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }} 
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          APP_IMAGE_URL: 537935548467.dkr.ecr.us-east-1.amazonaws.com/ftrv_backend:latest
-          
-      run: |
-         scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose-aws.yml ./initdbschema.sql ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/
-         ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }} << 'ENDSSH'
-         source .env
-         set -a; . .env; set +a;
-         aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin 537935548467.dkr.ecr.us-east-1.amazonaws.com
-         sudo docker pull $APP_IMAGE_URL
-         sudo docker-compose -f docker-compose-aws.yml down 
-         sudo docker-compose -f docker-compose-aws.yml up -d
-         env
-         ENDSSH
+      run:  echo "this is image url ${{needs.cd.outputs.output1}}/${{needs.cd.outputs.output2}}:${{needs.cd.outputs.output3}}" 
+
 
   
