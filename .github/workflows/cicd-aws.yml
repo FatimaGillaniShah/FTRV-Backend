@@ -102,6 +102,7 @@ jobs:
       output1: ${{ steps.buildimg.outputs.myregistry }}
       output2: ${{ steps.buildimg.outputs.myrepo }}
       output3: ${{ steps.buildimg.outputs.mytag }}
+      output4: ${{ steps.buildimg.outputs.myregistry2 }}
       
       
   #needs: ci
@@ -151,7 +152,7 @@ jobs:
         # Build a docker image and push it to ECR
         #docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         #docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=myregistry::whatis this"
+        echo "::set-output name=myregistry::2254.what.is.this"
         echo "::set-output name=myregistry2::${{ steps.login-ecr.outputs.registry }}"
         echo "::set-output name=myrepo::$ECR_REPOSITORY"
         echo "::set-output name=mytag::$IMAGE_TAG"
@@ -176,7 +177,7 @@ jobs:
    steps:
 
     - name: print app url
-      run:  echo "this is image url ${{needs.cd.outputs.output1}}/${{needs.cd.outputs.output2}}:${{needs.cd.outputs.output3}}" 
+      run:  echo "this is image url  ${{needs.cd.outputs.output4}} ${{needs.cd.outputs.output1}}/${{needs.cd.outputs.output2}}:${{needs.cd.outputs.output3}} " 
 
 
   
