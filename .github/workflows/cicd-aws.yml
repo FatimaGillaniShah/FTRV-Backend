@@ -204,11 +204,6 @@ jobs:
     - name: SSH, Pull and Deploy App image on EC2
       env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }} 
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          APP_IMAGE_URL: $MY_ECR_REGISTRY/$MY_ECR_REPOSITORY:$MY_ECR_IMAGE_TAG
-         
           
       run: |
          scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose-aws.yml ./initdbschema.sql ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/ 
