@@ -210,6 +210,7 @@ jobs:
       run: |
          scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose-aws.yml ./initdbschema.sql ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/ 
          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }} << 'ENDSSH'
+         cat .env
          source .env
          set -a; . .env; set +a;
          aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 537935548467.dkr.ecr.us-east-1.amazonaws.com 
