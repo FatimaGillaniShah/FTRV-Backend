@@ -12,6 +12,7 @@ services:
     links:
       - postgres
     environment:
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres/${DB_NAME}
       NODE_ENV: development
       VIRTUAL_HOST: devcicd.ftrvcentralpoint.com
       LETSENCRYPT_HOST: devcicd.ftrvcentralpoint.com
