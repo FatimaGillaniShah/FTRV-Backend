@@ -13,9 +13,9 @@ services:
       - postgres
     environment:
       NODE_ENV: development
-      VIRTUAL_HOST: devaws.ftrvcentralpoint.com
-      LETSENCRYPT_HOST: devaws.ftrvcentralpoint.com
-      LETSENCRYPT_EMAIL: zeeshan.manzoor@datics.ai
+      VIRTUAL_HOST: devcicd.ftrvcentralpoint.com
+      LETSENCRYPT_HOST: devcicd.ftrvcentralpoint.com
+      LETSENCRYPT_EMAIL: nm.nm@datics.ai
     
    # ports:
     #  - "0.0.0.0:3000:3000"
