@@ -219,7 +219,7 @@ jobs:
          set +o allexport
          env
          aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $APP_ECR_REGISTRY 
-         sudo docker pull 537935548467.dkr.ecr.us-east-1.amazonaws.com/ftrv_backend:latest
+         sudo docker pull $APP_IMAGE_URL
          sudo docker-compose -f docker-compose-aws.yml down 
          sudo docker-compose -f docker-compose-aws.yml up -d
          env
