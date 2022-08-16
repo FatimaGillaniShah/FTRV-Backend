@@ -185,6 +185,8 @@ jobs:
           echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
           echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env 
           echo APP_IMAGE_URL=$MY_ECR_REGISTRY/$MY_ECR_REPOSITORY:$MY_ECR_IMAGE_TAG >> .env 
+          echo APP_ECR_REGISTRY=$MY_ECR_REGISTRY >> .env 
+         
     
     # Add SSH key 
     - name: Add the private SSH key or key-pair to the ssh-agent
@@ -206,14 +208,17 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
           APP_IMAGE_URL: $MY_ECR_REGISTRY/$MY_ECR_REPOSITORY:$MY_ECR_IMAGE_TAG
+         
           
       run: |
          scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose-aws.yml ./initdbschema.sql ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }}:~/ 
          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_HOST_USER }}@${{ secrets.AWS_HOST }} << 'ENDSSH'
          cat .env
+         set -o allexport
          source .env
-         set -a; . .env; set +a;
-         aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 537935548467.dkr.ecr.us-east-1.amazonaws.com 
+         set +o allexport
+         env
+         aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin $APP_ECR_REGISTRY 
          sudo docker pull 537935548467.dkr.ecr.us-east-1.amazonaws.com/ftrv_backend:latest
          sudo docker-compose -f docker-compose-aws.yml down 
          sudo docker-compose -f docker-compose-aws.yml up -d
