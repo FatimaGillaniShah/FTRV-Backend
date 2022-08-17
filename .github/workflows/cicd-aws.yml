@@ -22,10 +22,17 @@ on:
   #  branches:
   #    - "develop"
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}       # set this to your preferred AWS region, e.g. us-west-1
-  MY_ECR_REGISTRY:  ${{ secrets.MY_ECR_REGISTRY }}   # 537935548467.dkr.ecr.us-east-1.amazonaws.com   # set this to your Amazon ECR registry 
-  MY_ECR_REPOSITORY:  ${{ secrets.MY_ECR_REPOSITORY }} # ftrv_backend    # set this to your Amazon ECR repository name
-  MY_ECR_IMAGE_TAG: latest                           # ${{ github.sha }}
+  # set this to your preferred AWS region, e.g. us-west-1
+  AWS_REGION: ${{ secrets.AWS_REGION }}       
+  
+  # set this to your Amazon ECR registry like e.g. 123456789012.dkr.ecr.us-east-1.amazonaws.com  
+  MY_ECR_REGISTRY:  ${{ secrets.MY_ECR_REGISTRY }}  
+  
+  # set this to your Amazon ECR repository name like e.g. ftrv_backend    
+  MY_ECR_REPOSITORY:  ${{ secrets.MY_ECR_REPOSITORY }} 
+  
+  # docker image tag we are using latest
+  MY_ECR_IMAGE_TAG: latest          # ${{ github.sha }}
   
   
 
