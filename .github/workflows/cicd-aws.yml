@@ -115,7 +115,6 @@ jobs:
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
           echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-          echo DB_HOSTNAME=${{ secrets.POSTGRES_HOST }} >> .env  
           echo DB_PORT=${{ secrets.POSTGRES_PORT }} >> .env
           echo SCHEMA_NAME=${{ secrets.SCHEMA_NAME }} >> .env
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
@@ -126,7 +125,7 @@ jobs:
           echo BODY_SIZE_LIMIT=10 >> .env 
           cat .env
           
-           
+        # echo DB_HOSTNAME=${{ secrets.POSTGRES_HOST }} >> .env  
         # echo SERVER_ADDRESS=${{ secrets.NODE_SERVER }} >> .env
         # echo PORT=${{ secrets.NODE_PORT }} >> .env
           
