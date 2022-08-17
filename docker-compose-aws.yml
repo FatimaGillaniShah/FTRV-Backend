@@ -14,8 +14,8 @@ services:
     environment:
       DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres/${DB_NAME}
       NODE_ENV: development
-      VIRTUAL_HOST: devcicd.ftrvcentralpoint.com
-      LETSENCRYPT_HOST: devcicd.ftrvcentralpoint.com
+      VIRTUAL_HOST: cicdaws.ftrvcentralpoint.com
+      LETSENCRYPT_HOST: cicdaws.ftrvcentralpoint.com
       LETSENCRYPT_EMAIL: nm.nm@datics.ai
     
    # ports:
