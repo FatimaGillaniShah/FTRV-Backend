@@ -116,6 +116,7 @@ jobs:
           echo DB_USERNAME=${{ secrets.POSTGRES_USER }} >> .env
           echo DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
           echo DB_PORT=${{ secrets.POSTGRES_PORT }} >> .env
+          echo DB_HOSTNAME=${{ secrets.POSTGRES_HOST }} >> .env  
           echo SCHEMA_NAME=${{ secrets.SCHEMA_NAME }} >> .env
           echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
           echo SESSION_SECRET=${{ secrets.SESSION_SECRET }} >> .env
@@ -125,7 +126,6 @@ jobs:
           echo BODY_SIZE_LIMIT=10 >> .env 
           cat .env
           
-        # echo DB_HOSTNAME=${{ secrets.POSTGRES_HOST }} >> .env  
         # echo SERVER_ADDRESS=${{ secrets.NODE_SERVER }} >> .env
         # echo PORT=${{ secrets.NODE_PORT }} >> .env
           
@@ -217,7 +217,7 @@ jobs:
          sudo docker pull $APP_IMAGE_URL
          sudo docker-compose -f docker-compose-aws.yml down 
          sudo docker-compose -f docker-compose-aws.yml up -d
-         env
+         sudo docker ps -a
          ENDSSH
 
   
