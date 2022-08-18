@@ -1,16 +1,30 @@
-# This workflow will build and push a new container image to Amazon ECR,
-#
+# This CICD workflow will perform
+# 1) Continus Intergratoins (CI)
+#     Scan,install dependencies, test and build the app
+# 2) Continus Delivery
+#     Build, tag and push container image to Amazon ECR repository.
+# 3) Continus Deploy
+#     SSH, copy required files, pull and deploy the app on EC2 (all components will run as container) 
+#---------------------------------------------------------------------------------------------------
 # To use this workflow, you will need to complete the following set-up steps:
 #
 # 1. Create an ECR repository to store your images.
-#    For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-2`.
-#    Replace the value of the `ECR_REPOSITORY` environment variable in the workflow below with your repository's name.
-#    Replace the value of the `AWS_REGION` environment variable in the workflow below with your repository's region.
+#    Use AWS Web console or aws cli
+#    Replace the value of the `MY_ECR_REPOSITORY` in GitHub Actions secrets.
+#    Replace the value of the `MY_ECR_REGISTRY` in GitHub Actions secrets.
 #
+# 2. Create EC2 with Security Group, keypair, Ubuntu 20.04 AMI, install package dependencies docker, docker-compose, aws cli etc.
+#    Replace the value of the `AWS_HOST` in GitHub Actions secrets.
+#    Replace the value of the `AWS_HOST_USER` in GitHub Actions secrets.
+#    Replace the value of the `AWS_HOST_SSH_KEY` (keypair used in EC2 creation) in GitHub Actions secrets.
+#    Replace the value of the `AWS_HOST_SECURITY_GROUP_ID` (id of SG used in EC2 creation)  in GitHub Actions secrets.
 #
-# 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-#    See the documentation for each action used below for the recommended IAM policies for this IAM user,
-#    and best practices on handling the access key credentials.
+# 3. Create IAM Role with existing plolicy "AmazonEC2ContainerRegistryReadOnly" and attach to EC2 (created above step).
+#
+# 4. Store an IAM user access key in GitHub Actions secrets `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+#
+# 5. Create / update all variables in GitHub Actions secrets, that you want to use .env file of app.
+#------------------------------------------------------------------------------------------------------
 
 name: CICD_AWS_EC2_ECR
 
@@ -74,8 +88,8 @@ jobs:
    runs-on: ubuntu-latest
    strategy:
      matrix:
-       #node-version: [10.x, 12.x, 14.x, 15.x]
-       node-version: [14.x]
+       node-version: [10.x, 12.x, 14.x, 15.x]
+       #node-version: [14.x]
    steps:
    
      - name: Checkout the code
