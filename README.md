@@ -20,8 +20,8 @@ password authentication.
 <br />
 ## PM2 Logs rotation
 
-* To enable pm2 logs file rotation ,use the pm2 module "pm2-logrotate".
-* Run 'pm2 install pm2-logrotate' to install   Note: the command is "pm2 install" NOT "npm install".
+* To enable pm2 logs file rotation ,use the pm2 module ` pm2-logrotate` 
+* Run ` pm2 install pm2-logrotate`  to install   Note: the command is ` pm2 install`  NOT ` npm install` 
 
 
 <br />
