@@ -168,7 +168,7 @@ How to setup FTRV backend on EC2 (AMI Ubuntu 20.04) or Ubuntu VM
   	in case of vm you can use public ip instead of url, to hit this api page.
 	
 	
-11 ) To enable pm2 logs file rotation , you can use pm2 module "pm2-logrotate". It rotates logs automatically of processes managed by pm2.
+11 ) To enable pm2 logs file rotation , you can use the pm2 module "pm2-logrotate". It rotates logs automatically of processes managed by pm2.
  	
 	To install  pm2-logrotate, run the following command , default file size is 10MB and retains 30 files. different parameters of "pm2-logrotate" can be configured.
 	
