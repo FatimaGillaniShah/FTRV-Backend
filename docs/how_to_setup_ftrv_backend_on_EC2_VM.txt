@@ -140,7 +140,13 @@ How to setup FTRV backend on EC2 (AMI Ubuntu 20.04) or Ubuntu VM
 
    npm run build
    
-   npm start
+   FOR DEVELOPMENT  
+   	npm start
+   
+   FOR PRODUCTION run the following command (it runs app with pm2)
+   	
+	npm run start:prod
+	
    
    Output of start command look likes this or differ in case of production (public ip or url)
    
@@ -160,6 +166,18 @@ How to setup FTRV backend on EC2 (AMI Ubuntu 20.04) or Ubuntu VM
   	webpage shows FTRV Intranet Portal with its APIs
   	
   	in case of vm you can use public ip instead of url, to hit this api page.
+	
+	
+11 ) To enable pm2 logs file rotation , you can use pm2 module "pm2-logrotate". It rotates logs automatically of processes managed by pm2.
+ 	
+	To install  pm2-logrotate, run the following command , default file size is 10MB and retains 30 files. different parameters of "pm2-logrotate" can be configured.
+	
+		pm2 install pm2-logrotate
+
+		NOTE: the command is "pm2 install" NOT "npm install"
+
+		To view current config , run following command 
+		pm2 config pm2-logrotate 
 
 
                
