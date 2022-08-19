@@ -17,14 +17,11 @@
 Authentication is based on [json web tokens](https://jwt.io). `passport-jwt` strategy is used to handle the email /
 password authentication.
 
-<br />
 ## PM2 Logs rotation
 
 * To enable pm2 logs file rotation ,use the pm2 module ` pm2-logrotate` 
 * Run ` pm2 install pm2-logrotate`  to install   Note: the command is ` pm2 install`  NOT ` npm install` 
 
-
-<br />
 ## API
 
 All APIs documentation is available on: `/api-docs` as openapi spec
